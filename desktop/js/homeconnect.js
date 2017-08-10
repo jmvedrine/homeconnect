@@ -14,7 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
+ 
+ $('.eqLogicAttr[data-l1key=configuration][data-l2key=modèle]').on('change',function(){
+    if($(this).value() == null){
+        return;
+    }
+    $('#img_machineModel').attr('src','plugins/homeconnect/core/img/'+$(this).value()+'.jpg');
+});
 
 $("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true});
 /*

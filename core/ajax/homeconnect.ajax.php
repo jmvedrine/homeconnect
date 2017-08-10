@@ -26,6 +26,15 @@ try {
     
     ajax::init();
 
+	if (init('action') == 'loginHomeConnect') {
+        homeconnect::loginHomeConnect();
+        ajax::success();
+    }
+	
+	if (init('action') == 'syncHomeConnect') {
+        homeconnect::syncHomeConnect();
+        ajax::success();
+    }
 
 
     throw new Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));

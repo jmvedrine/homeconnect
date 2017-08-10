@@ -22,29 +22,85 @@ if (!isConnect()) {
     die();
 }
 ?>
+
 <form class="form-horizontal">
     <fieldset>
-        <div class="form-group">
-            <label class="col-lg-4 control-label">{{Global param 1}}</label>
-            <div class="col-lg-2">
-                <input class="configKey form-control" data-l1key="param1" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-4 control-label">{{Global param 2}}</label>
-            <div class="col-lg-2">
-                <input class="configKey form-control" data-l1key="param2" value="80" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-4 control-label">{{Global param 2}}</label>
-            <div class="col-lg-2">
-                <select class="configKey form-control" data-l1key="param3">
-                    <option value="value1">value1</option>
-                    <option value="value2">value2</option>
-                </select>
-            </div>
-        </div>
+	
+		<?php 
+		if (empty(config::byKey('auth','homeconnect'))){
+			echo ('
+				<div class="form-group">
+					<label class="col-lg-2 control-label">{{Se connecter}}</label>
+					<div class="col-lg-2">
+						<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fa fa-sign-in"></i> {{Se connecter}}</a>
+					</div>
+				</div>
+			');
+		} 
+		?>	
+		
+		<div class="form-group">
+			<label class="col-lg-2 control-label">{{Synchroniser}}</label>
+			<div class="col-lg-2">
+				<a class="btn btn-warning" id="bt_syncHomeConnect"><i class="fa fa-refresh"></i> {{Synchroniser mes équipements}}</a>
+			</div>
+		</div>
+			
   </fieldset>
 </form>
 
+<script>
+
+	$('#bt_loginHomeConnect').on('click', function () {
+		
+		$.ajax({ // fonction permettant de faire de l'ajax
+
+			type: "POST", // methode de transmission des données au fichier php
+			url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+		
+			data: {
+				action: "loginHomeConnect",
+			},
+			
+			dataType: 'json',
+			
+			error: function (request, status, error) {
+				handleAjaxError(request, status, error);
+			},
+
+			success: function (data) { // si l'appel a bien fonctionné
+				if (data.state != 'ok') {
+					$('#div_alert').showAlert({message: data.result, level: 'danger'});
+					return;
+				}
+			}
+		});
+	});
+	
+	$('#bt_syncHomeConnect').on('click', function () {
+		
+		$.ajax({ // fonction permettant de faire de l'ajax
+
+			type: "POST", // methode de transmission des données au fichier php
+			url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+		
+			data: {
+				action: "syncHomeConnect",
+			},
+			
+			dataType: 'json',
+			
+			error: function (request, status, error) {
+				handleAjaxError(request, status, error);
+			},
+
+			success: function (data) { // si l'appel a bien fonctionné
+				if (data.state != 'ok') {
+					$('#div_alert').showAlert({message: data.result, level: 'danger'});
+					return;
+				}
+			}
+		});
+	});
+	
+</script>
