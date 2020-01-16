@@ -142,7 +142,7 @@ class homeconnect extends eqLogic {
 		// Construction de l'url.
 		$url = homeconnect::API_AUTH_URL."?client_id=".homeconnect::CLIENT_ID."&redirect_uri".homeconnect::CLIENT_REDIRECT_URL;
 		$url .= "&response_type=code&scope=IdentifyAppliance+Monitor";
-		
+		log::add('homeconnect', 'debug', "url : " . $url);
 		// Envoie d'une requête GET et récupération du header.
 		$curl = curl_init();
 		$options = [
@@ -162,6 +162,8 @@ class homeconnect extends eqLogic {
 			
 			// Récupération du message d'erreur pour log.
 			preg_match("/[\{].*[\}]/", $response, $matches);
+            log::add('homeconnect', 'debug', "info : " . print_r($info, true));
+            log::add('homeconnect', 'debug', "response : " . $response);
 			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$info['http_code'].") : ".print_r($matches));
 			throw new Exception("Erreur : " . print_r($matches));
 			return;

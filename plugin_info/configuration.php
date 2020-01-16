@@ -32,7 +32,7 @@ if (!isConnect()) {
 				<div class="form-group">
 					<label class="col-lg-2 control-label">{{Se connecter}}</label>
 					<div class="col-lg-2">
-						<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fa fa-sign-in"></i> {{Se connecter}}</a>
+						<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Se connecter}}</a>
 					</div>
 				</div>
 			');
@@ -42,7 +42,7 @@ if (!isConnect()) {
 		<div class="form-group">
 			<label class="col-lg-2 control-label">{{Synchroniser}}</label>
 			<div class="col-lg-2">
-				<a class="btn btn-warning" id="bt_syncHomeConnect"><i class="fa fa-refresh"></i> {{Synchroniser mes équipements}}</a>
+				<a class="btn btn-warning" id="bt_syncHomeConnect"><i class="fas fa-sync-alt"></i> {{Synchroniser mes équipements}}</a>
 			</div>
 		</div>
 			
