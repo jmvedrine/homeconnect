@@ -25,6 +25,24 @@ if (!isConnect()) {
 
 <form class="form-horizontal">
     <fieldset>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">{{Client ID}}</label>
+        <div class="col-lg-2">
+            <input id="homeconnectclientid" class="configKey form-control" data-l1key="clientId" style="margin-top:-5px" placeholder="{{Client ID sur site développeur}}"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">{{Client Secret}}</label>
+        <div class="col-lg-2">
+            <input id="homeconnectclientsecret" class="configKey form-control" data-l1key="clientSecret" style="margin-top:-5px" placeholder="{{Client secret sur site développeur}}"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">{{Client Redirect URL}}</label>
+        <div class="col-lg-2">
+            <input id="homeconnectredirecturl" class="configKey form-control" data-l1key="redirectUrl" style="margin-top:-5px" placeholder="{{Url de redirection sur site développeur}}"/>
+        </div>
+    </div>
 	
 		<?php 
 		if (empty(config::byKey('auth','homeconnect'))){
@@ -37,14 +55,7 @@ if (!isConnect()) {
 				</div>
 			');
 		} 
-		?>	
-		
-		<div class="form-group">
-			<label class="col-lg-2 control-label">{{Synchroniser}}</label>
-			<div class="col-lg-2">
-				<a class="btn btn-warning" id="bt_syncHomeConnect"><i class="fas fa-sync-alt"></i> {{Synchroniser mes équipements}}</a>
-			</div>
-		</div>
+		?>
 			
   </fieldset>
 </form>
@@ -60,32 +71,6 @@ if (!isConnect()) {
 		
 			data: {
 				action: "loginHomeConnect",
-			},
-			
-			dataType: 'json',
-			
-			error: function (request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-
-			success: function (data) { // si l'appel a bien fonctionné
-				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-					return;
-				}
-			}
-		});
-	});
-	
-	$('#bt_syncHomeConnect').on('click', function () {
-		
-		$.ajax({ // fonction permettant de faire de l'ajax
-
-			type: "POST", // methode de transmission des données au fichier php
-			url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
-		
-			data: {
-				action: "syncHomeConnect",
 			},
 			
 			dataType: 'json',

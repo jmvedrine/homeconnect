@@ -1,0 +1,59 @@
+{
+    "plugins\/homeconnect\/core\/ajax\/homeconnect.ajax.php": {
+        "Aucune méthode correspondante à : ": "Aucune méthode correspondante à : ",
+        "401 - Accès non autorisé": "401 - Accès non autorisé"
+    },
+    "plugins\/homeconnect\/desktop\/php\/homeconnect.php": {
+        "401 - Accès non autorisé": "401 - Accès non autorisé",
+        "Gestion": "Gestion",
+        "Synchronisation": "Synchronisation",
+        "Configuration": "Configuration",
+        "Santé": "Santé",
+        "Mes appareils": "Mes appareils",
+        "Sauvegarder": "Sauvegarder",
+        "Supprimer": "Supprimer",
+        "Configuration avancée": "Configuration avancée",
+        "Equipement": "Equipement",
+        "Commandes": "Commandes",
+        "Nom de l'appareil": "Nom de l'appareil",
+        "Identifiant": "Identifiant",
+        "Général": "Général",
+        "Objet parent": "Objet parent",
+        "Aucun": "Aucun",
+        "Catégorie": "Catégorie",
+        "Activer": "Activer",
+        "Visible": "Visible",
+        "Marque": "Marque",
+        "Modèle": "Modèle",
+        "Nom": "Nom",
+        "Sous-Type": "Sous-Type",
+        "Paramètres": "Paramètres",
+        "Options": "Options",
+        "Action": "Action"
+    },
+    "plugins\/homeconnect\/desktop\/modal\/health.php": {
+        "Appareil": "Appareil",
+        "Type": "Type",
+        "Connecté": "Connecté"
+    },
+    "plugins\/homeconnect\/core\/class\/homeconnect.class.php": {
+        "Connecté(e)": "Connecté(e)",
+        "Contrôle à distance": "Contrôle à distance",
+        "Programe": "Programe",
+        "Intensité café": "Intensité café",
+        "Taille tasse": "Taille tasse",
+        "Avancement": "Avancement",
+        "Porte": "Porte",
+        "Durée restante": "Durée restante"
+        
+    },
+    "plugins\/homeconnect\/plugin_info\/configuration.php": {
+        "Client ID": "Client ID",
+        "Client ID sur site développeur": "Client ID sur site développeur",
+        "Client Secret": "Client Secret",
+        "Client secret sur site développeur": "Client secret sur site développeur",
+        "Client Redirect URL": "Client Redirect URL",
+        "Url de redirection sur site développeur": "Url de redirection sur site développeur",
+        "Se connecter": "Se connecter"
+    }
+}

@@ -8,21 +8,27 @@ $eqLogics = eqLogic::byType($plugin->getId());
 ?>
 
 <div class="row row-overflow">
-
-	<div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
+	<div class="col-xs-12 eqLogicThumbnailDisplay">
 		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
-		
 		<div class="eqLogicThumbnailContainer">
-			
-			<div class="cursor eqLogicAction" data-action="gotoPluginConf" style="text-align: center; background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;">
-				<i class="fas fa-wrench" style="font-size : 6em;color:#767676;"></i>
+			<div class="cursor eqLogicAction logoSecondary" id="bt_syncHomeConnect" >
+				<i class="fas fa-sync-alt"></i>
 				<br>
-				<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676">{{Configuration}}</span>
+				<span>{{Synchronisation}}</span>
 			</div>
-			
+            <div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf" >
+                    <i class="fas fa-wrench"></i>
+                    <br>
+                    <span>{{Configuration}}</span>
+            </div>
+			<div class="cursor logoSecondary" id="bt_healthHomeConnect">
+				<i class="fas fa-medkit"></i>
+				<br />
+				<span>{{Santé}}</span>
+			</div>
 		</div>
 		
-		<legend><i class="fas fa-table"></i> {{Mes machines}}</legend>
+		<legend><i class="fas fa-table"></i> {{Mes appareils}}</legend>
 		
 		<div class="eqLogicThumbnailContainer">
 			
@@ -58,10 +64,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<fieldset>
 						
 							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Nom de la machine}}</label>
+								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
 								<div class="col-sm-3">
 									<input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
-									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de la machine}}"/>
+									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'appareil}}"/>
 								</div>
 							</div>
 							
@@ -117,7 +123,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 							
 							<div class="form-group">
-								<label class="col-lg-3 control-label">{{ID de la machine}}</label>
+								<label class="col-lg-3 control-label">{{Identifiant}}</label>
 								<div class="col-sm-6">
 									<span class="eqLogicAttr label label-info" style="font-size:1em;cursor: default;" data-l1key="configuration" data-l2key="haid"></span>
 								</div>
@@ -129,7 +135,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 				
 				<div class="col-xs-6">
 					<center>
-						<img src="plugins/homeconnect/core/config/images/" id="img_machineModel" style="height : 300px;" />
+						<img src="plugins/homeconnect/core/config/images/" id="img_applianceModel" style="height : 300px;" />
 					</center>
 				</div>
 			</div>

@@ -1,5 +1,4 @@
 <?php
-
 /* This file is part of Jeedom.
  *
  * Jeedom is free software: you can redistribute it and/or modify
@@ -16,19 +15,26 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
-
-function template_install() {
-    
+if (!isConnect('admin')) {
+	throw new Exception('401 Unauthorized');
 }
-
-function template_update() {
-    
-}
-
-
-function template_remove() {
-    
-}
-
+$eqLogics = homeconnect::byType('homeconnect');
 ?>
+
+<table class="table table-condensed tablesorter" id="table_healthpiHole">
+	<thead>
+		<tr>
+			<th>{{Appareil}}</th>
+			<th>{{Type}}</th>
+			<th>{{Connecté}}</th>
+		</tr>
+	</thead>
+	<tbody>
+	 <?php
+foreach ($eqLogics as $eqLogic) {
+	echo '<tr><td><a href="' . $eqLogic->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqLogic->getHumanName(true) . '</a></td>';
+	echo '</tr>';
+}
+?>
+	</tbody>
+</table>

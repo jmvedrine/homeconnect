@@ -15,12 +15,41 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
  
- 
+ $('#bt_syncHomeConnect').on('click', function () {
+    $.ajax({ // fonction permettant de faire de l'ajax
+
+        type: "POST", // methode de transmission des données au fichier php
+        url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+    
+        data: {
+            action: "syncHomeConnect",
+        },
+        
+        dataType: 'json',
+        
+        error: function (request, status, error) {
+            handleAjaxError(request, status, error);
+        },
+
+        success: function (data) { // si l'appel a bien fonctionné
+            if (data.state != 'ok') {
+                $('#div_alert').showAlert({message: data.result, level: 'danger'});
+                return;
+            }
+        }
+    });
+});
+
+ $('#bt_healthHomeConnect').on('click', function () {
+	$('#md_modal').dialog({title: "{{Santé Home Connect}}"});
+	$('#md_modal').load('index.php?v=d&plugin=homeconnect&modal=health').dialog('open');
+});
+
  $('.eqLogicAttr[data-l1key=configuration][data-l2key=modèle]').on('change',function(){
     if($(this).value() == null){
         return;
     }
-    $('#img_machineModel').attr('src','plugins/homeconnect/core/config/images/'+$(this).value()+'.jpg');
+    $('#img_applianceModel').attr('src','plugins/homeconnect/core/config/images/'+$(this).value()+'.jpg');
 });
 
 $("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true});

@@ -16,7 +16,7 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 
- 
+
 /** *************************** Includes ********************************** */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
@@ -24,111 +24,108 @@ require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 class homeconnect extends eqLogic {
 
 	/** *************************** Constantes ******************************** */
-	
-	const CLIENT_ID = "C53A4FFB6885FC6FF5B516128506BE4F466C54143BED715859127D350756AC37";
-	const CLIENT_SECRET = "703795835EC5BF1D869AD98453323A93CD712C05296370602497F9263F31A3E3";
-	const CLIENT_REDIRECT_URL = "https://apiclient.home-connect.com/o2c.html";
+
 	const API_AUTH_URL = "https://developer.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
 	const API_TOKEN_URL = "https://developer.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
 	const API_REQUEST_URL = "https://developer.home-connect.com/api/homeappliances";
-	
-	
-	
+
+
+
     /** *************************** Attributs ********************************* */
-	
-	
-	
+
+
+
 	/** *************************** Attributs statiques *********************** */
-	
-	
-	
+
+
+
 	/** *************************** Méthodes ********************************** */
-	
-	
-	
+
+
+
 	/** *************************** Méthodes statiques ************************ */
 
 	public static function loginHomeConnect() {
 	/**
      * Connexion au compte Home Connect et récupération du code d'authorisation.
      *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|	
-     */	
-		
+     * @param 			|*Cette fonction ne prend pas de paramètre*|
+     * @return 			|*Cette fonction ne retourne pas de valeur*|
+     */
+
 		if (empty(config::byKey('auth','homeconnect'))) {
-				
+
 				// Identification auprès du serveur.
 				homeconnect::authRequest();
 		}
 	}
-	
+
 	public static function syncHomeConnect() {
 	/**
-     * Connexion au compte Home Connect (via token) et récupération des machines liées.
-     *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|	
-     */	
-		
-		if (empty(config::byKey('auth','homeconnect'))) {
-			
-				// Si le code d'authorisation du serveur est absent.
-				// Identification auprès du serveur.
-				homeconnect::authRequest();
-		}
-		
-		// Récupération du token d'accès aux serveurs.
-		homeconnect::tokenRequest();
-		
-		// Récupération des machines.
-		homeconnect::homeappliances();
-	}
-	
-	public static function majMachine(){
-	/**
-     * Lance la mise à jour des informations des machines (lancement par cron).
+     * Connexion au compte Home Connect (via token) et récupération des appareils liés.
      *
      * @param 			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-	
+
+		if (empty(config::byKey('auth','homeconnect'))) {
+
+				// Si le code d'authorisation du serveur est absent.
+				// Identification auprès du serveur.
+				homeconnect::authRequest();
+		}
+
+		// Récupération du token d'accès aux serveurs.
+		homeconnect::tokenRequest();
+
+		// Récupération des appareils.
+		homeconnect::homeappliances();
+	}
+
+	public static function majMachine(){
+	/**
+     * Lance la mise à jour des informations des appareils (lancement par cron).
+     *
+     * @param 			|*Cette fonction ne retourne pas de valeur*|
+     * @return 			|*Cette fonction ne retourne pas de valeur*|
+     */
+
 		log::add('homeconnect', 'debug',"┌────────── Fonction majMachine()");
-		
+
 		// Vérification si le token est expiré.
 		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
-			
+
 			// Récupération du token d'accès aux serveurs.
 			homeconnect::tokenRequest();
 		}
-		
+
 		// Vérification de la présence du token et tentative de récupération si absent.
 		if (empty(config::byKey('access_token','homeconnect'))) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est manquant, recupération de ce dernier.");
-			
+
 			// Récupération du token d'accès aux serveurs.
 			homeconnect::tokenRequest();
-			
+
 			if (empty(config::byKey('access_token','homeconnect'))) {
-				
+
 				log::add('homeconnect', 'debug', "│ [Erreur ]: La récupération du token à échouée.");
 				return;
 			}
-		} 
-		
-		// MAJ du statut de connexion des machines.
+		}
+
+		// MAJ du statut de connexion des appareils.
 		homeconnect::majConnected();
-		
+
 		// MAJ des programes en cours.
 		homeconnect::majPrograms();
-		
+
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction majMachine()");
 	}
-	
-	
+
+
 	private static function authRequest() {
 	/**
      * Récupère un code d'authorisation à échanger contre un token.
@@ -136,11 +133,13 @@ class homeconnect extends eqLogic {
      * @param			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-	
+
 		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
-		
+
 		// Construction de l'url.
-		$url = homeconnect::API_AUTH_URL."?client_id=".homeconnect::CLIENT_ID."&redirect_uri".homeconnect::CLIENT_REDIRECT_URL;
+        $clientId = config::byKey('clientId','homeconnect','',true);
+        $redirectUrl = config::byKey('redirectUrl','homeconnect','',true);
+		$url = homeconnect::API_AUTH_URL."?client_id=".$clientId."&redirect_uri=".$redirectUrl;
 		$url .= "&response_type=code&scope=IdentifyAppliance+Monitor";
 		log::add('homeconnect', 'debug', "url : " . $url);
 		// Envoie d'une requête GET et récupération du header.
@@ -159,7 +158,7 @@ class homeconnect extends eqLogic {
 
 		// Vérification du code réponse.
 		if ($info['http_code'] != 302) {
-			
+
 			// Récupération du message d'erreur pour log.
 			preg_match("/[\{].*[\}]/", $response, $matches);
             log::add('homeconnect', 'debug', "info : " . print_r($info, true));
@@ -174,40 +173,42 @@ class homeconnect extends eqLogic {
 
 		// Récupération du code d'authorisation.
 		foreach($params as $key => $value) {
-			
+
 			$explode = explode("=", $value);
-			
+
 			if ($explode[0] == "code") {
-				
+
 				config::save('auth', $explode[1], 'homeconnect');
 				log::add('homeconnect', 'debug', "│ Code d'authorisation récupéré (".$explode[1].".");
-			}	
+			}
 		}
-		
+
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
 	}
-	
+
 	private static function tokenRequest() {
 	/**
      * Récupère un token permettant l'accès au serveur.
      *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
+     * @param 			|*Cette fonction ne prend pas de paramètres*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-	
+
 		log::add('homeconnect', 'debug',"┌────────── Fonction tokenRequest()");
-		
+
 		// Vérification de la présence du code d'authorisation avant de demander le token.
 		if (empty(config::byKey('auth','homeconnect'))) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
-		
+
 		// Création du paramêtre POSTFIELDS.
-		$post_fields = 'client_id='. homeconnect::CLIENT_ID;
-		$post_fields .= '&redirect_uri='. homeconnect::CLIENT_REDIRECT_URL;
+        $clientId = config::byKey('clientId','homeconnect','',true);
+        $redirectUrl = config::byKey('redirectUrl','homeconnect','',true);
+		$post_fields = 'client_id='. $clientId;
+		$post_fields .= '&redirect_uri='. $redirectUrl;
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');
 
@@ -222,24 +223,24 @@ class homeconnect extends eqLogic {
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
-		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);		
+		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
-		
+
 		// Vérification du code réponse.
 		if($http_code != 200) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") : Impossible de récupérer le token.");
 			throw new Exception("Erreur : Impossible de récupérer le token (code erreur : ".$http_code.").");
 			return;
-			
+
 		} else {
-			
+
 			log::add('homeconnect', 'debug', "│ Token récupéré.");
 		}
 
 		// Calcul de l'expiration du token.
 		$expires_in = time() + $response['expires_in'];
-		
+
 		// Enregistrement des informations dans le plugin.
 		config::save('access_token', $response['access_token'], 'homeconnect');
 		config::save('refresh_token', $response['refresh_token'], 'homeconnect');
@@ -247,7 +248,7 @@ class homeconnect extends eqLogic {
 		config::save('scope', $response['scope'], 'homeconnect');
 		config::save('expires_in', $expires_in, 'homeconnect');
 		config::save('id_token', $response['id_token'], 'homeconnect');
-		
+
 		log::add('homeconnect', 'debug',"│ Access token : ".$response['access_token']);
 		log::add('homeconnect', 'debug',"│ Refresh token : ".$response['refresh_token']);
 		log::add('homeconnect', 'debug',"│ Token type : ".$response['token_type']);
@@ -256,7 +257,7 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenhRequest()");
 	}
-	
+
 	private static function homeappliances() {
 	/**
      * Récupère la liste des objects connectés et création des objets associés.
@@ -264,39 +265,39 @@ class homeconnect extends eqLogic {
      * @param 			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-		
+
 		log::add('homeconnect', 'debug',"┌────────── Fonction homeappliances()");
-		
+
 		// Vérification si le token est expiré.
 		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
-			
+
 			// Récupération du token d'accès aux serveurs.
 			homeconnect::tokenRequest();
 		}
-		
+
 		// Vérification de la présence du token et tentative de récupération si absent.
 		if (empty(config::byKey('access_token','homeconnect'))) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est manquant, recupération de ce dernier.");
-			
+
 			// Récupération du token d'accès aux serveurs.
 			homeconnect::tokenRequest();
-			
+
 			if (empty(config::byKey('access_token','homeconnect'))) {
-				
+
 				log::add('homeconnect', 'debug', "│ [Erreur ]: La récupération du token à échouée.");
 				return;
 			}
-		} 		
-		
+		}
+
 		$headers = [
 			"Accept: application/vnd.bsh.sdk.v1+json",
 			"Authorization: Bearer ".config::byKey('access_token','homeconnect'),
 			];
 
-		$curl = curl_init();	
+		$curl = curl_init();
 		$options = [
 			CURLOPT_URL => homeconnect::API_REQUEST_URL,
 			CURLOPT_RETURNTRANSFER => True,
@@ -305,38 +306,38 @@ class homeconnect extends eqLogic {
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
-		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);		
+		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
-		
+
 		// Vérification du code réponse.
 		if($http_code != 200) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") ".print_r($response));
 			throw new Exception("Erreur : ".print_r($response));
 			return;
 		}
 
 		foreach($response['data']['homeappliances'] as $key) {
-			/* 	haId = Id de la machine
-				vib = modèle de la machine
-				brand = marque de la machine
-				type = type de machine
-				name = nom de la machine
+			/* 	haId = Id de l'appareil
+				vib = modèle de l'appareil
+				brand = marque de l'appareil
+				type = type de l'appareil
+				name = nom de l'appareil
 				enumber = N° de série
 				connected = boolean */
-			
-			// Si la machine n'est pas connectée, nous ne la créons pas.
+
+			// Si l'appareil n'est pas connecté, nous ne le créons pas.
 			if ($key['connected'] == True) {
-				
-				// Vérification que la machine n'est pas déjà créée.
+
+				// Vérification que l'appareil n'est pas déjà créé.
 				$eqLogic = eqLogic::byLogicalId($key['haId'], 'homeconnect');
-				
+
 				if (!is_object($eqLogic)) {
-					
-					// Création de la machine.
+
+					// Création de l'appareil.
 					$eqLogic = new homeconnect();
 				}
-				
+
 				$eqLogic->setLogicalId($key['haId']);
 				$eqLogic->setIsEnable(1);
 				$eqLogic->setIsVisible(1);
@@ -347,28 +348,28 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('brand', $key['brand']);
 				$eqLogic->setConfiguration('type', homeconnect::traduction($key['type']));
 				$eqLogic->save();
-				
+
 				log::add('homeconnect', 'debug', "├──────────");
-				log::add('homeconnect', 'debug', "│ Création d'une machine :");
+				log::add('homeconnect', 'debug', "│ Création d'un appareil :");
 				log::add('homeconnect', 'debug', "│ Type : ".homeconnect::traduction($key['type']));
 				log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
 				log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
 				log::add('homeconnect', 'debug', "├──────────");
 			}
 		}
-		
+
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction homeappliances()");
 	}
-	
-	
+
+
 	private static function majConnected() {
 	/**
-     * Récupère le statut connecté de la machine.
+     * Récupère le statut connecté de l'appareil.
      *
      * @param			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-		
+
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction majConnected()");
 
@@ -377,7 +378,7 @@ class homeconnect extends eqLogic {
 			"Authorization: Bearer ".config::byKey('access_token','homeconnect'),
 			];
 
-		$curl = curl_init();	
+		$curl = curl_init();
 		$options = [
 			CURLOPT_URL => homeconnect::API_REQUEST_URL,
 			CURLOPT_RETURNTRANSFER => True,
@@ -386,35 +387,35 @@ class homeconnect extends eqLogic {
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
-		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);		
+		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
-		
+
 		// Vérification du code réponse.
 		if($http_code != 200) {
-			
+
 			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") ".print_r($response));
 			return;
 		}
 
 		foreach($response['data']['homeappliances'] as $key) {
-			/* connected = boolean */				
-				
+			/* connected = boolean */
+
 			$eqLogic = eqLogic::byLogicalId($key['haId'], 'homeconnect');
           	if (is_object($eqLogic)){
-            
+
 				$eqLogic->checkAndUpdateCmd('connected', $key['connected']);
-				
+
 				log::add('homeconnect', 'debug', "├─────");
-				log::add('homeconnect', 'debug', "│ MAJ d'une machine :");
+				log::add('homeconnect', 'debug', "│ MAJ d'un appareil :");
 				log::add('homeconnect', 'debug', "│ Type : ".homeconnect::traduction($key['type']));
 				log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
 				log::add('homeconnect', 'debug', "│ Connecté : ".$key['connected']);
 				log::add('homeconnect', 'debug', "├─────");
-			
+
 			} else {
-				
+
 				log::add('homeconnect', 'debug', "├───── [Erreur]");
-				log::add('homeconnect', 'debug', "│ La machine n'existe pas :");
+				log::add('homeconnect', 'debug', "│ L'appareil n'existe pas :");
 				log::add('homeconnect', 'debug', "│ Type : ".homeconnect::traduction($key['type']));
 				log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
 				log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
@@ -422,10 +423,10 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "├─────");
 			}
 		}
-		
+
 		log::add('homeconnect', 'debug',"├───── Fin de la fonction majConnected()");
 	}
-	
+
 	private static function majPrograms(){
 	/**
      * Récupère le programe et options en cours pour MAJ équipements.
@@ -433,107 +434,107 @@ class homeconnect extends eqLogic {
      * @param			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-	
+
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction majPrograms()");
-		
+
 		// Parcours des marchines existantes.
       	foreach (eqLogic::byType('homeconnect') as $eqLogic) {
-			
-			// MAJ des machines étant connectée.
-			// Si la machine est connecté, MAJ des infos.
+
+			// MAJ des appareils qui sont connectée.
+			// Si l'appareil est connecté, MAJ des infos.
 			if ($eqLogic->getConfiguration('connected') == True) {
-				
+
 				log::add('homeconnect', 'debug', "├─────");
-				log::add('homeconnect', 'debug', "│ MAJ d'une machine :");
+				log::add('homeconnect', 'debug', "│ MAJ d'un appaeil :");
 				log::add('homeconnect', 'debug', "│ Type : ".$eqLogic->getConfiguration('type'));
 				log::add('homeconnect', 'debug', "│ Id : ".$eqLogic->getLogicalId());
 				log::add('homeconnect', 'debug', "│");
-			
+
 				$headers = array("Accept: application/vnd.bsh.sdk.v1+json",
 								"Accept-Language: en-GB",
 								"Authorization: Bearer ".config::byKey('access_token','homeconnect'));
 
-				$curl = curl_init();	
+				$curl = curl_init();
 				$options = [
 					CURLOPT_URL => homeconnect::API_REQUEST_URL. "/" .$eqLogic->getLogicalId()."/programs/active",
 					CURLOPT_RETURNTRANSFER => True,
 					CURLOPT_SSL_VERIFYPEER => FALSE,
 					CURLOPT_HTTPHEADER => $headers,
 					];
-				curl_setopt_array($curl, $options);		
+				curl_setopt_array($curl, $options);
 				$response = json_decode(curl_exec($curl), true);
 				$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
-			
+
 				// Code 200 = Ok.
 				// Code 404 = Pas de programe actif.
 				// Code autre = erreur.
-			  
+
 				if ($http_code != 200 && $http_code !=404) {
-					
+
 					log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") : ".$response);
-					return;			
-					
+					return;
+
 				} elseif ($http_code == 404) {
-					
+
 					log::add('homeconnect', 'debug', "│ Programe : Pas de lavage en cours;");
 					// RAZ des info.
 					homeconnect::razInfo($eqLogic->getLogicalId());
-				
+
 				} else {
-					
+
 					// MAJ du programe en cours.
 					$program = homeconnect::traduction(substr(strrchr($response['data']['key'], "."), 1));
 					$eqLogic->checkAndUpdateCmd('Programs',$program);
-					
-					
+
+
 					log::add('homeconnect', 'debug', "│ Programe en cours : ".$program);
-					
+
 					// MAJ des options et autres informations du programe en cours.
 					foreach ($response['data']['options'] as $value) {
-						
+
 						// Récupération du nom du programe / option.
 						$program = substr(strrchr($value['key'], "."), 1);
-						
+
 						// Récupération de la valeur du programe / option.
 						switch ($program) {
-				
+
 							case "Temperature" :
 								$reglage = substr(strrchr($value['value'], "."), 3);
 								break;
-							
+
 							case "SpinSpeed" :
 								$reglage = substr(strrchr($value['value'], "."), 4);
 								break;
-							
+
 							default :
 								$reglage = homeconnect::traduction($value['value']);
-							
+
 						}
-						
+
 						// Traduction en Français du nom du program / option.
 						$program = homeconnect::traduction($program);
-						
+
 						$eqLogic->checkAndUpdateCmd($program,$reglage);
 						log::add('homeconnect', 'debug', "│ Option : ".$program." - Réglage :".$reglage);
 					}
-					
+
 					log::add('homeconnect', 'debug', "├─────");
 				}
-				
+
 			} else {
-				
+
 				// RAZ des info.
 				homeconnect::razInfo($eqLogic->getLogicalId());
 			}
-			
+
 			// MAJ du widget.
 			$eqLogic->refreshWidget();
-        }	
-		
+        }
+
 		log::add('homeconnect', 'debug',"├───── Fin de la fonction majPrograms()");
 	}
-	
+
 	private static function majState(){
 	/**
      * Récupère les états en cours pour MAJ équipements.
@@ -541,13 +542,13 @@ class homeconnect extends eqLogic {
      * @param			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
      */
-	
+
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction maState()");
-		
-		
-		
-	 
+
+
+
+
 		log::add('homeconnect', 'debug',"├───── Fin de la fonction majState()");
 	}
 	private static function razInfo($haId) {
@@ -556,38 +557,38 @@ class homeconnect extends eqLogic {
      *
      * @param	$haId		string		Id de la machine en cours.
      * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */	
-		
+     */
+
 		log::add('homeconnect', 'debug',"/** ******************** function razInfo ******************** **/");
-		
+
 		$eqLogic = eqLogic::byLogicalId($haId, 'homeconnect');
-		
+
 		foreach($eqLogic->getCmd() as $cmd) {
-			
+
 			if ($cmd->getLogicalId() == "Programs") {
-				
+
 				log::add('homeconnect','debug',"MAJ de la valeur de ".$cmd->getLogicalId()." (NoPrg) de la machine ".$eqLogic->getConfiguration('type'));
 				$eqLogic->checkAndUpdateCmd($cmd->getLogicalId(),"NoPrg");
-				
+
 			}else if ($cmd->getLogicalId() != "connected") {
-				
+
 				log::add('homeconnect','debug',"MAJ de la valeur de ".$cmd->getLogicalId()." (null) de la machine ".$eqLogic->getConfiguration('type'));
 				$eqLogic->checkAndUpdateCmd($cmd->getLogicalId(), "");
 			}
 		}
-		
+
 		// MAJ du widget.
 		$eqLogic->refreshWidget();
 	}
-	
+
 	private static function traduction($word){
 	/**
      * Traduction des informations.
      *
      * @param	$word		string		Mot en anglais.
      * @return 	$word		string		Mot en Français (ou anglais, si traduction inexistante).
-     */	
-	 
+     */
+
 		$translate = [
 				'Auto1' => "Auto 35-45°C",
 				'Auto2' => "Auto 45-65°C",
@@ -614,17 +615,17 @@ class homeconnect extends eqLogic {
 				'VeryStrong' => "Très fort",
 				'Wool' => "Laine",
 				];
-				
+
 				(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
-				
+
 				return $word;
 	}
-	
+
     /*
      * Fonction exécutée automatiquement toutes les minutes par Jeedom */
       public static function cron() {
 		//homeconnect::majMachine();
-		
+
       }
 
 
@@ -647,20 +648,20 @@ class homeconnect extends eqLogic {
     /** *************************** Méthodes d'instance************************ */
 
     public function preInsert() {
-        
+
     }
 
     public function postInsert() {
-        
+
     }
 
     public function preSave() {
-        
+
     }
 
     public function postSave() {
     /**
-     * Création / MAJ des commandes des machines.
+     * Création / MAJ des commandes des appareils.
      *
      * @param 			|*Cette fonction ne retourne pas de valeur*|
      * @return 			|*Cette fonction ne retourne pas de valeur*|
@@ -682,10 +683,10 @@ class homeconnect extends eqLogic {
 		$connected->setConfiguration('repeatEventManagement', 'never');
 		$connected->setEqLogic_id($this->getId());
 		$connected->save();
-	 
+
 		/** Machine à café **/
 		if ($this->getConfiguration('type') == "CoffeeMaker"){
-			
+
 			// Contrôle à distance.
 			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
 			if (!is_object($connected)) {
@@ -702,7 +703,7 @@ class homeconnect extends eqLogic {
 			$remote->setConfiguration('repeatEventManagement', 'never');
 			$remote->setEqLogic_id($this->getId());
 			$remote->save();
-			
+
 			// Programe en cours.
 			$programs = $this->getCmd(null, 'Programs');
 			if (!is_object($programs)) {
@@ -718,7 +719,7 @@ class homeconnect extends eqLogic {
 			$programs->setConfiguration('repeatEventManagement', 'never');
 			$programs->setEqLogic_id($this->getId());
 			$programs->save();
-			
+
 			// Sélectionner l'intensité du café.
 			$bean_amount = $this->getCmd(null, 'BeanAmount');
 			if (!is_object($bean_amount)) {
@@ -734,7 +735,7 @@ class homeconnect extends eqLogic {
 			$bean_amount->setConfiguration('repeatEventManagement', 'never');
 			$bean_amount->setEqLogic_id($this->getId());
 			$bean_amount->save();
-			
+
 			// Taille de la tasse.
 			$fill_quantity = $this->getCmd(null, 'FillQuantity');
 			if (!is_object($fill_quantity)) {
@@ -750,7 +751,7 @@ class homeconnect extends eqLogic {
 			$fill_quantity->setConfiguration('repeatEventManagement', 'never');
 			$fill_quantity->setEqLogic_id($this->getId());
 			$fill_quantity->save();
-			
+
 			// Avancement du programe en cours.
 			$progress = $this->getCmd(null, 'ProgramProgress');
 			if (!is_object($progress)) {
@@ -767,10 +768,10 @@ class homeconnect extends eqLogic {
 			$progress->setEqLogic_id($this->getId());
 			$progress->save();
 		}
-		
+
 		/** Lave-vaiselle **/
 		if ($this->getConfiguration('type') == "Dishwasher"){
-			
+
 			// Contrôle à distance.
 			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
 			if (!is_object($connected)) {
@@ -787,7 +788,7 @@ class homeconnect extends eqLogic {
 			$remote->setConfiguration('repeatEventManagement', 'never');
 			$remote->setEqLogic_id($this->getId());
 			$remote->save();
-			
+
 			// Etat de la porte.
 			$door = $this->getCmd(null, 'DoorState');
 			if (!is_object($connected)) {
@@ -804,7 +805,7 @@ class homeconnect extends eqLogic {
 			$door->setConfiguration('repeatEventManagement', 'never');
 			$door->setEqLogic_id($this->getId());
 			$door->save();
-			
+
 			// Programe en cours.
 			$programs = $this->getCmd(null, 'Programs');
 			if (!is_object($programs)) {
@@ -820,7 +821,7 @@ class homeconnect extends eqLogic {
 			$programs->setConfiguration('repeatEventManagement', 'never');
 			$programs->setEqLogic_id($this->getId());
 			$programs->save();
-		
+
 			// Temps restant du programe en cours.
 			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
 			if (!is_object($remaining_time)) {
@@ -836,7 +837,7 @@ class homeconnect extends eqLogic {
 			$remaining_time->setConfiguration('repeatEventManagement', 'never');
 			$remaining_time->setEqLogic_id($this->getId());
 			$remaining_time->save();
-			
+
 			// Délai avant démarrage.
 			$start_in_relative = $this->getCmd(null, 'StartInRelative');
 			if (!is_object($start_in_relative)) {
@@ -852,7 +853,7 @@ class homeconnect extends eqLogic {
 			$start_in_relative->setConfiguration('repeatEventManagement', 'never');
 			$start_in_relative->setEqLogic_id($this->getId());
 			$start_in_relative->save();
-			
+
 			// Avancement du programe en cours.
 			$progress = $this->getCmd(null, 'ProgramProgress');
 			if (!is_object($progress)) {
@@ -869,10 +870,10 @@ class homeconnect extends eqLogic {
 			$progress->setEqLogic_id($this->getId());
 			$progress->save();
 		}
-		
+
 		/** Sèche-linge **/
 		if ($this->getConfiguration('type') == "Dryer"){
-			
+
 			// Contrôle à distance.
 			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
 			if (!is_object($connected)) {
@@ -889,7 +890,7 @@ class homeconnect extends eqLogic {
 			$remote->setConfiguration('repeatEventManagement', 'never');
 			$remote->setEqLogic_id($this->getId());
 			$remote->save();
-			
+
 			// Etat de la porte.
 			$door = $this->getCmd(null, 'DoorState');
 			if (!is_object($connected)) {
@@ -906,7 +907,7 @@ class homeconnect extends eqLogic {
 			$door->setConfiguration('repeatEventManagement', 'never');
 			$door->setEqLogic_id($this->getId());
 			$door->save();
-			
+
 			// Programe en cours.
 			$programs = $this->getCmd(null, 'Programs');
 			if (!is_object($programs)) {
@@ -922,7 +923,7 @@ class homeconnect extends eqLogic {
 			$programs->setConfiguration('repeatEventManagement', 'never');
 			$programs->setEqLogic_id($this->getId());
 			$programs->save();
-		
+
 			// Sécheresse souhaitée.
 			$drying_target = $this->getCmd(null, 'DryingTarget');
 			if (!is_object($drying_target)) {
@@ -938,7 +939,7 @@ class homeconnect extends eqLogic {
 			$drying_target->setConfiguration('repeatEventManagement', 'never');
 			$drying_target->setEqLogic_id($this->getId());
 			$drying_target->save();
-			
+
 			// Temps restant du programe en cours.
 			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
 			if (!is_object($remaining_time)) {
@@ -954,7 +955,7 @@ class homeconnect extends eqLogic {
 			$remaining_time->setConfiguration('repeatEventManagement', 'never');
 			$remaining_time->setEqLogic_id($this->getId());
 			$remaining_time->save();
-			
+
 			// Avancement du programe en cours.
 			$progress = $this->getCmd(null, 'ProgramProgress');
 			if (!is_object($progress)) {
@@ -971,11 +972,11 @@ class homeconnect extends eqLogic {
 			$progress->setEqLogic_id($this->getId());
 			$progress->save();
 		}
-		
+
 		/** Frigidaire **/
 		if ($this->getConfiguration('type') == "FridgeFreezer"){
 			// Aucun programe et option pour le frigidaire.
-			
+
 			// Etat de la porte.
 			$door = $this->getCmd(null, 'DoorState');
 			if (!is_object($connected)) {
@@ -993,10 +994,10 @@ class homeconnect extends eqLogic {
 			$door->setEqLogic_id($this->getId());
 			$door->save();
 		}
-		
+
 		/** Four **/
 		if ($this->getConfiguration('type') == "Oven"){
-			
+
 			// Contrôle à distance.
 			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
 			if (!is_object($connected)) {
@@ -1013,7 +1014,7 @@ class homeconnect extends eqLogic {
 			$remote->setConfiguration('repeatEventManagement', 'never');
 			$remote->setEqLogic_id($this->getId());
 			$remote->save();
-			
+
 			// Etat de la porte.
 			$door = $this->getCmd(null, 'DoorState');
 			if (!is_object($connected)) {
@@ -1030,7 +1031,7 @@ class homeconnect extends eqLogic {
 			$door->setConfiguration('repeatEventManagement', 'never');
 			$door->setEqLogic_id($this->getId());
 			$door->save();
-			
+
 			// Programe en cours.
 			$programs = $this->getCmd(null, 'Programs');
 			if (!is_object($programs)) {
@@ -1046,7 +1047,7 @@ class homeconnect extends eqLogic {
 			$programs->setConfiguration('repeatEventManagement', 'never');
 			$programs->setEqLogic_id($this->getId());
 			$programs->save();
-		
+
 			// Température de consigne.
 			$temperature = $this->getCmd(null, 'SetpointTemperature');
 			if (!is_object($temperature)) {
@@ -1062,7 +1063,7 @@ class homeconnect extends eqLogic {
 			$temperature->setConfiguration('repeatEventManagement', 'never');
 			$temperature->setEqLogic_id($this->getId());
 			$temperature->save();
-			
+
 			// Durée de préchaufage.
 			$duration = $this->getCmd(null, 'Duration');
 			if (!is_object($duration)) {
@@ -1078,7 +1079,7 @@ class homeconnect extends eqLogic {
 			$duration->setConfiguration('repeatEventManagement', 'never');
 			$duration->setEqLogic_id($this->getId());
 			$duration->save();
-			
+
 			// Temps restant du programe en cours.
 			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
 			if (!is_object($remaining_time)) {
@@ -1094,7 +1095,7 @@ class homeconnect extends eqLogic {
 			$remaining_time->setConfiguration('repeatEventManagement', 'never');
 			$remaining_time->setEqLogic_id($this->getId());
 			$remaining_time->save();
-			
+
 			// Temps écoulé du programe en cours.
 			$elapsed_time = $this->getCmd(null, 'ElapsedProgramTime');
 			if (!is_object($elapsed_time)) {
@@ -1110,7 +1111,7 @@ class homeconnect extends eqLogic {
 			$elapsed_time->setConfiguration('repeatEventManagement', 'never');
 			$elapsed_time->setEqLogic_id($this->getId());
 			$elapsed_time->save();
-			
+
 			// Avancement du programe en cours.
 			$progress = $this->getCmd(null, 'ProgramProgress');
 			if (!is_object($progress)) {
@@ -1127,10 +1128,10 @@ class homeconnect extends eqLogic {
 			$progress->setEqLogic_id($this->getId());
 			$progress->save();
 		}
-		
+
 		/** Lave-linge **/
 		if ($this->getConfiguration('type') == "Washer"){
-			
+
 			// Contrôle à distance.
 			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
 			if (!is_object($connected)) {
@@ -1147,7 +1148,7 @@ class homeconnect extends eqLogic {
 			$remote->setConfiguration('repeatEventManagement', 'never');
 			$remote->setEqLogic_id($this->getId());
 			$remote->save();
-			
+
 			// Etat de la porte.
 			$door = $this->getCmd(null, 'DoorState');
 			if (!is_object($connected)) {
@@ -1164,7 +1165,7 @@ class homeconnect extends eqLogic {
 			$door->setConfiguration('repeatEventManagement', 'never');
 			$door->setEqLogic_id($this->getId());
 			$door->save();
-			
+
 			// Programe en cours.
 			$programs = $this->getCmd(null, 'Programs');
 			if (!is_object($programs)) {
@@ -1180,7 +1181,7 @@ class homeconnect extends eqLogic {
 			$programs->setConfiguration('repeatEventManagement', 'never');
 			$programs->setEqLogic_id($this->getId());
 			$programs->save();
-		
+
 			// Température de consigne.
 			$temperature = $this->getCmd(null, 'Temperature');
 			if (!is_object($temperature)) {
@@ -1196,7 +1197,7 @@ class homeconnect extends eqLogic {
 			$temperature->setConfiguration('repeatEventManagement', 'never');
 			$temperature->setEqLogic_id($this->getId());
 			$temperature->save();
-			
+
 			// Vitesse essorage.
 			$spin_speed = $this->getCmd(null, 'SpinSpeed');
 			if (!is_object($spin_speed)) {
@@ -1212,7 +1213,7 @@ class homeconnect extends eqLogic {
 			$spin_speed->setConfiguration('repeatEventManagement', 'never');
 			$spin_speed->setEqLogic_id($this->getId());
 			$spin_speed->save();
-			
+
 			// Temps restant du programe en cours.
 			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
 			if (!is_object($remaining_time)) {
@@ -1228,7 +1229,7 @@ class homeconnect extends eqLogic {
 			$remaining_time->setConfiguration('repeatEventManagement', 'never');
 			$remaining_time->setEqLogic_id($this->getId());
 			$remaining_time->save();
-			
+
 			// Avancement du programe en cours.
 			$progress = $this->getCmd(null, 'ProgramProgress');
 			if (!is_object($progress)) {
@@ -1245,12 +1246,12 @@ class homeconnect extends eqLogic {
 			$progress->setEqLogic_id($this->getId());
 			$progress->save();
 		}
-		
+
 		/** table de cuisson **/
 		if ($this->getConfiguration('type') == "Cooktop"){
 			// API support is planned to be released later in 2017.
 		}
-		
+
 		/** Hôte **/
 		if ($this->getConfiguration('type') == "Hood"){
 			// API support is planned to be released later in 2017.
@@ -1258,19 +1259,19 @@ class homeconnect extends eqLogic {
     }
 
     public function preUpdate() {
-        
+
     }
 
     public function postUpdate() {
-        
+
     }
 
     public function preRemove() {
-        
+
     }
 
     public function postRemove() {
-        
+
     }
 
     /*
@@ -1280,40 +1281,40 @@ class homeconnect extends eqLogic {
       }
      */
 
-	 
-	 
+
+
     /** *************************** Getters ********************************* */
-	
-	
-	
+
+
+
 	/** *************************** Setters ********************************* */
-	
-	
-	
+
+
+
 }
 
 class homeconnectCmd extends cmd {
- 
+
 	/** *************************** Constantes ******************************** */
-	
-	
-	
+
+
+
     /** *************************** Attributs ********************************* */
-	
-	
-	
+
+
+
 	/** *************************** Attributs statiques *********************** */
-	
-	
-	
+
+
+
 	/** *************************** Méthodes ********************************** */
-	
-	
-	
+
+
+
 	/** *************************** Méthodes statiques ************************ */
-	
-	
-	
+
+
+
 	/** *************************** Méthodes d'instance************************ */
 
     /*
@@ -1325,17 +1326,17 @@ class homeconnectCmd extends cmd {
 
     public function execute($_options = array()) {
 		//switch ($this->getType)
-        
+
     }
 
     /** *************************** Getters ********************************* */
-	
-	
-	
+
+
+
 	/** *************************** Setters ********************************* */
-	
-	
-	
+
+
+
 }
 
 ?>
