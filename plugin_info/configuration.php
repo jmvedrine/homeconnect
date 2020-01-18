@@ -74,7 +74,7 @@ if (!isConnect()) {
 				</div>
 
 		<?php
-		if (empty(config::byKey('auth','homeconnect'))){
+		// if (empty(config::byKey('auth','homeconnect'))){
 			echo ('
 				<div class="form-group">
 					<label class="col-lg-2 control-label">{{Se connecter}}</label>
@@ -83,7 +83,7 @@ if (!isConnect()) {
 					</div>
 				</div>
 			');
-		}
+		// }
 		?>
 
   </fieldset>
