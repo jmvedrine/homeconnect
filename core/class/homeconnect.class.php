@@ -18,6 +18,13 @@
 
 
 /** *************************** Includes ********************************** */
+use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
+use Psr\Http\Message\ResponseInterface;
+
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 
@@ -25,13 +32,13 @@ class homeconnect extends eqLogic {
 
 	/** *************************** Constantes ******************************** */
 
-	const API_AUTH_URL = "https://developer.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
-	const API_TOKEN_URL = "https://developer.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
+	const API_AUTH_URL = "https://api.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
+	const API_TOKEN_URL = "https://api.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
 	const API_REQUEST_URL = "https://developer.home-connect.com/api/homeappliances";
 
 
 
-    /** *************************** Attributs ********************************* */
+	/** *************************** Attributs ********************************* */
 
 
 
@@ -44,14 +51,32 @@ class homeconnect extends eqLogic {
 
 
 	/** *************************** Méthodes statiques ************************ */
+	public static function getProvider() {
+		return new homeconnectProvider([
+			'clientId' => config::byKey('client_id','homeconnect','',true),
+			'clientSecret' => config::byKey('client_id','homeconnect','',true),
+			'redirectUri' => network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'),
+		]);
+	}
+
+	public function linkToUser() {
+		log::add('homeconnect', 'debug',"┌────────── Fonction linkToUser()");
+		@session_start();
+		$provider = homeconnect::getProvider();
+		$authorizationUrl = $provider->getAuthorizationUrl();
+		log::add('homeconnect', 'debug',"│ url = " . $authorizationUrl);
+		log::add('homeconnect', 'debug',"│ state = " . $provider->getState());
+		$_SESSION['oauth2state'] = $provider->getState();
+		return $authorizationUrl;
+	}
 
 	public static function loginHomeConnect() {
 	/**
-     * Connexion au compte Home Connect et récupération du code d'authorisation.
-     *
-     * @param 			|*Cette fonction ne prend pas de paramètre*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Connexion au compte Home Connect et récupération du code d'authorisation.
+	 *
+	 * @param			|*Cette fonction ne prend pas de paramètre*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		if (empty(config::byKey('auth','homeconnect'))) {
 
@@ -62,11 +87,11 @@ class homeconnect extends eqLogic {
 
 	public static function syncHomeConnect() {
 	/**
-     * Connexion au compte Home Connect (via token) et récupération des appareils liés.
-     *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Connexion au compte Home Connect (via token) et récupération des appareils liés.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		if (empty(config::byKey('auth','homeconnect'))) {
 
@@ -84,11 +109,11 @@ class homeconnect extends eqLogic {
 
 	public static function majMachine(){
 	/**
-     * Lance la mise à jour des informations des appareils (lancement par cron).
-     *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Lance la mise à jour des informations des appareils (lancement par cron).
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"┌────────── Fonction majMachine()");
 
@@ -111,7 +136,7 @@ class homeconnect extends eqLogic {
 
 			if (empty(config::byKey('access_token','homeconnect'))) {
 
-				log::add('homeconnect', 'debug', "│ [Erreur ]: La récupération du token à échouée.");
+				log::add('homeconnect', 'debug', "│ [Erreur ]: La récupération du token a échouée.");
 				return;
 			}
 		}
@@ -128,19 +153,20 @@ class homeconnect extends eqLogic {
 
 	private static function authRequest() {
 	/**
-     * Récupère un code d'authorisation à échanger contre un token.
-     *
-     * @param			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Récupère un code d'authorisation à échanger contre un token.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
 
 		// Construction de l'url.
-        $clientId = config::byKey('clientId','homeconnect','',true);
-        $redirectUrl = config::byKey('redirectUrl','homeconnect','',true);
+		$clientId = config::byKey('client_id','homeconnect','',true);
+		$redirectUrl = urlencode(network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php');
+		$state = 'apikey=' . jeedom::getApiKey('homeconnect');
 		$url = homeconnect::API_AUTH_URL."?client_id=".$clientId."&redirect_uri=".$redirectUrl;
-		$url .= "&response_type=code&scope=IdentifyAppliance+Monitor";
+		$url .= "&response_type=code&scope=IdentifyAppliance+Monitor&state=".$state;
 		log::add('homeconnect', 'debug', "url : " . $url);
 		// Envoie d'une requête GET et récupération du header.
 		$curl = curl_init();
@@ -161,8 +187,8 @@ class homeconnect extends eqLogic {
 
 			// Récupération du message d'erreur pour log.
 			preg_match("/[\{].*[\}]/", $response, $matches);
-            log::add('homeconnect', 'debug', "info : " . print_r($info, true));
-            log::add('homeconnect', 'debug', "response : " . $response);
+			log::add('homeconnect', 'debug', "info : " . print_r($info, true));
+			log::add('homeconnect', 'debug', "response : " . $response);
 			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$info['http_code'].") : ".print_r($matches));
 			throw new Exception("Erreur : " . print_r($matches));
 			return;
@@ -188,11 +214,11 @@ class homeconnect extends eqLogic {
 
 	private static function tokenRequest() {
 	/**
-     * Récupère un token permettant l'accès au serveur.
-     *
-     * @param 			|*Cette fonction ne prend pas de paramètres*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Récupère un token permettant l'accès au serveur.
+	 *
+	 * @param			|*Cette fonction ne prend pas de paramètres*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"┌────────── Fonction tokenRequest()");
 
@@ -205,8 +231,8 @@ class homeconnect extends eqLogic {
 		}
 
 		// Création du paramêtre POSTFIELDS.
-        $clientId = config::byKey('clientId','homeconnect','',true);
-        $redirectUrl = config::byKey('redirectUrl','homeconnect','',true);
+		$clientId = config::byKey('clientId','homeconnect','',true);
+		$redirectUrl = config::byKey('redirectUrl','homeconnect','',true);
 		$post_fields = 'client_id='. $clientId;
 		$post_fields .= '&redirect_uri='. $redirectUrl;
 		$post_fields .= '&grant_type=authorization_code';
@@ -260,11 +286,11 @@ class homeconnect extends eqLogic {
 
 	private static function homeappliances() {
 	/**
-     * Récupère la liste des objects connectés et création des objets associés.
-     *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Récupère la liste des objects connectés et création des objets associés.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"┌────────── Fonction homeappliances()");
 
@@ -318,7 +344,7 @@ class homeconnect extends eqLogic {
 		}
 
 		foreach($response['data']['homeappliances'] as $key) {
-			/* 	haId = Id de l'appareil
+			/*	haId = Id de l'appareil
 				vib = modèle de l'appareil
 				brand = marque de l'appareil
 				type = type de l'appareil
@@ -364,11 +390,11 @@ class homeconnect extends eqLogic {
 
 	private static function majConnected() {
 	/**
-     * Récupère le statut connecté de l'appareil.
-     *
-     * @param			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Récupère le statut connecté de l'appareil.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction majConnected()");
@@ -401,7 +427,7 @@ class homeconnect extends eqLogic {
 			/* connected = boolean */
 
 			$eqLogic = eqLogic::byLogicalId($key['haId'], 'homeconnect');
-          	if (is_object($eqLogic)){
+			if (is_object($eqLogic)){
 
 				$eqLogic->checkAndUpdateCmd('connected', $key['connected']);
 
@@ -429,17 +455,17 @@ class homeconnect extends eqLogic {
 
 	private static function majPrograms(){
 	/**
-     * Récupère le programe et options en cours pour MAJ équipements.
-     *
-     * @param			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Récupère le programe et options en cours pour MAJ équipements.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction majPrograms()");
 
 		// Parcours des marchines existantes.
-      	foreach (eqLogic::byType('homeconnect') as $eqLogic) {
+		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
 
 			// MAJ des appareils qui sont connectée.
 			// Si l'appareil est connecté, MAJ des infos.
@@ -530,18 +556,18 @@ class homeconnect extends eqLogic {
 
 			// MAJ du widget.
 			$eqLogic->refreshWidget();
-        }
+		}
 
 		log::add('homeconnect', 'debug',"├───── Fin de la fonction majPrograms()");
 	}
 
 	private static function majState(){
 	/**
-     * Récupère les états en cours pour MAJ équipements.
-     *
-     * @param			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Récupère les états en cours pour MAJ équipements.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction maState()");
@@ -553,11 +579,11 @@ class homeconnect extends eqLogic {
 	}
 	private static function razInfo($haId) {
 	/**
-     * Remise à zéro des informations d'une machine.
-     *
-     * @param	$haId		string		Id de la machine en cours.
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	 * Remise à zéro des informations d'une machine.
+	 *
+	 * @param	$haId		string		Id de la machine en cours.
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		log::add('homeconnect', 'debug',"/** ******************** function razInfo ******************** **/");
 
@@ -583,11 +609,11 @@ class homeconnect extends eqLogic {
 
 	private static function traduction($word){
 	/**
-     * Traduction des informations.
-     *
-     * @param	$word		string		Mot en anglais.
-     * @return 	$word		string		Mot en Français (ou anglais, si traduction inexistante).
-     */
+	 * Traduction des informations.
+	 *
+	 * @param	$word		string		Mot en anglais.
+	 * @return	$word		string		Mot en Français (ou anglais, si traduction inexistante).
+	 */
 
 		$translate = [
 				'Auto1' => "Auto 35-45°C",
@@ -621,51 +647,51 @@ class homeconnect extends eqLogic {
 				return $word;
 	}
 
-    /*
-     * Fonction exécutée automatiquement toutes les minutes par Jeedom */
-      public static function cron() {
+	/*
+	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
+	  public static function cron() {
 		//homeconnect::majMachine();
 
-      }
+	  }
 
 
-    /*
-     * Fonction exécutée automatiquement toutes les heures par Jeedom
-      public static function cronHourly() {
+	/*
+	 * Fonction exécutée automatiquement toutes les heures par Jeedom
+	  public static function cronHourly() {
 
-      }
-     */
+	  }
+	 */
 
-    /*
-     * Fonction exécutée automatiquement tous les jours par Jeedom
-      public static function cronDayly() {
+	/*
+	 * Fonction exécutée automatiquement tous les jours par Jeedom
+	  public static function cronDayly() {
 
-      }
-     */
+	  }
+	 */
 
 
 
-    /** *************************** Méthodes d'instance************************ */
+	/** *************************** Méthodes d'instance************************ */
 
-    public function preInsert() {
+	public function preInsert() {
 
-    }
+	}
 
-    public function postInsert() {
+	public function postInsert() {
 
-    }
+	}
 
-    public function preSave() {
+	public function preSave() {
 
-    }
+	}
 
-    public function postSave() {
-    /**
-     * Création / MAJ des commandes des appareils.
-     *
-     * @param 			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
+	public function postSave() {
+	/**
+	 * Création / MAJ des commandes des appareils.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
 
 		// Statut connecté.
 		$connected = $this->getCmd(null, 'connected');
@@ -1256,34 +1282,34 @@ class homeconnect extends eqLogic {
 		if ($this->getConfiguration('type') == "Hood"){
 			// API support is planned to be released later in 2017.
 		}
-    }
+	}
 
-    public function preUpdate() {
+	public function preUpdate() {
 
-    }
+	}
 
-    public function postUpdate() {
+	public function postUpdate() {
 
-    }
+	}
 
-    public function preRemove() {
+	public function preRemove() {
 
-    }
+	}
 
-    public function postRemove() {
+	public function postRemove() {
 
-    }
+	}
 
-    /*
-     * Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
-      public function toHtml($_version = 'dashboard') {
+	/*
+	 * Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
+	  public function toHtml($_version = 'dashboard') {
 
-      }
-     */
+	  }
+	 */
 
 
 
-    /** *************************** Getters ********************************* */
+	/** *************************** Getters ********************************* */
 
 
 
@@ -1299,7 +1325,7 @@ class homeconnectCmd extends cmd {
 
 
 
-    /** *************************** Attributs ********************************* */
+	/** *************************** Attributs ********************************* */
 
 
 
@@ -1317,19 +1343,19 @@ class homeconnectCmd extends cmd {
 
 	/** *************************** Méthodes d'instance************************ */
 
-    /*
-     * Non obligatoire permet de demander de ne pas supprimer les commandes même si elles ne sont pas dans la nouvelle configuration de l'équipement envoyé en JS
-      public function dontRemoveCmd() {
-      return true;
-      }
-     */
+	/*
+	 * Non obligatoire permet de demander de ne pas supprimer les commandes même si elles ne sont pas dans la nouvelle configuration de l'équipement envoyé en JS
+	  public function dontRemoveCmd() {
+	  return true;
+	  }
+	 */
 
-    public function execute($_options = array()) {
+	public function execute($_options = array()) {
 		//switch ($this->getType)
 
-    }
+	}
 
-    /** *************************** Getters ********************************* */
+	/** *************************** Getters ********************************* */
 
 
 
@@ -1339,4 +1365,74 @@ class homeconnectCmd extends cmd {
 
 }
 
+class homeconnectProvider extends AbstractProvider {
+	use BearerAuthorizationTrait;
+	const BASE_HOMECONNECT_URL = 'https://www.fitbit.com';
+	const BASE_HOMECONNECT_API_URL = 'https://api.home-connect.com';
+
+	protected function getDefaultHeaders(){
+				return ['Authorization' => 'Basic '.base64_encode($this->clientId.':'.$this->clientSecret)];
+		}
+
+	public function getBaseAuthorizationUrl() {
+		return static::BASE_HOMECONNECT_API_URL . '/security/oauth/authorize';
+	}
+
+	public function getBaseAccessTokenUrl(array $params) {
+		return static::BASE_HOMECONNECT_API_URL . '/security/oauth/token';
+	}
+
+	public function getResourceOwnerDetailsUrl(AccessToken $token) {
+		return static::BASE_HOMECONNECT_API_URL . '/1/user/-/profile.json';
+	}
+
+	protected function getDefaultScopes() {
+		return ['IdentifyAppliance', 'Monitor', 'Control'];
+	}
+
+	protected function getScopeSeparator() {
+		return ' ';
+	}
+
+	protected function getAuthorizationParameters(array $options) {
+		$params = parent::getAuthorizationParameters($options);
+		unset($params['approval_prompt']);
+		if (!empty($options['prompt'])) {
+			$params['prompt'] = $options['prompt'];
+		}
+		return $params;
+	}
+
+	protected function getAccessTokenOptions(array $params) {
+		$options = parent::getAccessTokenOptions($params);
+		$options['headers']['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
+		return $options;
+	}
+
+	public function createResourceOwner(array $response, AccessToken $token) {
+		return new fitbitOwner($response);
+	}
+
+	protected function checkResponse(ResponseInterface $response, $data) {
+		if ($response->getStatusCode() >= 400) {
+			$errorMessage = '';
+			if (!empty($data['errors'])) {
+				foreach ($data['errors'] as $error) {
+					if (!empty($errorMessage)) {
+						$errorMessage .= ' , ';
+					}
+					$errorMessage .= implode(' - ', $error);
+				}
+			} else {
+				$errorMessage = $response->getReasonPhrase();
+			}
+			throw new IdentityProviderException(
+				$errorMessage,
+				$response->getStatusCode(),
+				$response
+			);
+		}
+	}
+
+}
 ?>

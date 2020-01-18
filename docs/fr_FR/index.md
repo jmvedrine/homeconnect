@@ -21,11 +21,15 @@ Associez les appareils à l'app en suivant le guide joint aux appareils.
 Obtension d'un Home Connect application Client ID
 ---
 
-Adhérez au programme des développeurs Home Connect et créez un compte.
+Adhérez au programme des développeurs Home Connect et créez un compte sur le site https://developer.home-connect.com/user/register
 
-Enregistrez une nouvelle application, assurez vous que Device Flow est sélectionné pour le OAuth Flow et que le compte utilise bien la même adresse mail que celle utilisée dans l'app Home Connect à l'étape précédente.
+Enregistrez une nouvelle application sur la page https://developer.home-connect.com/applications/add
 
-Enregistrez le Client ID obtenu car vous en aurez besoin plus tard.
+Assurez vous que le compte utilise bien la même adresse mail que celle utilisée dans l'app Home Connect à l'étape précédente.
+
+Indiquez pour le champ Redirect URI, l'url de retour disponible sur la page de configuration du plugin de la forme https://xxxxxxxxxxx.jeedom.com/plugins/homeconnect/core/php/callback.php
+
+Enregistrez le Client ID et le Client secret Obtenus et reportez les dans le champs correspondants de la page configuration du plugin. Sauvegardez.
 
 FAQ
 ===

@@ -18,33 +18,62 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 include_file('core', 'authentification', 'php');
 if (!isConnect()) {
-    include_file('desktop', '404', 'php');
-    die();
+	include_file('desktop', '404', 'php');
+	die();
 }
 ?>
 
 <form class="form-horizontal">
-    <fieldset>
-    <div class="form-group">
-        <label class="col-lg-2 control-label">{{Client ID}}</label>
-        <div class="col-lg-2">
-            <input id="homeconnectclientid" class="configKey form-control" data-l1key="clientId" style="margin-top:-5px" placeholder="{{Client ID sur site développeur}}"/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-2 control-label">{{Client Secret}}</label>
-        <div class="col-lg-2">
-            <input id="homeconnectclientsecret" class="configKey form-control" data-l1key="clientSecret" style="margin-top:-5px" placeholder="{{Client secret sur site développeur}}"/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-2 control-label">{{Client Redirect URL}}</label>
-        <div class="col-lg-2">
-            <input id="homeconnectredirecturl" class="configKey form-control" data-l1key="redirectUrl" style="margin-top:-5px" placeholder="{{Url de redirection sur site développeur}}"/>
-        </div>
-    </div>
-	
-		<?php 
+	<fieldset>
+		<div class="form-group">
+					<label class="col-lg-3 control-label">
+						{{Creation de l'application Jeedom sur le siteHome Connect}}
+						<sup>
+							<i class="fa fa-question-circle tooltips" title="{{Creation des identifiants (https://developer.home-connect.com/applications/add)}}" style="font-size : 1em;color:grey;"></i>
+						</sup>
+					</label>
+					<div class="col-lg-4">
+				<a class="btn btn-info" style="margin-bottom : 5px;" title="Creer Application" href="https://developer.home-connect.com/applications/add" target="_blank">
+					<i class="fa fa-add"></i>
+					Creer Application
+				</a>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-lg-3 control-label">
+						{{Redirect URI}}
+						<sup>
+							<i class="fa fa-question-circle tooltips" title="{{Cette URL sera demandée sur le site Home Connect pour la création des identifiants (https://developer.home-connect.com/applications/add)}}" style="font-size : 1em;color:grey;"></i>
+						</sup>
+					</label>
+					<div class="col-lg-9">
+						<span><?php echo network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');?></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						{{Client ID}}
+						<sup>
+							<i class="fa fa-question-circle tooltips" title="{{Récupérez ce paramètre sur le site Home Connect (https://developer.home-connect.com/applications)}}" style="font-size : 1em;color:grey;"></i>
+						</sup>
+					</label>
+					<div class="col-sm-3">
+						<input type="text" class="configKey form-control" data-l1key="client_id"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">
+						{{Client Secret}}
+						<sup>
+							<i class="fa fa-question-circle tooltips" title="{{Récupérez ce paramètre sur le site Home Connect (https://developer.home-connect.com/applications)}}" style="font-size : 1em;color:grey;"></i>
+						</sup>
+					</label>
+					<div class="col-sm-3">
+						<input type="text" class="configKey form-control" data-l1key="client_secret"/>
+					</div>
+				</div>
+
+		<?php
 		if (empty(config::byKey('auth','homeconnect'))){
 			echo ('
 				<div class="form-group">
@@ -54,38 +83,31 @@ if (!isConnect()) {
 					</div>
 				</div>
 			');
-		} 
+		}
 		?>
-			
+
   </fieldset>
 </form>
 
 <script>
-
-	$('#bt_loginHomeConnect').on('click', function () {
-		
-		$.ajax({ // fonction permettant de faire de l'ajax
-
-			type: "POST", // methode de transmission des données au fichier php
-			url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
-		
-			data: {
-				action: "loginHomeConnect",
-			},
-			
-			dataType: 'json',
-			
-			error: function (request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-
-			success: function (data) { // si l'appel a bien fonctionné
-				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-					return;
-				}
+$('#bt_loginHomeConnect').on('click', function () {
+	$.ajax({ // fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+		data: {
+			action: "loginHomeConnect"
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) {
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
 			}
-		});
+			window.location.href = data.result.redirect;
+		}
 	});
-	
+});
 </script>

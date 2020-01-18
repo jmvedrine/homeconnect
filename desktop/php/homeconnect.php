@@ -9,29 +9,29 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 <div class="row row-overflow">
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
-		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
+		<legend><i class="fas fa-cog"></i>	{{Gestion}}</legend>
 		<div class="eqLogicThumbnailContainer">
 			<div class="cursor eqLogicAction logoSecondary" id="bt_syncHomeConnect" >
 				<i class="fas fa-sync-alt"></i>
 				<br>
 				<span>{{Synchronisation}}</span>
 			</div>
-            <div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf" >
-                    <i class="fas fa-wrench"></i>
-                    <br>
-                    <span>{{Configuration}}</span>
-            </div>
+			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf" >
+					<i class="fas fa-wrench"></i>
+					<br>
+					<span>{{Configuration}}</span>
+			</div>
 			<div class="cursor logoSecondary" id="bt_healthHomeConnect">
 				<i class="fas fa-medkit"></i>
 				<br />
 				<span>{{Santé}}</span>
 			</div>
 		</div>
-		
+
 		<legend><i class="fas fa-table"></i> {{Mes appareils}}</legend>
-		
+
 		<div class="eqLogicThumbnailContainer">
-			
+
 			<?php
 				foreach ($eqLogics as $eqLogic) {
 					$opacity = ($eqLogic->getIsEnable()) ? '' : jeedom::getConfiguration('eqLogic:style:noactive');
@@ -42,7 +42,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 					echo '</div>';
 				}
 			?>
-			
+
 		</div>
 	</div>
 
@@ -58,11 +58,11 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<div class="tab-content" style="height:calc(100% - 50px);overflow:auto;overflow-x: hidden;">
 			<div role="tabpanel" class="tab-pane active" id="eqlogictab">
 				<br/>
-				
+
 				<div class="col-xs-6">
 					<form class="form-horizontal">
 						<fieldset>
-						
+
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
 								<div class="col-sm-3">
@@ -70,7 +70,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'appareil}}"/>
 								</div>
 							</div>
-							
+
 							<div class="form-group">
 								<label class="col-sm-3 control-label" >{{Objet parent}}</label>
 								<div class="col-sm-3">
@@ -84,7 +84,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									</select>
 								</div>
 							</div>
-							
+
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Catégorie}}</label>
 								<div class="col-sm-8">
@@ -97,7 +97,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									?>
 								</div>
 							</div>
-				
+
 							<div class="form-group">
 								<label class="col-sm-3 control-label"></label>
 								<div class="col-sm-9">
@@ -105,44 +105,44 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
 								</div>
 							</div>
-							
+
 							<br />
-							
+
 							<div class="form-group">
 								<label class="col-lg-3 control-label">{{Marque : }}</label>
 								<div class="col-sm-6">
 									<span class="eqLogicAttr label label-info" style="font-size:1em;cursor: default;" data-l1key="configuration" data-l2key="brand"></span>
 								</div>
 							</div>
-							
+
 							<div class="form-group">
 								<label class="col-lg-3 control-label">{{Modèle : }}</label>
 								<div class="col-sm-6">
 									<span class="eqLogicAttr label label-info" style="font-size:1em;cursor: default;" data-l1key="configuration" data-l2key="vib"></span>
 								</div>
 							</div>
-							
+
 							<div class="form-group">
 								<label class="col-lg-3 control-label">{{Identifiant}}</label>
 								<div class="col-sm-6">
 									<span class="eqLogicAttr label label-info" style="font-size:1em;cursor: default;" data-l1key="configuration" data-l2key="haid"></span>
 								</div>
 							</div>
-							
+
 						</fieldset>
 					</form>
 				</div>
-				
+
 				<div class="col-xs-6">
 					<center>
 						<img src="plugins/homeconnect/core/config/images/" id="img_applianceModel" style="height : 300px;" />
 					</center>
 				</div>
 			</div>
-			
+
 			<div role="tabpanel" class="tab-pane" id="commandtab">
 				<a class="btn btn-success btn-sm cmdAction pull-right" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Commandes}}</a><br/><br/>
-				
+
 				<table id="table_cmd" class="table table-bordered table-condensed">
 					<thead>
 						<tr>
@@ -152,7 +152,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 					<tbody>
 					</tbody>
 				</table>
-				
+
 			</div>
 		</div>
 	</div>
