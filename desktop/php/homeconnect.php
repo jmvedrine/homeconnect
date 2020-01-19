@@ -34,12 +34,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 			<?php
 				foreach ($eqLogics as $eqLogic) {
-					$opacity = ($eqLogic->getIsEnable()) ? '' : jeedom::getConfiguration('eqLogic:style:noactive');
-					echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
-					echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
-					echo "<br>";
-					echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
-					echo '</div>';
+					$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+					echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
+					echo '<img src="' . $eqLogic->getImage() . '"/>';
+					echo '<br>';
+					echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+					echo '</div>'
 				}
 			?>
 
@@ -135,7 +135,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 				<div class="col-xs-6">
 					<center>
-						<img src="plugins/homeconnect/core/config/images/" id="img_applianceModel" style="height : 300px;" />
+						<img src="plugins/homeconnect/core/config/images/default.jpg" id="img_applianceModel" style="height : 300px;" />
 					</center>
 				</div>
 			</div>

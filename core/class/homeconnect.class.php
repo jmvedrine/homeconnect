@@ -35,8 +35,11 @@ class homeconnect extends eqLogic {
 	const API_AUTH_URL = "https://api.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
 	const API_TOKEN_URL = "https://api.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
 	const API_REQUEST_URL = "https://api.home-connect.com/api/homeappliances";
-
-
+/*
+	const API_AUTH_URL = "https://simulator.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
+	const API_TOKEN_URL = "https://simulator.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
+	const API_REQUEST_URL = "https://simulator.home-connect.com/api/homeappliances";
+*/
 
 	/** *************************** Attributs ********************************* */
 
@@ -79,7 +82,7 @@ class homeconnect extends eqLogic {
 	 */
 		log::add('homeconnect', 'debug',"┌────────── Fonction syncHomeConnect()");
 		if (empty(config::byKey('auth','homeconnect'))) {
-            log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
+			log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
@@ -152,11 +155,11 @@ class homeconnect extends eqLogic {
 
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. config::byKey('client_id','homeconnect','',true);
-        $post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);;
+		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);;
 		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');
-        log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
+		log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
@@ -168,7 +171,7 @@ class homeconnect extends eqLogic {
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
-        log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
+		log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
 		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
 
@@ -262,8 +265,8 @@ class homeconnect extends eqLogic {
 			throw new Exception("Erreur : ".print_r($response));
 			return;
 		}
-        
-        log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
+
+		log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
 
 		foreach($response['data']['homeappliances'] as $key) {
 			/*	haId = Id de l'appareil
@@ -594,6 +597,13 @@ class homeconnect extends eqLogic {
 
 
 	/** *************************** Méthodes d'instance************************ */
+	public function getImage() {
+		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('vib') . '.jpg';
+		if(file_exists(__DIR__.'/../../../../'.$filename)){
+			return $filename;
+		}
+		return 'plugins/homeconnect/plugin_info/homeconnect_icon.png';
+	}
 
 	public function preInsert() {
 

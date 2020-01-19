@@ -45,7 +45,7 @@
 	$('#md_modal').load('index.php?v=d&plugin=homeconnect&modal=health').dialog('open');
 });
 
- $('.eqLogicAttr[data-l1key=configuration][data-l2key=modèle]').on('change',function(){
+ $('.eqLogicAttr[data-l1key=configuration][data-l2key=vib]').on('change',function(){
 	if($(this).value() == null){
 		return;
 	}
