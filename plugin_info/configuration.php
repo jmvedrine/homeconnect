@@ -77,8 +77,8 @@ if (!isConnect()) {
 		// if (empty(config::byKey('auth','homeconnect'))){
 			echo ('
 				<div class="form-group">
-					<label class="col-lg-2 control-label">{{Se connecter}}</label>
-					<div class="col-lg-2">
+					<label class="col-sm-3 control-label">{{Se connecter}}</label>
+					<div class="col-sm 3">
 						<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Se connecter}}</a>
 					</div>
 				</div>

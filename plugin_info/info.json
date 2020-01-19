@@ -3,7 +3,7 @@
 	"name" : "Home Connect",
 	"description" : "Plugin permettant de récupérer les informations des appareils électroménagers compatibles",
 	"licence" : "AGPL",
-    "installation" : "Vérifiez bien que vous avez correctement configuré la partie Générale -> Administration -> Configuration puis reseaux, en effet il faut lors de l'association de Jeedom au compte Home Connect que votre Jeedom soit accessible de l'exterieur (ensuite cela n'est plus nécessaire)",
+    "installation" : "Vérifiez bien que vous avez correctement configuré la partie Générale -> Administration -> Configuration puis reseaux, en effet il faut lors de l'association de Jeedom au compte Home Connect que votre Jeedom soit accessible de l'exterieur.",
 	"author" : "Sartog",
 	"require" : "3.3",
 	"category" : "devicecommunication",
