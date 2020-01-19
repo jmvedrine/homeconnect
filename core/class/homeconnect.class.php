@@ -1390,7 +1390,11 @@ class homeconnectProvider extends AbstractProvider {
 	}
 
 	protected function getDefaultScopes() {
-		return ['IdentifyAppliance'];
+		return ['IdentifyAppliance', 'Monitor', 'Settings',
+                'CleaningRobot-Control', 'CoffeeMaker-Control',
+                'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
+                'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
+                'WasherDryer-Control', 'WineCooler-Control'];;
 	}
 
 	protected function getScopeSeparator() {
