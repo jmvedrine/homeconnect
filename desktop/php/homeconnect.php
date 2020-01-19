@@ -39,7 +39,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 					echo '<img src="' . $eqLogic->getImage() . '"/>';
 					echo '<br>';
 					echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-					echo '</div>'
+					echo '</div>';
 				}
 			?>
 

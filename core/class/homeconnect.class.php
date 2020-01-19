@@ -108,7 +108,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
-			homeconnect::tokenRequest();
+			homeconnect::tokenRefresh();
 		}
 
 		// Vérification de la présence du token et tentative de récupération si absent.
@@ -155,7 +155,7 @@ class homeconnect extends eqLogic {
 
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. config::byKey('client_id','homeconnect','',true);
-		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);;
+		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
 		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');
@@ -204,7 +204,78 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"│ scope : ".$response['scope']);
 		log::add('homeconnect', 'debug',"│ Expires in : ".$expires_in);
 		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenhRequest()");
+		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRequest()");
+	}
+    
+    public static function tokenRefresh() {
+	/**
+	 * Rafraichit un token expiré permettant l'accès au serveur.
+	 *
+	 * @param			|*Cette fonction ne prend pas de paramètres*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
+
+		log::add('homeconnect', 'debug',"┌────────── Fonction tokenRefresh()");
+
+		// Vérification de la présence du code d'authorisation avant de demander le token.
+		if (empty(config::byKey('auth','homeconnect'))) {
+
+			log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
+			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
+			return;
+		}
+
+		// Création du paramêtre POSTFIELDS.
+		$post_fields = 'grant_type=refresh_token';
+		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
+		$post_fields .= '&refresh_token='.  config::byKey('refresh_token','homeconnect','',true);
+
+		log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
+		// Récupération du Token.
+		$curl = curl_init();
+		$options = [
+			CURLOPT_URL => homeconnect::API_TOKEN_URL,
+			CURLOPT_RETURNTRANSFER => True,
+			CURLOPT_SSL_VERIFYPEER => FALSE,
+			CURLOPT_POST => True,
+			CURLOPT_POSTFIELDS => $post_fields,
+			];
+		curl_setopt_array($curl, $options);
+		$response = json_decode(curl_exec($curl), true);
+		log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
+		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
+		curl_close ($curl);
+
+		// Vérification du code réponse.
+		if($http_code != 200) {
+
+			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") : Impossible de rafraichir le token.");
+			throw new Exception("Erreur : Impossible de rafraichir le token (code erreur : ".$http_code.").");
+			return;
+
+		} else {
+
+			log::add('homeconnect', 'debug', "│ Token rafraichi.");
+		}
+
+		// Calcul de l'expiration du token.
+		$expires_in = time() + $response['expires_in'];
+
+		// Enregistrement des informations dans le plugin.
+		config::save('access_token', $response['access_token'], 'homeconnect');
+		config::save('refresh_token', $response['refresh_token'], 'homeconnect');
+		config::save('token_type', $response['token_type'], 'homeconnect');
+		config::save('scope', $response['scope'], 'homeconnect');
+		config::save('expires_in', $expires_in, 'homeconnect');
+		config::save('id_token', $response['id_token'], 'homeconnect');
+
+		log::add('homeconnect', 'debug',"│ Access token : ".$response['access_token']);
+		log::add('homeconnect', 'debug',"│ Refresh token : ".$response['refresh_token']);
+		log::add('homeconnect', 'debug',"│ Token type : ".$response['token_type']);
+		log::add('homeconnect', 'debug',"│ scope : ".$response['scope']);
+		log::add('homeconnect', 'debug',"│ Expires in : ".$expires_in);
+		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
+		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRefresh()");
 	}
 
 	private static function homeappliances() {
@@ -223,7 +294,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
-			homeconnect::tokenRequest();
+			homeconnect::tokenRefresh();
 		}
 
 		// Vérification de la présence du token et tentative de récupération si absent.
@@ -574,8 +645,8 @@ class homeconnect extends eqLogic {
 
 	/*
 	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
-	  public static function cron() {
-		//homeconnect::majMachine();
+	  public static function cron15() {
+		homeconnect::majMachine();
 
 	  }
 
