@@ -27,7 +27,7 @@ try {
 	ajax::init();
 
 	if (init('action') == 'loginHomeConnect') {
-		$url = homeconnect::linkToUser();
+		$url = homeconnect::authRequest();
 		ajax::success(array('redirect' => $url));
 	}
 

@@ -18,12 +18,6 @@
 
 
 /** *************************** Includes ********************************** */
-use League\OAuth2\Client\Provider\AbstractProvider;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use League\OAuth2\Client\Token\AccessToken;
-use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
-use Psr\Http\Message\ResponseInterface;
 
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
@@ -55,25 +49,6 @@ class homeconnect extends eqLogic {
 		} else {
 			return	"https://api.home-connect.com";
 		}
-	}
-
-	public static function getProvider() {
-		return new homeconnectProvider([
-			'clientId' => config::byKey('client_id','homeconnect','',true),
-			'clientSecret' => config::byKey('client_id','homeconnect','',true),
-			'redirectUri' => network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'),
-		]);
-	}
-
-	public function linkToUser() {
-		log::add('homeconnect', 'debug',"┌────────── Fonction linkToUser()");
-		@session_start();
-		$provider = homeconnect::getProvider();
-		$authorizationUrl = $provider->getAuthorizationUrl();
-		log::add('homeconnect', 'debug',"│ url = " . $authorizationUrl);
-		log::add('homeconnect', 'debug',"│ state = " . $provider->getState());
-		$_SESSION['oauth2state'] = $provider->getState();
-		return $authorizationUrl;
 	}
 
 	public static function syncHomeConnect() {
@@ -138,6 +113,43 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction majMachine()");
 	}
 
+	public static function authRequest() {
+	/**
+	 * Construit l'url d'authentification.
+	 *
+	 * @param			|*Cette fonction ne prend pas de paramètres*|
+	 * @return			|*Cette fonction retourne l'url d'authentification*|
+	 */
+		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
+		@session_start();
+		$authorizationUrl = homeconnect::baseUrl() . homeconnect::API_AUTH_URL;
+		$clientId = config::byKey('client_id','homeconnect','',true);
+		$clientSecret = config::byKey('client_secret','homeconnect','',true);
+		$redirectUri = urlencode(network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
+		if (config::byKey('demo_mode','homeconnect')) {
+			$scopes = ['IdentifyAppliance', 'Monitor', 'Settings',
+				'CoffeeMaker-Control',
+				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
+				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
+				'WasherDryer-Control', 'WineCooler-Control'];
+		} else {
+			$scopes = ['IdentifyAppliance', 'Monitor', 'Settings',
+				'CoffeeMaker-Control',
+				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
+				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
+				'WasherDryer-Control', 'WineCooler-Control'];
+		}
+		$scope = implode('%20', $scopes);
+		$state = bin2hex(random_bytes(16));
+		$_SESSION['oauth2state'] = $state;
+		// Construction de l'url.
+		$url =$authorizationUrl ."?client_id=". $clientId."&redirect_uri=".$redirectUri;
+		$url .= "&response_type=code&scope=".$scope."&state=".$state;
+		log::add('homeconnect', 'debug',"│ url = " . $url);
+		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
+		return $url;
+	}
+
 	public static function tokenRequest() {
 	/**
 	 * Récupère un token permettant l'accès au serveur.
@@ -147,6 +159,7 @@ class homeconnect extends eqLogic {
 	 */
 
 		log::add('homeconnect', 'debug',"┌────────── Fonction tokenRequest()");
+		$clientId = config::byKey('client_id','homeconnect','',true);
 
 		// Vérification de la présence du code d'authorisation avant de demander le token.
 		if (empty(config::byKey('auth','homeconnect'))) {
@@ -155,9 +168,10 @@ class homeconnect extends eqLogic {
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
-
+		$url = homeconnect::baseUrl() . homeconnect::API_TOKEN_URL;
+		log::add('homeconnect', 'debug', "│ Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
-		$post_fields = 'client_id='. config::byKey('client_id','homeconnect','',true);
+		$post_fields = 'client_id='. $clientId;
 		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
 		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
@@ -166,7 +180,7 @@ class homeconnect extends eqLogic {
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_TOKEN_URL,
+			CURLOPT_URL => $url,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_POST => True,
@@ -227,7 +241,8 @@ class homeconnect extends eqLogic {
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
-
+		$url = homeconnect::baseUrl() . homeconnect::API_TOKEN_URL;
+		log::add('homeconnect', 'debug', "│ Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'grant_type=refresh_token';
 		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
@@ -237,7 +252,7 @@ class homeconnect extends eqLogic {
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_TOKEN_URL,
+			CURLOPT_URL => $url,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_POST => True,
@@ -1368,79 +1383,6 @@ class homeconnectCmd extends cmd {
 	/** *************************** Setters ********************************* */
 
 
-
-}
-
-class homeconnectProvider extends AbstractProvider {
-	use BearerAuthorizationTrait;
-
-	protected function getDefaultHeaders(){
-				return ['Authorization' => 'Basic '.base64_encode($this->clientId.':'.$this->clientSecret)];
-		}
-
-	public function getBaseAuthorizationUrl() {
-		return homeconnect::baseUrl() . '/security/oauth/authorize';
-	}
-
-	public function getBaseAccessTokenUrl(array $params) {
-		return homeconnect::baseUrl() . '/security/oauth/token';
-	}
-
-	public function getResourceOwnerDetailsUrl(AccessToken $token) {
-		return homeconnect::baseUrl() . '/1/user/-/profile.json';
-	}
-
-	protected function getDefaultScopes() {
-		return ['IdentifyAppliance', 'Monitor', 'Settings',
-				'CleaningRobot-Control', 'CoffeeMaker-Control',
-				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
-				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
-				'WasherDryer-Control', 'WineCooler-Control'];;
-	}
-
-	protected function getScopeSeparator() {
-		return ' ';
-	}
-
-	protected function getAuthorizationParameters(array $options) {
-		$params = parent::getAuthorizationParameters($options);
-		unset($params['approval_prompt']);
-		if (!empty($options['prompt'])) {
-			$params['prompt'] = $options['prompt'];
-		}
-		return $params;
-	}
-
-	protected function getAccessTokenOptions(array $params) {
-		$options = parent::getAccessTokenOptions($params);
-		$options['headers']['Authorization'] = 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret);
-		return $options;
-	}
-
-	public function createResourceOwner(array $response, AccessToken $token) {
-		return new fitbitOwner($response);
-	}
-
-	protected function checkResponse(ResponseInterface $response, $data) {
-		if ($response->getStatusCode() >= 400) {
-			$errorMessage = '';
-			if (!empty($data['errors'])) {
-				foreach ($data['errors'] as $error) {
-					if (!empty($errorMessage)) {
-						$errorMessage .= ' , ';
-					}
-					$errorMessage .= implode(' - ', $error);
-				}
-			} else {
-				$errorMessage = $response->getReasonPhrase();
-			}
-			throw new IdentityProviderException(
-				$errorMessage,
-				$response->getStatusCode(),
-				$response
-			);
-		}
-	}
 
 }
 ?>
