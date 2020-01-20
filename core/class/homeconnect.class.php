@@ -32,14 +32,9 @@ class homeconnect extends eqLogic {
 
 	/** *************************** Constantes ******************************** */
 
-	const API_AUTH_URL = "https://api.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
-	const API_TOKEN_URL = "https://api.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
-	const API_REQUEST_URL = "https://api.home-connect.com/api/homeappliances";
-/*
-	const API_AUTH_URL = "https://simulator.home-connect.com/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
-	const API_TOKEN_URL = "https://simulator.home-connect.com/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
-	const API_REQUEST_URL = "https://simulator.home-connect.com/api/homeappliances";
-*/
+	const API_AUTH_URL = "/security/oauth/authorize"; //?client_id=XXX&redirect_uri=XXX&response_type=code&scope=XXX&state=XXX
+	const API_TOKEN_URL = "/security/oauth/token"; //client_id=XXX&redirect_uri=XXX&grant_type=authorization_code&code=XXX
+	const API_REQUEST_URL = "/api/homeappliances";
 
 	/** *************************** Attributs ********************************* */
 
@@ -54,6 +49,14 @@ class homeconnect extends eqLogic {
 
 
 	/** *************************** Méthodes statiques ************************ */
+	public static function baseUrl() {
+		if (config::byKey('demo_mode','homeconnect')) {
+			return "https://simulator.home-connect.com";
+		} else {
+			return	"https://api.home-connect.com";
+		}
+	}
+
 	public static function getProvider() {
 		return new homeconnectProvider([
 			'clientId' => config::byKey('client_id','homeconnect','',true),
@@ -163,7 +166,7 @@ class homeconnect extends eqLogic {
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::API_TOKEN_URL,
+			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_TOKEN_URL,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_POST => True,
@@ -206,8 +209,8 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRequest()");
 	}
-    
-    public static function tokenRefresh() {
+
+	public static function tokenRefresh() {
 	/**
 	 * Rafraichit un token expiré permettant l'accès au serveur.
 	 *
@@ -228,13 +231,13 @@ class homeconnect extends eqLogic {
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'grant_type=refresh_token';
 		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
-		$post_fields .= '&refresh_token='.  config::byKey('refresh_token','homeconnect','',true);
+		$post_fields .= '&refresh_token='.	config::byKey('refresh_token','homeconnect','',true);
 
 		log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::API_TOKEN_URL,
+			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_TOKEN_URL,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_POST => True,
@@ -319,7 +322,7 @@ class homeconnect extends eqLogic {
 
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::API_REQUEST_URL,
+			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_REQUEST_URL,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_HTTPHEADER => $headers,
@@ -402,7 +405,7 @@ class homeconnect extends eqLogic {
 
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::API_REQUEST_URL,
+			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_REQUEST_URL,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_HTTPHEADER => $headers,
@@ -479,7 +482,7 @@ class homeconnect extends eqLogic {
 
 				$curl = curl_init();
 				$options = [
-					CURLOPT_URL => homeconnect::API_REQUEST_URL. "/" .$eqLogic->getLogicalId()."/programs/active",
+					CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_REQUEST_URL . "/" . $eqLogic->getLogicalId() . "/programs/active",
 					CURLOPT_RETURNTRANSFER => True,
 					CURLOPT_SSL_VERIFYPEER => FALSE,
 					CURLOPT_HTTPHEADER => $headers,
@@ -1370,31 +1373,29 @@ class homeconnectCmd extends cmd {
 
 class homeconnectProvider extends AbstractProvider {
 	use BearerAuthorizationTrait;
-	const BASE_HOMECONNECT_URL = 'https://www.fitbit.com';
-	const BASE_HOMECONNECT_API_URL = 'https://api.home-connect.com';
 
 	protected function getDefaultHeaders(){
 				return ['Authorization' => 'Basic '.base64_encode($this->clientId.':'.$this->clientSecret)];
 		}
 
 	public function getBaseAuthorizationUrl() {
-		return static::BASE_HOMECONNECT_API_URL . '/security/oauth/authorize';
+		return homeconnect::baseUrl() . '/security/oauth/authorize';
 	}
 
 	public function getBaseAccessTokenUrl(array $params) {
-		return static::BASE_HOMECONNECT_API_URL . '/security/oauth/token';
+		return homeconnect::baseUrl() . '/security/oauth/token';
 	}
 
 	public function getResourceOwnerDetailsUrl(AccessToken $token) {
-		return static::BASE_HOMECONNECT_API_URL . '/1/user/-/profile.json';
+		return homeconnect::baseUrl() . '/1/user/-/profile.json';
 	}
 
 	protected function getDefaultScopes() {
 		return ['IdentifyAppliance', 'Monitor', 'Settings',
-                'CleaningRobot-Control', 'CoffeeMaker-Control',
-                'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
-                'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
-                'WasherDryer-Control', 'WineCooler-Control'];;
+				'CleaningRobot-Control', 'CoffeeMaker-Control',
+				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
+				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
+				'WasherDryer-Control', 'WineCooler-Control'];;
 	}
 
 	protected function getScopeSeparator() {
