@@ -7,6 +7,8 @@
 	"author" : "Sartog",
 	"require" : "3.3",
 	"category" : "devicecommunication",
+	"changelog" : "https://jmvedrine.github.io/homeconnect/#language#/changelog",
+	"documentation" : "https://jmvedrine.github.io/homeconnect/#language#/",
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
