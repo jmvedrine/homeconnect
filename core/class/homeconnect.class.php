@@ -50,6 +50,9 @@ class homeconnect extends eqLogic {
 			return	"https://api.home-connect.com";
 		}
 	}
+	protected static function buildQueryString(array $params) {
+		return http_build_query($params, null, '&', PHP_QUERY_RFC3986);
+	}
 
 	public static function syncHomeConnect() {
 	/**
@@ -124,27 +127,31 @@ class homeconnect extends eqLogic {
 		@session_start();
 		$authorizationUrl = homeconnect::baseUrl() . homeconnect::API_AUTH_URL;
 		$clientId = config::byKey('client_id','homeconnect','',true);
-		$clientSecret = config::byKey('client_secret','homeconnect','',true);
 		$redirectUri = urlencode(network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
 		if (config::byKey('demo_mode','homeconnect')) {
-			$scopes = ['IdentifyAppliance', 'Monitor', 'Settings',
-				'CoffeeMaker-Control',
+			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
+				'CoffeeMaker-Control', 'CleaningRobot-Control',
 				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
 				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
-				'WasherDryer-Control', 'WineCooler-Control'];
+				'WasherDryer-Control', 'WineCooler-Control']);
+			$parameters['user'] = 'me'; // Can be anything non-zero length
 		} else {
-			$scopes = ['IdentifyAppliance', 'Monitor', 'Settings',
-				'CoffeeMaker-Control',
+			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
+				'CoffeeMaker-Control', 'CleaningRobot-Control',
 				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
 				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
-				'WasherDryer-Control', 'WineCooler-Control'];
+				'CookProcessor-Control', 'FridgeFreezer-Control',
+				'WasherDryer-Control', 'WineCooler-Control']);
+			$parameters['redirect_uri'] = network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		}
-		$scope = implode('%20', $scopes);
+		$parameters['client_id'] = config::byKey('client_id','homeconnect','',true);
+		$parameters['response_type'] = 'code';
 		$state = bin2hex(random_bytes(16));
 		$_SESSION['oauth2state'] = $state;
+		$parameters['state'] = $state;
+
 		// Construction de l'url.
-		$url =$authorizationUrl ."?client_id=". $clientId."&redirect_uri=".$redirectUri;
-		$url .= "&response_type=code&scope=".$scope."&state=".$state;
+		$url = $authorizationUrl ."?" . self::buildQueryString($parameters);
 		log::add('homeconnect', 'debug',"│ url = " . $url);
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
 		return $url;
