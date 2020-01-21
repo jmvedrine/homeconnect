@@ -1,0 +1,76 @@
+{
+  "commands": [
+    {
+      "name": "Connecté(e)",
+      "type": "info",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never"
+      },
+      "subtype": "binary",
+      "logicalId": "connected"
+    },
+    {
+      "name": "Contrôle à distance",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "RemoteControlStartAllowed"
+    },
+    {
+      "name": "Programme en cours",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "programActive"
+    },
+    {
+      "name": "Intensité café",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ConsumerProducts.CoffeeMaker.Option.BeanAmount"
+    },
+    {
+      "name": "Taille tasse",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "ml",
+      "configuration": {
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ConsumerProducts.CoffeeMaker.Option.FillQuantity"
+    },
+    {
+      "name": "Température",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ConsumerProducts.CoffeeMaker.Option.CoffeeTemperature"
+    }
+  ]
+}

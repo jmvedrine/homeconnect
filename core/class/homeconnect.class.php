@@ -69,7 +69,7 @@ class homeconnect extends eqLogic {
 		}
 
 		// Récupération des appareils.
-		homeconnect::homeappliances();
+		self::homeappliances();
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction syncHomeConnect()");
 	}
 
@@ -89,7 +89,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
-			homeconnect::tokenRefresh();
+			self::tokenRefresh();
 		}
 
 		// Vérification de la présence du token et tentative de récupération si absent.
@@ -98,7 +98,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est manquant, recupération de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
-			homeconnect::tokenRequest();
+			self::tokenRequest();
 
 			if (empty(config::byKey('access_token','homeconnect'))) {
 
@@ -108,10 +108,10 @@ class homeconnect extends eqLogic {
 		}
 
 		// MAJ du statut de connexion des appareils.
-		homeconnect::majConnected();
+		self::majConnected();
 
 		// MAJ des programes en cours.
-		homeconnect::majPrograms();
+		self::majPrograms();
 
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction majMachine()");
 	}
@@ -125,7 +125,7 @@ class homeconnect extends eqLogic {
 	 */
 		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
 		@session_start();
-		$authorizationUrl = homeconnect::baseUrl() . homeconnect::API_AUTH_URL;
+		$authorizationUrl = self::baseUrl() . self::API_AUTH_URL;
 		$clientId = config::byKey('client_id','homeconnect','',true);
 		$redirectUri = urlencode(network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
 		if (config::byKey('demo_mode','homeconnect')) {
@@ -175,7 +175,7 @@ class homeconnect extends eqLogic {
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
-		$url = homeconnect::baseUrl() . homeconnect::API_TOKEN_URL;
+		$url = self::baseUrl() . self::API_TOKEN_URL;
 		log::add('homeconnect', 'debug', "│ Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. $clientId;
@@ -248,7 +248,7 @@ class homeconnect extends eqLogic {
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
-		$url = homeconnect::baseUrl() . homeconnect::API_TOKEN_URL;
+		$url = self::baseUrl() . self::API_TOKEN_URL;
 		log::add('homeconnect', 'debug', "│ Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'grant_type=refresh_token';
@@ -319,7 +319,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
-			homeconnect::tokenRefresh();
+			self::tokenRefresh();
 		}
 
 		// Vérification de la présence du token et tentative de récupération si absent.
@@ -328,7 +328,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ [Warning] : Le token est manquant, recupération de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
-			homeconnect::tokenRequest();
+			self::tokenRequest();
 
 			if (empty(config::byKey('access_token','homeconnect'))) {
 
@@ -339,30 +339,30 @@ class homeconnect extends eqLogic {
 
 		$headers = [
 			"Accept: application/vnd.bsh.sdk.v1+json",
+            "Accept-Language: " . config::byKey('language', 'core', 'fr_FR'),
 			"Authorization: Bearer ".config::byKey('access_token','homeconnect'),
 			];
 
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_REQUEST_URL,
+			CURLOPT_URL => self::baseUrl() . self::API_REQUEST_URL,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_HTTPHEADER => $headers,
 			];
 		curl_setopt_array($curl, $options);
-		$response = json_decode(curl_exec($curl), true);
+        $response = curl_exec($curl);
+        log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
 
 		// Vérification du code réponse.
 		if($http_code != 200) {
-
-			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") ".print_r($response));
-			throw new Exception("Erreur : ".print_r($response));
+			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.")");
+			throw new Exception("Erreur : " . $response);
 			return;
 		}
-
-		log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
+		$response = json_decode($response, true);
 
 		foreach($response['data']['homeappliances'] as $key) {
 			/*	haId = Id de l'appareil
@@ -393,15 +393,18 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('haid', $key['haId']);
 				$eqLogic->setConfiguration('vib', $key['vib']);
 				$eqLogic->setConfiguration('brand', $key['brand']);
-				$eqLogic->setConfiguration('type', homeconnect::traduction($key['type']));
+				$eqLogic->setConfiguration('type', self::traduction($key['type']));
 				$eqLogic->save();
 
 				log::add('homeconnect', 'debug', "├──────────");
 				log::add('homeconnect', 'debug', "│ Création d'un appareil :");
-				log::add('homeconnect', 'debug', "│ Type : ".homeconnect::traduction($key['type']));
+				log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
 				log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
 				log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
 				log::add('homeconnect', 'debug', "├──────────");
+                
+				$found_eqLogics = self::findProduct($key);
+				log::add('homeconnect','debug',json_encode($found_eqLogics));
 			}
 		}
 
@@ -422,28 +425,29 @@ class homeconnect extends eqLogic {
 
 		$headers = [
 			"Accept: application/vnd.bsh.sdk.v1+json",
+            "Accept-Language: " . config::byKey('language', 'core', 'fr_FR'),
 			"Authorization: Bearer ".config::byKey('access_token','homeconnect'),
 			];
 
 		$curl = curl_init();
 		$options = [
-			CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_REQUEST_URL,
+			CURLOPT_URL => self::baseUrl() . self::API_REQUEST_URL,
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_HTTPHEADER => $headers,
 			];
 		curl_setopt_array($curl, $options);
-		$response = json_decode(curl_exec($curl), true);
+        $response = curl_exec($curl);
+        log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
 
 		// Vérification du code réponse.
 		if($http_code != 200) {
-
-			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") ".print_r($response));
+			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : " . $http_code . ")");
 			return;
 		}
-
+		$response = json_decode($response, true);
 		foreach($response['data']['homeappliances'] as $key) {
 			/* connected = boolean */
 
@@ -454,7 +458,7 @@ class homeconnect extends eqLogic {
 
 				log::add('homeconnect', 'debug', "├─────");
 				log::add('homeconnect', 'debug', "│ MAJ d'un appareil :");
-				log::add('homeconnect', 'debug', "│ Type : ".homeconnect::traduction($key['type']));
+				log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
 				log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
 				log::add('homeconnect', 'debug', "│ Connecté : ".$key['connected']);
 				log::add('homeconnect', 'debug', "├─────");
@@ -463,7 +467,7 @@ class homeconnect extends eqLogic {
 
 				log::add('homeconnect', 'debug', "├───── [Erreur]");
 				log::add('homeconnect', 'debug', "│ L'appareil n'existe pas :");
-				log::add('homeconnect', 'debug', "│ Type : ".homeconnect::traduction($key['type']));
+				log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
 				log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
 				log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
 				log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
@@ -476,7 +480,7 @@ class homeconnect extends eqLogic {
 
 	private static function majPrograms(){
 	/**
-	 * Récupère le programe et options en cours pour MAJ équipements.
+	 * Récupère le programme et options en cours pour MAJ équipements.
 	 *
 	 * @param			|*Cette fonction ne retourne pas de valeur*|
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
@@ -499,18 +503,20 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "│");
 
 				$headers = array("Accept: application/vnd.bsh.sdk.v1+json",
-								"Accept-Language: en-GB",
+								"Accept-Language: " . config::byKey('language', 'core', 'fr_FR'),
 								"Authorization: Bearer ".config::byKey('access_token','homeconnect'));
 
 				$curl = curl_init();
 				$options = [
-					CURLOPT_URL => homeconnect::baseUrl() . homeconnect::API_REQUEST_URL . "/" . $eqLogic->getLogicalId() . "/programs/active",
+					CURLOPT_URL => self::baseUrl() . self::API_REQUEST_URL . "/" . $eqLogic->getLogicalId() . "/programs/active",
 					CURLOPT_RETURNTRANSFER => True,
 					CURLOPT_SSL_VERIFYPEER => FALSE,
 					CURLOPT_HTTPHEADER => $headers,
 					];
 				curl_setopt_array($curl, $options);
-				$response = json_decode(curl_exec($curl), true);
+                $response = curl_exec($curl);
+                log::add('homeconnect', 'debug', "│ Réponse : " . $response);
+
 				$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 
 				// Code 200 = Ok.
@@ -519,31 +525,31 @@ class homeconnect extends eqLogic {
 
 				if ($http_code != 200 && $http_code !=404) {
 
-					log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") : ".$response);
+					log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.")");
 					return;
 
 				} elseif ($http_code == 404) {
 
-					log::add('homeconnect', 'debug', "│ Programe : Pas de lavage en cours;");
+					log::add('homeconnect', 'debug', "│ Programe : Pas de programme en cours;");
 					// RAZ des info.
-					homeconnect::razInfo($eqLogic->getLogicalId());
+					self::razInfo($eqLogic->getLogicalId());
 
 				} else {
+				    $response = json_decode($response, true);
+					// MAJ du programme en cours.
+					$program = self::traduction(substr(strrchr($response['data']['key'], "."), 1));
+					$eqLogic->checkAndUpdateCmd('currentProgram',$program);
 
-					// MAJ du programe en cours.
-					$program = homeconnect::traduction(substr(strrchr($response['data']['key'], "."), 1));
-					$eqLogic->checkAndUpdateCmd('Programs',$program);
 
+					log::add('homeconnect', 'debug', "│ Programme en cours : ".$program);
 
-					log::add('homeconnect', 'debug', "│ Programe en cours : ".$program);
-
-					// MAJ des options et autres informations du programe en cours.
+					// MAJ des options et autres informations du programme en cours.
 					foreach ($response['data']['options'] as $value) {
 
-						// Récupération du nom du programe / option.
+						// Récupération du nom du programme / option.
 						$program = substr(strrchr($value['key'], "."), 1);
 
-						// Récupération de la valeur du programe / option.
+						// Récupération de la valeur du programme / option.
 						switch ($program) {
 
 							case "Temperature" :
@@ -555,12 +561,12 @@ class homeconnect extends eqLogic {
 								break;
 
 							default :
-								$reglage = homeconnect::traduction($value['value']);
+								$reglage = self::traduction($value['value']);
 
 						}
 
 						// Traduction en Français du nom du program / option.
-						$program = homeconnect::traduction($program);
+						$program = self::traduction($program);
 
 						$eqLogic->checkAndUpdateCmd($program,$reglage);
 						log::add('homeconnect', 'debug', "│ Option : ".$program." - Réglage :".$reglage);
@@ -572,7 +578,7 @@ class homeconnect extends eqLogic {
 			} else {
 
 				// RAZ des info.
-				homeconnect::razInfo($eqLogic->getLogicalId());
+				self::razInfo($eqLogic->getLogicalId());
 			}
 
 			// MAJ du widget.
@@ -612,7 +618,7 @@ class homeconnect extends eqLogic {
 
 		foreach($eqLogic->getCmd() as $cmd) {
 
-			if ($cmd->getLogicalId() == "Programs") {
+			if ($cmd->getLogicalId() == "currentProgram") {
 
 				log::add('homeconnect','debug',"MAJ de la valeur de ".$cmd->getLogicalId()." (NoPrg) de la machine ".$eqLogic->getConfiguration('type'));
 				$eqLogic->checkAndUpdateCmd($cmd->getLogicalId(),"NoPrg");
@@ -627,6 +633,77 @@ class homeconnect extends eqLogic {
 		// MAJ du widget.
 		$eqLogic->refreshWidget();
 	}
+
+	public static function findProduct($_device) {
+		if(file_exists(__DIR__.'/../config/types/'.$_device['type'].'.json')){
+		  log::add('homeconnect','debug','Found config file for product type ' . $_device['type']);
+		  $eqLogic = self::byLogicalId($_device['haId'], 'homeconnect');
+		  $products = json_decode(file_get_contents(__DIR__.'/../config/types/'.$_device['type'].'.json'),true);
+		  log::add('homeconnect','debug','Product : '.file_get_contents(__DIR__.'/../config/types/'.$_device['type'].'.json'));
+		  $link_cmds = array();
+		  foreach ($products['commands'] as $product) {
+			 log::add('homeconnect','debug','Commande : '.json_encode($product));
+			$cmd = $eqLogic->getCmd(null, $product['logicalId']);
+			if(is_object($cmd)){
+			  continue;
+			}
+			$cmd = new homeconnectCmd();
+			utils::a2o($cmd, $product);
+			$cmd->setLogicalId($product['logicalId']);
+			$cmd->setEqLogic_id($eqLogic->getId());
+			$cmd->setName(__($product['name'], __FILE__));
+			$cmd->save();
+			if (isset($product['value'])) {
+			  $link_cmds[$cmd->getId()] = $product['value'];
+			}
+		  }
+		} else {
+			log::add('homeconnect','debug','No config file for product type ' . $_device['type']);
+		}
+		if (count($link_cmds) > 0) {
+		  foreach ($eqLogic->getCmd() as $eqLogic_cmd) {
+			foreach ($link_cmds as $cmd_id => $link_cmd) {
+			  if ($link_cmd == $eqLogic_cmd->getName()) {
+				$cmd = cmd::byId($cmd_id);
+				if (is_object($cmd)) {
+				  $cmd->setValue($eqLogic_cmd->getId());
+				  $cmd->save();
+				}
+			  }
+			}
+		  }
+		}
+		return $eqLogic;
+	}
+
+    public static function devicesParameters($_device = '') {
+        $return = array();
+        foreach (ls(dirname(__FILE__) . '/../config/types', '*') as $dir) {
+            $path = dirname(__FILE__) . '/../config/types/' . $dir;
+            if (!is_dir($path)) {
+                continue;
+            }
+            log::add('homeconnect', 'debug', 'devicesParameters path '.$path);
+            $files = ls($path, '*.json', false, array('files', 'quiet'));
+            foreach ($files as $file) {
+                try {
+                    $content = file_get_contents($path . '/' . $file);
+                    if (is_json($content)) {
+                        $return += json_decode($content, true);
+                    }
+                } catch (Exception $e) {
+                }
+            }
+        }
+        if (isset($_device) && $_device != '') {
+            if (isset($return[$_device])) {
+                return $return[$_device];
+            }
+            return array();
+        }
+        log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return));
+        return $return;
+    }
 
 	private static function traduction($word){
 	/**
@@ -671,7 +748,7 @@ class homeconnect extends eqLogic {
 	/*
 	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
 	  public static function cron15() {
-		homeconnect::majMachine();
+		self::majMachine();
 
 	  }
 
@@ -701,6 +778,24 @@ class homeconnect extends eqLogic {
 		return 'plugins/homeconnect/plugin_info/homeconnect_icon.png';
 	}
 
+    public function applyModuleConfiguration() {
+        log::add('homeconnect', 'debug', 'debut de applyModuleConfiguration');
+        log::add('homeconnect', 'debug', 'type = '.$this->getConfiguration('type'));
+        $this->setConfiguration('applyType', $this->getConfiguration('tyep'));
+        $this->save();
+        if ($this->getConfiguration('type') == '') {
+          log::add('homeconnect', 'debug', 'applyModuleConfiguration type is empty return true');
+          return true;
+        }
+        log::add('homeconnect', 'debug', 'applyModuleConfiguration call devicesParameters');
+        $device = self::devicesParameters($this->getConfiguration('tyep'));
+        if (!is_array($device)) {
+            log::add('homeconnect', 'debug', 'deviceParameters result is not an array');
+            return true;
+        }
+        log::add('homeconnect', 'debug', 'applyModuleConfiguration import' . print_r($device, true));
+        $this->import($device);
+    }
 	public function preInsert() {
 
 	}
@@ -720,596 +815,10 @@ class homeconnect extends eqLogic {
 	 * @param			|*Cette fonction ne retourne pas de valeur*|
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
-
-		// Statut connecté.
-		$connected = $this->getCmd(null, 'connected');
-		if (!is_object($connected)) {
-			$connected = new homeconnectCmd();
-			$connected->setLogicalId('connected');
-			$connected->setName(__('Connecté(e)', __FILE__));
-			$connected->setIsVisible(1);
-			$connected->setIsHistorized(0);
-			$connected->setOrder(0);
-		}
-		$connected->setUnite('');
-		$connected->setType('info');
-		$connected->setSubType('binary');
-		$connected->setConfiguration('repeatEventManagement', 'never');
-		$connected->setEqLogic_id($this->getId());
-		$connected->save();
-
-		/** Machine à café **/
-		if ($this->getConfiguration('type') == "CoffeeMaker"){
-
-			// Contrôle à distance.
-			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
-			if (!is_object($connected)) {
-				$remote = new homeconnectCmd();
-				$remote->setLogicalId('RemoteControlStartAllowed');
-				$remote->setName(__('Contrôle à distance', __FILE__));
-				$remote->setIsVisible(1);
-				$remote->setIsHistorized(0);
-				$remote->setOrder(1);
-			}
-			$remote->setUnite('');
-			$remote->setType('info');
-			$remote->setSubType('binary');
-			$remote->setConfiguration('repeatEventManagement', 'never');
-			$remote->setEqLogic_id($this->getId());
-			$remote->save();
-
-			// Programe en cours.
-			$programs = $this->getCmd(null, 'Programs');
-			if (!is_object($programs)) {
-				$programs = new homeconnectCmd();
-				$programs->setLogicalId('Programs');
-				$programs->setName(__('Programe', __FILE__));
-				$programs->setIsVisible(1);
-				$programs->setIsHistorized(0);
-			}
-			$programs->setUnite('');
-			$programs->setType('info');
-			$programs->setSubType('string');
-			$programs->setConfiguration('repeatEventManagement', 'never');
-			$programs->setEqLogic_id($this->getId());
-			$programs->save();
-
-			// Sélectionner l'intensité du café.
-			$bean_amount = $this->getCmd(null, 'BeanAmount');
-			if (!is_object($bean_amount)) {
-				$bean_amount = new homeconnectCmd();
-				$bean_amount->setLogicalId('BeanAmount');
-				$bean_amount->setName(__('Intensité café', __FILE__));
-				$bean_amount->setIsVisible(1);
-				$bean_amount->setIsHistorized(0);
-			}
-			$bean_amount->setUnite('');
-			$bean_amount->setType('info');
-			$bean_amount->setSubType('string');
-			$bean_amount->setConfiguration('repeatEventManagement', 'never');
-			$bean_amount->setEqLogic_id($this->getId());
-			$bean_amount->save();
-
-			// Taille de la tasse.
-			$fill_quantity = $this->getCmd(null, 'FillQuantity');
-			if (!is_object($fill_quantity)) {
-				$fill_quantity = new homeconnectCmd();
-				$fill_quantity->setLogicalId('FillQuantity');
-				$fill_quantity->setName(__('Taille tasse', __FILE__));
-				$fill_quantity->setIsVisible(1);
-				$fill_quantity->setIsHistorized(0);
-			}
-			$fill_quantity->setUnite('ml');
-			$fill_quantity->setType('info');
-			$fill_quantity->setSubType('numeric');
-			$fill_quantity->setConfiguration('repeatEventManagement', 'never');
-			$fill_quantity->setEqLogic_id($this->getId());
-			$fill_quantity->save();
-
-			// Avancement du programe en cours.
-			$progress = $this->getCmd(null, 'ProgramProgress');
-			if (!is_object($progress)) {
-				$progress = new homeconnectCmd();
-				$progress->setLogicalId('ProgramProgress');
-				$progress->setName(__('Avancement', __FILE__));
-				$progress->setIsVisible(1);
-				$progress->setIsHistorized(0);
-			}
-			$progress->setUnite('%');
-			$progress->setType('info');
-			$progress->setSubType('numeric');
-			$progress->setConfiguration('repeatEventManagement', 'never');
-			$progress->setEqLogic_id($this->getId());
-			$progress->save();
-		}
-
-		/** Lave-vaiselle **/
-		if ($this->getConfiguration('type') == "Dishwasher"){
-
-			// Contrôle à distance.
-			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
-			if (!is_object($connected)) {
-				$remote = new homeconnectCmd();
-				$remote->setLogicalId('RemoteControlStartAllowed');
-				$remote->setName(__('Contrôle à distance', __FILE__));
-				$remote->setIsVisible(1);
-				$remote->setIsHistorized(0);
-				$remote->setOrder(1);
-			}
-			$remote->setUnite('');
-			$remote->setType('info');
-			$remote->setSubType('binary');
-			$remote->setConfiguration('repeatEventManagement', 'never');
-			$remote->setEqLogic_id($this->getId());
-			$remote->save();
-
-			// Etat de la porte.
-			$door = $this->getCmd(null, 'DoorState');
-			if (!is_object($connected)) {
-				$door = new homeconnectCmd();
-				$door->setLogicalId('DoorState');
-				$door->setName(__('Porte', __FILE__));
-				$door->setIsVisible(1);
-				$door->setIsHistorized(0);
-				$door->setOrder(2);
-			}
-			$door->setUnite('');
-			$door->setType('info');
-			$door->setSubType('string');
-			$door->setConfiguration('repeatEventManagement', 'never');
-			$door->setEqLogic_id($this->getId());
-			$door->save();
-
-			// Programe en cours.
-			$programs = $this->getCmd(null, 'Programs');
-			if (!is_object($programs)) {
-				$programs = new homeconnectCmd();
-				$programs->setLogicalId('Programs');
-				$programs->setName(__('Programe', __FILE__));
-				$programs->setIsVisible(1);
-				$programs->setIsHistorized(0);
-			}
-			$programs->setUnite('');
-			$programs->setType('info');
-			$programs->setSubType('string');
-			$programs->setConfiguration('repeatEventManagement', 'never');
-			$programs->setEqLogic_id($this->getId());
-			$programs->save();
-
-			// Temps restant du programe en cours.
-			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
-			if (!is_object($remaining_time)) {
-				$remaining_time = new homeconnectCmd();
-				$remaining_time->setLogicalId('RemainingProgramTime');
-				$remaining_time->setName(__('Durée restante', __FILE__));
-				$remaining_time->setIsVisible(1);
-				$remaining_time->setIsHistorized(0);
-			}
-			$remaining_time->setUnite('s');
-			$remaining_time->setType('info');
-			$remaining_time->setSubType('numeric');
-			$remaining_time->setConfiguration('repeatEventManagement', 'never');
-			$remaining_time->setEqLogic_id($this->getId());
-			$remaining_time->save();
-
-			// Délai avant démarrage.
-			$start_in_relative = $this->getCmd(null, 'StartInRelative');
-			if (!is_object($start_in_relative)) {
-				$start_in_relative = new homeconnectCmd();
-				$start_in_relative->setLogicalId('StartInRelative');
-				$start_in_relative->setName(__('Délai démarrage', __FILE__));
-				$start_in_relative->setIsVisible(1);
-				$start_in_relative->setIsHistorized(0);
-			}
-			$start_in_relative->setUnite('s');
-			$start_in_relative->setType('info');
-			$start_in_relative->setSubType('numeric');
-			$start_in_relative->setConfiguration('repeatEventManagement', 'never');
-			$start_in_relative->setEqLogic_id($this->getId());
-			$start_in_relative->save();
-
-			// Avancement du programe en cours.
-			$progress = $this->getCmd(null, 'ProgramProgress');
-			if (!is_object($progress)) {
-				$progress = new homeconnectCmd();
-				$progress->setLogicalId('ProgramProgress');
-				$progress->setName(__('Avancement', __FILE__));
-				$progress->setIsVisible(1);
-				$progress->setIsHistorized(0);
-			}
-			$progress->setUnite('%');
-			$progress->setType('info');
-			$progress->setSubType('numeric');
-			$progress->setConfiguration('repeatEventManagement', 'never');
-			$progress->setEqLogic_id($this->getId());
-			$progress->save();
-		}
-
-		/** Sèche-linge **/
-		if ($this->getConfiguration('type') == "Dryer"){
-
-			// Contrôle à distance.
-			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
-			if (!is_object($connected)) {
-				$remote = new homeconnectCmd();
-				$remote->setLogicalId('RemoteControlStartAllowed');
-				$remote->setName(__('Contrôle à distance', __FILE__));
-				$remote->setIsVisible(1);
-				$remote->setIsHistorized(0);
-				$remote->setOrder(1);
-			}
-			$remote->setUnite('');
-			$remote->setType('info');
-			$remote->setSubType('binary');
-			$remote->setConfiguration('repeatEventManagement', 'never');
-			$remote->setEqLogic_id($this->getId());
-			$remote->save();
-
-			// Etat de la porte.
-			$door = $this->getCmd(null, 'DoorState');
-			if (!is_object($connected)) {
-				$door = new homeconnectCmd();
-				$door->setLogicalId('DoorState');
-				$door->setName(__('Porte', __FILE__));
-				$door->setIsVisible(1);
-				$door->setIsHistorized(0);
-				$door->setOrder(2);
-			}
-			$door->setUnite('');
-			$door->setType('info');
-			$door->setSubType('string');
-			$door->setConfiguration('repeatEventManagement', 'never');
-			$door->setEqLogic_id($this->getId());
-			$door->save();
-
-			// Programe en cours.
-			$programs = $this->getCmd(null, 'Programs');
-			if (!is_object($programs)) {
-				$programs = new homeconnectCmd();
-				$programs->setLogicalId('Programs');
-				$programs->setName(__('Programe', __FILE__));
-				$programs->setIsVisible(1);
-				$programs->setIsHistorized(0);
-			}
-			$programs->setUnite('');
-			$programs->setType('info');
-			$programs->setSubType('string');
-			$programs->setConfiguration('repeatEventManagement', 'never');
-			$programs->setEqLogic_id($this->getId());
-			$programs->save();
-
-			// Sécheresse souhaitée.
-			$drying_target = $this->getCmd(null, 'DryingTarget');
-			if (!is_object($drying_target)) {
-				$drying_target = new homeconnectCmd();
-				$drying_target->setLogicalId('DryingTarget');
-				$drying_target->setName(__('Séchage', __FILE__));
-				$drying_target->setIsVisible(1);
-				$drying_target->setIsHistorized(0);
-			}
-			$drying_target->setUnite('');
-			$drying_target->setType('info');
-			$drying_target->setSubType('string');
-			$drying_target->setConfiguration('repeatEventManagement', 'never');
-			$drying_target->setEqLogic_id($this->getId());
-			$drying_target->save();
-
-			// Temps restant du programe en cours.
-			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
-			if (!is_object($remaining_time)) {
-				$remaining_time = new homeconnectCmd();
-				$remaining_time->setLogicalId('RemainingProgramTime');
-				$remaining_time->setName(__('Durée restante', __FILE__));
-				$remaining_time->setIsVisible(1);
-				$remaining_time->setIsHistorized(0);
-			}
-			$remaining_time->setUnite('s');
-			$remaining_time->setType('info');
-			$remaining_time->setSubType('numeric');
-			$remaining_time->setConfiguration('repeatEventManagement', 'never');
-			$remaining_time->setEqLogic_id($this->getId());
-			$remaining_time->save();
-
-			// Avancement du programe en cours.
-			$progress = $this->getCmd(null, 'ProgramProgress');
-			if (!is_object($progress)) {
-				$progress = new homeconnectCmd();
-				$progress->setLogicalId('ProgramProgress');
-				$progress->setName(__('Avancement', __FILE__));
-				$progress->setIsVisible(1);
-				$progress->setIsHistorized(0);
-			}
-			$progress->setUnite('%');
-			$progress->setType('info');
-			$progress->setSubType('numeric');
-			$progress->setConfiguration('repeatEventManagement', 'never');
-			$progress->setEqLogic_id($this->getId());
-			$progress->save();
-		}
-
-		/** Frigidaire **/
-		if ($this->getConfiguration('type') == "FridgeFreezer"){
-			// Aucun programe et option pour le frigidaire.
-
-			// Etat de la porte.
-			$door = $this->getCmd(null, 'DoorState');
-			if (!is_object($connected)) {
-				$door = new homeconnectCmd();
-				$door->setLogicalId('DoorState');
-				$door->setName(__('Porte', __FILE__));
-				$door->setIsVisible(1);
-				$door->setIsHistorized(0);
-				$door->setOrder(2);
-			}
-			$door->setUnite('');
-			$door->setType('info');
-			$door->setSubType('string');
-			$door->setConfiguration('repeatEventManagement', 'never');
-			$door->setEqLogic_id($this->getId());
-			$door->save();
-		}
-
-		/** Four **/
-		if ($this->getConfiguration('type') == "Oven"){
-
-			// Contrôle à distance.
-			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
-			if (!is_object($connected)) {
-				$remote = new homeconnectCmd();
-				$remote->setLogicalId('RemoteControlStartAllowed');
-				$remote->setName(__('Contrôle à distance', __FILE__));
-				$remote->setIsVisible(1);
-				$remote->setIsHistorized(0);
-				$remote->setOrder(1);
-			}
-			$remote->setUnite('');
-			$remote->setType('info');
-			$remote->setSubType('binary');
-			$remote->setConfiguration('repeatEventManagement', 'never');
-			$remote->setEqLogic_id($this->getId());
-			$remote->save();
-
-			// Etat de la porte.
-			$door = $this->getCmd(null, 'DoorState');
-			if (!is_object($connected)) {
-				$door = new homeconnectCmd();
-				$door->setLogicalId('DoorState');
-				$door->setName(__('Porte', __FILE__));
-				$door->setIsVisible(1);
-				$door->setIsHistorized(0);
-				$door->setOrder(2);
-			}
-			$door->setUnite('');
-			$door->setType('info');
-			$door->setSubType('string');
-			$door->setConfiguration('repeatEventManagement', 'never');
-			$door->setEqLogic_id($this->getId());
-			$door->save();
-
-			// Programe en cours.
-			$programs = $this->getCmd(null, 'Programs');
-			if (!is_object($programs)) {
-				$programs = new homeconnectCmd();
-				$programs->setLogicalId('Programs');
-				$programs->setName(__('Programe', __FILE__));
-				$programs->setIsVisible(1);
-				$programs->setIsHistorized(0);
-			}
-			$programs->setUnite('');
-			$programs->setType('info');
-			$programs->setSubType('string');
-			$programs->setConfiguration('repeatEventManagement', 'never');
-			$programs->setEqLogic_id($this->getId());
-			$programs->save();
-
-			// Température de consigne.
-			$temperature = $this->getCmd(null, 'SetpointTemperature');
-			if (!is_object($temperature)) {
-				$temperature = new homeconnectCmd();
-				$temperature->setLogicalId('SetpointTemperature');
-				$temperature->setName(__('Température consigne', __FILE__));
-				$temperature->setIsVisible(1);
-				$temperature->setIsHistorized(0);
-			}
-			$temperature->setUnite('°C');
-			$temperature->setType('info');
-			$temperature->setSubType('numeric');
-			$temperature->setConfiguration('repeatEventManagement', 'never');
-			$temperature->setEqLogic_id($this->getId());
-			$temperature->save();
-
-			// Durée de préchaufage.
-			$duration = $this->getCmd(null, 'Duration');
-			if (!is_object($duration)) {
-				$duration = new homeconnectCmd();
-				$duration->setLogicalId('Duration');
-				$duration->setName(__('Temps préchaufage', __FILE__));
-				$duration->setIsVisible(1);
-				$duration->setIsHistorized(0);
-			}
-			$duration->setUnite('s');
-			$duration->setType('info');
-			$duration->setSubType('numeric');
-			$duration->setConfiguration('repeatEventManagement', 'never');
-			$duration->setEqLogic_id($this->getId());
-			$duration->save();
-
-			// Temps restant du programe en cours.
-			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
-			if (!is_object($remaining_time)) {
-				$remaining_time = new homeconnectCmd();
-				$remaining_time->setLogicalId('RemainingProgramTime');
-				$remaining_time->setName(__('Durée restante', __FILE__));
-				$remaining_time->setIsVisible(1);
-				$remaining_time->setIsHistorized(0);
-			}
-			$remaining_time->setUnite('s');
-			$remaining_time->setType('info');
-			$remaining_time->setSubType('numeric');
-			$remaining_time->setConfiguration('repeatEventManagement', 'never');
-			$remaining_time->setEqLogic_id($this->getId());
-			$remaining_time->save();
-
-			// Temps écoulé du programe en cours.
-			$elapsed_time = $this->getCmd(null, 'ElapsedProgramTime');
-			if (!is_object($elapsed_time)) {
-				$elapsed_time = new homeconnectCmd();
-				$elapsed_time->setLogicalId('ElapsedProgramTime');
-				$elapsed_time->setName(__('Durée écoulée', __FILE__));
-				$elapsed_time->setIsVisible(1);
-				$elapsed_time->setIsHistorized(0);
-			}
-			$elapsed_time->setUnite('s');
-			$elapsed_time->setType('info');
-			$elapsed_time->setSubType('numeric');
-			$elapsed_time->setConfiguration('repeatEventManagement', 'never');
-			$elapsed_time->setEqLogic_id($this->getId());
-			$elapsed_time->save();
-
-			// Avancement du programe en cours.
-			$progress = $this->getCmd(null, 'ProgramProgress');
-			if (!is_object($progress)) {
-				$progress = new homeconnectCmd();
-				$progress->setLogicalId('ProgramProgress');
-				$progress->setName(__('Avancement', __FILE__));
-				$progress->setIsVisible(1);
-				$progress->setIsHistorized(0);
-			}
-			$progress->setUnite('%');
-			$progress->setType('info');
-			$progress->setSubType('numeric');
-			$progress->setConfiguration('repeatEventManagement', 'never');
-			$progress->setEqLogic_id($this->getId());
-			$progress->save();
-		}
-
-		/** Lave-linge **/
-		if ($this->getConfiguration('type') == "Washer"){
-
-			// Contrôle à distance.
-			$remote = $this->getCmd(null, 'RemoteControlStartAllowed');
-			if (!is_object($connected)) {
-				$remote = new homeconnectCmd();
-				$remote->setLogicalId('RemoteControlStartAllowed');
-				$remote->setName(__('Contrôle à distance', __FILE__));
-				$remote->setIsVisible(1);
-				$remote->setIsHistorized(0);
-				$remote->setOrder(1);
-			}
-			$remote->setUnite('');
-			$remote->setType('info');
-			$remote->setSubType('binary');
-			$remote->setConfiguration('repeatEventManagement', 'never');
-			$remote->setEqLogic_id($this->getId());
-			$remote->save();
-
-			// Etat de la porte.
-			$door = $this->getCmd(null, 'DoorState');
-			if (!is_object($connected)) {
-				$door = new homeconnectCmd();
-				$door->setLogicalId('DoorState');
-				$door->setName(__('Porte', __FILE__));
-				$door->setIsVisible(1);
-				$door->setIsHistorized(0);
-				$door->setOrder(2);
-			}
-			$door->setUnite('');
-			$door->setType('info');
-			$door->setSubType('string');
-			$door->setConfiguration('repeatEventManagement', 'never');
-			$door->setEqLogic_id($this->getId());
-			$door->save();
-
-			// Programe en cours.
-			$programs = $this->getCmd(null, 'Programs');
-			if (!is_object($programs)) {
-				$programs = new homeconnectCmd();
-				$programs->setLogicalId('Programs');
-				$programs->setName(__('Programe', __FILE__));
-				$programs->setIsVisible(1);
-				$programs->setIsHistorized(0);
-			}
-			$programs->setUnite('');
-			$programs->setType('info');
-			$programs->setSubType('string');
-			$programs->setConfiguration('repeatEventManagement', 'never');
-			$programs->setEqLogic_id($this->getId());
-			$programs->save();
-
-			// Température de consigne.
-			$temperature = $this->getCmd(null, 'Temperature');
-			if (!is_object($temperature)) {
-				$temperature = new homeconnectCmd();
-				$temperature->setLogicalId('Temperature');
-				$temperature->setName(__('Température consigne', __FILE__));
-				$temperature->setIsVisible(1);
-				$temperature->setIsHistorized(0);
-			}
-			$temperature->setUnite('°C');
-			$temperature->setType('info');
-			$temperature->setSubType('numeric');
-			$temperature->setConfiguration('repeatEventManagement', 'never');
-			$temperature->setEqLogic_id($this->getId());
-			$temperature->save();
-
-			// Vitesse essorage.
-			$spin_speed = $this->getCmd(null, 'SpinSpeed');
-			if (!is_object($spin_speed)) {
-				$spin_speed = new homeconnectCmd();
-				$spin_speed->setLogicalId('SpinSpeed');
-				$spin_speed->setName(__('Vitesse essorage', __FILE__));
-				$spin_speed->setIsVisible(1);
-				$spin_speed->setIsHistorized(0);
-			}
-			$spin_speed->setUnite('tr/min');
-			$spin_speed->setType('info');
-			$spin_speed->setSubType('numeric');
-			$spin_speed->setConfiguration('repeatEventManagement', 'never');
-			$spin_speed->setEqLogic_id($this->getId());
-			$spin_speed->save();
-
-			// Temps restant du programe en cours.
-			$remaining_time = $this->getCmd(null, 'RemainingProgramTime');
-			if (!is_object($remaining_time)) {
-				$remaining_time = new homeconnectCmd();
-				$remaining_time->setLogicalId('RemainingProgramTime');
-				$remaining_time->setName(__('Durée restante', __FILE__));
-				$remaining_time->setIsVisible(1);
-				$remaining_time->setIsHistorized(0);
-			}
-			$remaining_time->setUnite('s');
-			$remaining_time->setType('info');
-			$remaining_time->setSubType('numeric');
-			$remaining_time->setConfiguration('repeatEventManagement', 'never');
-			$remaining_time->setEqLogic_id($this->getId());
-			$remaining_time->save();
-
-			// Avancement du programe en cours.
-			$progress = $this->getCmd(null, 'ProgramProgress');
-			if (!is_object($progress)) {
-				$progress = new homeconnectCmd();
-				$progress->setLogicalId('ProgramProgress');
-				$progress->setName(__('Avancement', __FILE__));
-				$progress->setIsVisible(1);
-				$progress->setIsHistorized(0);
-			}
-			$progress->setUnite('%');
-			$progress->setType('info');
-			$progress->setSubType('numeric');
-			$progress->setConfiguration('repeatEventManagement', 'never');
-			$progress->setEqLogic_id($this->getId());
-			$progress->save();
-		}
-
-		/** table de cuisson **/
-		if ($this->getConfiguration('type') == "Cooktop"){
-			// API support is planned to be released later in 2017.
-		}
-
-		/** Hôte **/
-		if ($this->getConfiguration('type') == "Hood"){
-			// API support is planned to be released later in 2017.
-		}
+        if ($this->getConfiguration('applyType') != $this->getConfiguration('type')) {
+            $this->applyModuleConfiguration();
+            $this->refreshWidget();
+        }
 	}
 
 	public function preUpdate() {
