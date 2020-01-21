@@ -781,7 +781,7 @@ class homeconnect extends eqLogic {
     public function applyModuleConfiguration() {
         log::add('homeconnect', 'debug', 'debut de applyModuleConfiguration');
         log::add('homeconnect', 'debug', 'type = '.$this->getConfiguration('type'));
-        $this->setConfiguration('applyType', $this->getConfiguration('tyep'));
+        $this->setConfiguration('applyType', $this->getConfiguration('type'));
         $this->save();
         if ($this->getConfiguration('type') == '') {
           log::add('homeconnect', 'debug', 'applyModuleConfiguration type is empty return true');
@@ -796,6 +796,7 @@ class homeconnect extends eqLogic {
         log::add('homeconnect', 'debug', 'applyModuleConfiguration import' . print_r($device, true));
         $this->import($device);
     }
+
 	public function preInsert() {
 
 	}
