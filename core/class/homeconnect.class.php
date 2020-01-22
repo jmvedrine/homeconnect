@@ -686,7 +686,7 @@ class homeconnect extends eqLogic {
             if (!is_dir($path)) {
                 continue;
             }
-            log::add('homeconnect', 'debug', 'devicesParameters path '.$path);
+            log::add('homeconnect', 'debug', '| Path = '.$path);
             $files = ls($path, '*.json', false, array('files', 'quiet'));
             foreach ($files as $file) {
                 try {
@@ -700,8 +700,12 @@ class homeconnect extends eqLogic {
         }
         if (isset($_device) && $_device != '') {
             if (isset($return[$_device])) {
+                log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return[$_device]));
+                log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
                 return $return[$_device];
             }
+            log::add('homeconnect', 'debug', 'devicesParameters return empty array');
+            log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
             return array();
         }
         log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return));
@@ -783,22 +787,25 @@ class homeconnect extends eqLogic {
 	}
 
     public function applyModuleConfiguration() {
-        log::add('homeconnect', 'debug', 'debut de applyModuleConfiguration');
-        log::add('homeconnect', 'debug', 'type = '.$this->getConfiguration('type'));
+		log::add('homeconnect', 'debug',"├────────── Fonction applyModuleConfiguration()");
+        log::add('homeconnect', 'debug', '│ type = '.$this->getConfiguration('type'));
         $this->setConfiguration('applyType', $this->getConfiguration('type'));
         $this->save();
         if ($this->getConfiguration('type') == '') {
-          log::add('homeconnect', 'debug', 'applyModuleConfiguration type is empty return true');
+          log::add('homeconnect', 'debug', '│ applyModuleConfiguration type is empty');
+          log::add('homeconnect', 'debug',"├────────── Fin de la fonction applyModuleConfiguration()");
           return true;
         }
-        log::add('homeconnect', 'debug', 'applyModuleConfiguration call devicesParameters');
-        $device = self::devicesParameters($this->getConfiguration('tyep'));
+        log::add('homeconnect', 'debug', '│ applyModuleConfiguration call devicesParameters');
+        $device = self::devicesParameters($this->getConfiguration('type'));
         if (!is_array($device)) {
-            log::add('homeconnect', 'debug', 'deviceParameters result is not an array');
+            log::add('homeconnect', 'debug', '│ deviceParameters result is not an array');
+            log::add('homeconnect', 'debug',"├────────── Fin de la fonction applyModuleConfiguration()");
             return true;
         }
-        log::add('homeconnect', 'debug', 'applyModuleConfiguration import' . print_r($device, true));
+        log::add('homeconnect', 'debug', '│ applyModuleConfiguration import' . print_r($device, true));
         $this->import($device);
+        log::add('homeconnect', 'debug',"├────────── Fin de la fonction applyModuleConfiguration()");
     }
 
 	public function preInsert() {
@@ -820,10 +827,12 @@ class homeconnect extends eqLogic {
 	 * @param			|*Cette fonction ne retourne pas de valeur*|
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
+        log::add('homeconnect', 'debug',"┌────────── Fonction postSave()");
         if ($this->getConfiguration('applyType') != $this->getConfiguration('type')) {
             $this->applyModuleConfiguration();
             $this->refreshWidget();
         }
+        log::add('homeconnect', 'debug',"└────────── Fin de la fonction postSave()");
 	}
 
 	public function preUpdate() {
