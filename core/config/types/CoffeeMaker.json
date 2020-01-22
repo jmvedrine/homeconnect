@@ -1,7 +1,7 @@
 {
   "commands": [
     {
-      "name": "Connecté(e)",
+      "name": "ConnectÃ©(e)",
       "type": "info",
       "isVisible": 1,
       "isHistorized": 0,
@@ -13,7 +13,7 @@
       "logicalId": "connected"
     },
     {
-      "name": "Contrôle à distance",
+      "name": "ContrÃ´le Ã  distance",
       "type": "info",
       "subtype": "binary",
       "isVisible": 1,
@@ -37,7 +37,7 @@
       "logicalId": "programActive"
     },
     {
-      "name": "Intensité café",
+      "name": "IntensitÃ© cafÃ©",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
@@ -61,12 +61,12 @@
       "logicalId": "ConsumerProducts.CoffeeMaker.Option.FillQuantity"
     },
     {
-      "name": "Température",
+      "name": "TempÃ©rature",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "°C",
+      "unite": "Â°C",
       "configuration": {
         "repeatEventManagement" : "never"
       },

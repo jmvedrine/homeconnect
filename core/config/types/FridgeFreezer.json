@@ -1,7 +1,7 @@
 {
   "commands": [
     {
-      "name": "Connecté(e)",
+      "name": "ConnectÃ©(e)",
       "type": "info",
       "isVisible": 1,
       "isHistorized": 0,
@@ -13,7 +13,7 @@
       "logicalId": "connected"
     },
     {
-      "name": "Contrôle à distance",
+      "name": "ContrÃ´le Ã  distance",
       "type": "info",
       "subtype": "binary",
       "isVisible": 1,
