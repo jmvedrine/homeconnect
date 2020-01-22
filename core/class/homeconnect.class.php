@@ -364,7 +364,7 @@ class homeconnect extends eqLogic {
 		}
 		$response = json_decode($response, true);
 
-		foreach($response['data']['homeappliances'] as $key) {
+		foreach($response['data']['homeappliances'] as $key => $appliance) {
 			/*	haId = Id de l'appareil
 				vib = modèle de l'appareil
 				brand = marque de l'appareil
@@ -373,39 +373,37 @@ class homeconnect extends eqLogic {
 				enumber = N° de série
 				connected = boolean */
 
-			// Si l'appareil n'est pas connecté, nous ne le créons pas.
-			if ($key['connected'] == True) {
-
 				// Vérification que l'appareil n'est pas déjà créé.
-				$eqLogic = eqLogic::byLogicalId($key['haId'], 'homeconnect');
+				$eqLogic = eqLogic::byLogicalId($appliance['haId'], 'homeconnect');
 
 				if (!is_object($eqLogic)) {
-
+                    log::add('homeconnect','info','Nouvel appareil : '.$_device['name']);
+                    event::add('jeedom::alert', array(
+                        'level' => 'warning',
+                        'page' => 'homeconnect',
+                        'message' => __('Nouveau produit detecté', __FILE__),
+                    ));
 					// Création de l'appareil.
+                    log::add('homeconnect', 'debug', "├──────────");
+                    log::add('homeconnect', 'debug', "│ Création d'un appareil :");
+                    log::add('homeconnect', 'debug', "│ Type : ".self::traduction($appliance['type']));
+                    log::add('homeconnect', 'debug', "│ Marque : ".$appliance['brand']);
+                    log::add('homeconnect', 'debug', "│ Modèle : ".$appliance['vib']);
+                    log::add('homeconnect', 'debug', "├──────────");
 					$eqLogic = new homeconnect();
+                    $eqLogic->setLogicalId($appliance['haId']);
+                    $eqLogic->setIsEnable(1);
+                    $eqLogic->setIsVisible(1);
+                    $eqLogic->setEqType_name('homeconnect');
+                    $eqLogic->setName($appliance['name']);
 				}
-
-				$eqLogic->setLogicalId($key['haId']);
-				$eqLogic->setIsEnable(1);
-				$eqLogic->setIsVisible(1);
-				$eqLogic->setEqType_name('homeconnect');
-				$eqLogic->setName($key['name']);
-				$eqLogic->setConfiguration('haid', $key['haId']);
-				$eqLogic->setConfiguration('vib', $key['vib']);
-				$eqLogic->setConfiguration('brand', $key['brand']);
-				$eqLogic->setConfiguration('type', self::traduction($key['type']));
+				$eqLogic->setConfiguration('haid', $appliance['haId']);
+				$eqLogic->setConfiguration('vib', $appliance['vib']);
+				$eqLogic->setConfiguration('brand', $appliance['brand']);
+				$eqLogic->setConfiguration('type', self::traduction($appliance['type']));
 				$eqLogic->save();
-
-				log::add('homeconnect', 'debug', "├──────────");
-				log::add('homeconnect', 'debug', "│ Création d'un appareil :");
-				log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
-				log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
-				log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
-				log::add('homeconnect', 'debug', "├──────────");
-                
-				$found_eqLogics = self::findProduct($key);
+				$found_eqLogics = self::findProduct($appliance);
 				log::add('homeconnect','debug',json_encode($found_eqLogics));
-			}
 		}
 
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction homeappliances()");
@@ -634,13 +632,13 @@ class homeconnect extends eqLogic {
 		$eqLogic->refreshWidget();
 	}
 
-	public static function findProduct($_device) {
-        log::add('homeconnect', 'debug',"┌────────── Fonction findProduct($_device)");
-		if(file_exists(__DIR__.'/../config/types/'.$_device['type'].'.json')){
-		  log::add('homeconnect','debug','Found config file for product type ' . $_device['type']);
-		  $eqLogic = self::byLogicalId($_device['haId'], 'homeconnect');
-		  $products = json_decode(file_get_contents(__DIR__.'/../config/types/'.$_device['type'].'.json'),true);
-		  log::add('homeconnect','debug','Product : '.file_get_contents(__DIR__.'/../config/types/'.$_device['type'].'.json'));
+	public static function findProduct($_appliance) {
+        log::add('homeconnect', 'debug',"┌────────── Fonction findProduct($_appliance)");
+		if(file_exists(__DIR__.'/../config/types/'.$_appliance['type'].'.json')){
+		  log::add('homeconnect','debug','Found config file for product type ' . $_appliance['type']);
+		  $eqLogic = self::byLogicalId($_appliance['haId'], 'homeconnect');
+		  $products = json_decode(file_get_contents(__DIR__.'/../config/types/'.$_appliance['type'].'.json'),true);
+		  log::add('homeconnect','debug','Product : '.file_get_contents(__DIR__.'/../config/types/'.$_appliance['type'].'.json'));
 		  $link_cmds = array();
 		  foreach ($products['commands'] as $product) {
 			 log::add('homeconnect','debug','Commande : '.json_encode($product));
@@ -659,7 +657,7 @@ class homeconnect extends eqLogic {
 			}
 		  }
 		} else {
-			log::add('homeconnect','debug','No config file for product type ' . $_device['type']);
+			log::add('homeconnect','debug','No config file for product type ' . $_appliance['type']);
 		}
 		if (count($link_cmds) > 0) {
 		  foreach ($eqLogic->getCmd() as $eqLogic_cmd) {
@@ -678,8 +676,8 @@ class homeconnect extends eqLogic {
 		return $eqLogic;
 	}
 
-    public static function devicesParameters($_device = '') {
-        log::add('homeconnect', 'debug',"┌────────── Fonction devicesParameters($_device)");
+    public static function devicesParameters($_type = '') {
+        log::add('homeconnect', 'debug',"┌────────── Fonction devicesParameters($_type)");
         $return = array();
         foreach (ls(dirname(__FILE__) . '/../config/types', '*') as $dir) {
             $path = dirname(__FILE__) . '/../config/types/' . $dir;
@@ -698,11 +696,11 @@ class homeconnect extends eqLogic {
                 }
             }
         }
-        if (isset($_device) && $_device != '') {
-            if (isset($return[$_device])) {
-                log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return[$_device]));
+        if (isset($_type) && $_type != '') {
+            if (isset($return[$_type])) {
+                log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return[$_type]));
                 log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
-                return $return[$_device];
+                return $return[$_type];
             }
             log::add('homeconnect', 'debug', 'devicesParameters return empty array');
             log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
