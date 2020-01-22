@@ -12,7 +12,7 @@
       "subtype": "binary",
       "logicalId": "connected"
     },
-     {
+    {
       "name": "Contrôle à distance",
       "type": "info",
       "subtype": "binary",

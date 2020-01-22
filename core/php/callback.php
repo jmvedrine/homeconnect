@@ -21,8 +21,8 @@ if (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
 	exit('Invalid state');
 }
 
-	config::save('auth', init('code'), 'homeconnect');
-	log::add('homeconnect', 'debug', "│ Code d'authorisation récupéré (".init('code').").");
-	homeconnect::tokenRequest();
-
-redirect(network::getNetworkAccess('external','proto:dns') . '/index.php?v=d&p=plugin&id=homeconnect');
+config::save('auth', init('code'), 'homeconnect');
+log::add('homeconnect', 'debug', "│ Code d'authorisation sauvegardé (".init('code').").");
+homeconnect::tokenRequest();
+log::add('homeconnect', 'debug',"└────────── Fin de Callback");
+redirect(network::getNetworkAccess('external') . '/index.php?v=d&p=plugin&id=homeconnect');

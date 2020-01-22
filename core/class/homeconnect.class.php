@@ -127,7 +127,7 @@ class homeconnect extends eqLogic {
 		@session_start();
 		$authorizationUrl = self::baseUrl() . self::API_AUTH_URL;
 		$clientId = config::byKey('client_id','homeconnect','',true);
-		$redirectUri = urlencode(network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
+		$redirectUri = urlencode(network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
 		if (config::byKey('demo_mode','homeconnect')) {
 			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
 				'CoffeeMaker-Control', 'CleaningRobot-Control',
@@ -142,7 +142,7 @@ class homeconnect extends eqLogic {
 				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
 				'CookProcessor-Control', 'FridgeFreezer-Control',
 				'WasherDryer-Control', 'WineCooler-Control']);
-			$parameters['redirect_uri'] = network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
+			$parameters['redirect_uri'] = network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		}
 		$parameters['client_id'] = config::byKey('client_id','homeconnect','',true);
 		$parameters['response_type'] = 'code';
@@ -165,7 +165,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"┌────────── Fonction tokenRequest()");
+		log::add('homeconnect', 'debug',"├────────── Fonction tokenRequest()");
 		$clientId = config::byKey('client_id','homeconnect','',true);
 
 		// Vérification de la présence du code d'authorisation avant de demander le token.
@@ -180,7 +180,7 @@ class homeconnect extends eqLogic {
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. $clientId;
 		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
-		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
+		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');
 		log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
@@ -228,7 +228,7 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"│ scope : ".$response['scope']);
 		log::add('homeconnect', 'debug',"│ Expires in : ".$expires_in);
 		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRequest()");
+		log::add('homeconnect', 'debug',"├────────── Fin de la fonction tokenRequest()");
 	}
 
 	public static function tokenRefresh() {
@@ -635,6 +635,7 @@ class homeconnect extends eqLogic {
 	}
 
 	public static function findProduct($_device) {
+        log::add('homeconnect', 'debug',"┌────────── Fonction findProduct($_device)");
 		if(file_exists(__DIR__.'/../config/types/'.$_device['type'].'.json')){
 		  log::add('homeconnect','debug','Found config file for product type ' . $_device['type']);
 		  $eqLogic = self::byLogicalId($_device['haId'], 'homeconnect');
@@ -673,10 +674,12 @@ class homeconnect extends eqLogic {
 			}
 		  }
 		}
+        log::add('homeconnect', 'debug',"└────────── Fin de la fonction findProduct()");
 		return $eqLogic;
 	}
 
     public static function devicesParameters($_device = '') {
+        log::add('homeconnect', 'debug',"┌────────── Fonction devicesParameters($_device)");
         $return = array();
         foreach (ls(dirname(__FILE__) . '/../config/types', '*') as $dir) {
             $path = dirname(__FILE__) . '/../config/types/' . $dir;
@@ -702,6 +705,7 @@ class homeconnect extends eqLogic {
             return array();
         }
         log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return));
+        log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
         return $return;
     }
 

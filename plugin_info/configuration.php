@@ -47,7 +47,7 @@ if (!isConnect()) {
 				</sup>
 			</label>
 			<div class="col-lg-9">
-				<span><?php echo network::getNetworkAccess('external','proto:dns') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');?></span>
+				<span><?php echo network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');?></span>
 			</div>
 		</div>
 		<div class="form-group">
