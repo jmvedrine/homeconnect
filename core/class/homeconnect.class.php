@@ -154,7 +154,7 @@ class homeconnect extends eqLogic {
 
 		// MAJ des programes en cours.
 		self::majPrograms();
-		
+
 		// MAJ des états
 		self::majState();
 
@@ -433,10 +433,40 @@ class homeconnect extends eqLogic {
 				$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
 				if ($status !== false) {
 					log::add('homeconnect', 'debug', "│ Status : " . $status);
+					$availableStatus = array();
+					foreach($response['data']['status'] as $applianceStatus) {
+						$statusParts = explode('.', $applianceStatus['key']);
+						$logicalId = $statusParts[count($statusParts) - 1];
+						$availableStatus[$logicalId] = $applianceStatus;
+					}
+					foreach($eqLogic->getCmd() as $cmd) {
+						if (array_key_exists($cmd->getLogicalId(), $availableStatus)) {
+							if (isset($availableStatus[$cmd->getLogicalId()]['name'])) {
+								$cmd->setName($availableStatus[$cmd->getLogicalId()]['name']);
+							}
+						} else {
+							$cmd->remove();
+						}
+					}
 				}
 				$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
 				if ($settings !== false) {
 					log::add('homeconnect', 'debug', "│ Settings : " . $settings);
+					$availableSettings = array();
+					foreach($response['data']['settings'] as $applianceSetting) {
+						$settingParts = explode('.', $applianceSetting['key']);
+						$logicalId = $settingParts[count($settingParts) - 1];
+						$availableSettings[$logicalId] = $applianceSetting;
+					}
+					foreach($eqLogic->getCmd() as $cmd) {
+						if (array_key_exists($cmd->getLogicalId(), $availableSettings)) {
+							if (isset($availableSettings[$cmd->getLogicalId()]['name'])) {
+								$cmd->setName($availableSettings[$cmd->getLogicalId()]['name']);
+							}
+						} else {
+							$cmd->remove();
+						}
+					}
 				}
 		}
 

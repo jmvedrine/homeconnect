@@ -13,6 +13,19 @@
       "logicalId": "connected"
     },
     {
+      "name": "Démarrage à distance",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "RemoteControlStartAllowed"
+    },
+    {
       "name": "Contrôle à distance",
       "type": "info",
       "subtype": "binary",
@@ -20,9 +33,23 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
+        "request": "BSH.Common.Status",
         "repeatEventManagement" : "never"
       },
-      "logicalId": "RemoteControlStartAllowed"
+      "logicalId": "RemoteControlActive"
+    },
+    {
+      "name": "Appareil en fonctionnement",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "LocalControlActive"
     },
     {
       "name": "Programme en cours",
@@ -33,8 +60,47 @@
       "unite": "",
       "configuration": {
         "repeatEventManagement" : "never"
-    },
+      },
       "logicalId": "programActive"
+    },
+    {
+      "name": "Statut de fonctionnement",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "OperationState"
+    },
+    {
+      "name": "Statut de la porte",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "DoorState"
+    },
+    {
+      "name": "Statut de puissance",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Setting",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "PowerState"
     }
   ]
 }
