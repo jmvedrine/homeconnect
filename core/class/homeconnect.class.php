@@ -82,16 +82,16 @@ class homeconnect extends eqLogic {
 		// curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Linux; Android 7.0; SM-G930F Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/64.0.3282.137 Mobile Safari/537.36');
 
 		$result = curl_exec($ch);
-		log::add('homeconnect','debug','Request result '.$result);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		if ($code =='200') {
 			return $result;
 		} else if ($code =='201' || $code =='204') {
+			// Cas d'un POST ou d'un PUT
 			// La requête ou la création a réussi mais rien à retourner.
 			return '';
 		} else {
-			log::add('homconnect','debug','Request failed code = ' . $code . ' result = '.$result);
+			log::add('homconnect','debug',' | Request failed code = ' . $code . ' result = '.$result);
 			return false;
 		}
 	}
@@ -154,9 +154,9 @@ class homeconnect extends eqLogic {
 
 		// MAJ des programes en cours.
 		self::majPrograms();
-        
-        // MAJ des états
-        self::majState();
+		
+		// MAJ des états
+		self::majState();
 
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction updateAppliances()");
 	}
@@ -425,7 +425,19 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('type', self::traduction($appliance['type']));
 				$eqLogic->save();
 				$found_eqLogics = self::findProduct($appliance);
-				log::add('homeconnect','debug',json_encode($found_eqLogics));
+				// log::add('homeconnect','debug',json_encode($found_eqLogics));
+				$programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
+				if ($programs !== false) {
+					log::add('homeconnect', 'debug', "│ Programs : " . $programs);
+				}
+				$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
+				if ($status !== false) {
+					log::add('homeconnect', 'debug', "│ Status : " . $status);
+				}
+				$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
+				if ($settings !== false) {
+					log::add('homeconnect', 'debug', "│ Settings : " . $settings);
+				}
 		}
 
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction homeappliances()");
