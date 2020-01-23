@@ -160,10 +160,10 @@ class homeconnect extends eqLogic {
 
 		// MAJ des réglages
 		self::majSettings();
-        
+
 		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
-            $eqLogic->refreshWidget();
-        }
+			$eqLogic->refreshWidget();
+		}
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction updateAppliances()");
 	}
 
@@ -650,7 +650,7 @@ class homeconnect extends eqLogic {
 				$response = self::request(self::API_REQUEST_URL . '/' . $eqLogic->getLogicalId() . '/status', null, 'GET', array());
 				log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 				if ($response !== false) {
-                    $response = json_decode($response, true);
+					$response = json_decode($response, true);
 					$available = array();
 					foreach($response['data']['status'] as $applianceStatus) {
 						$parts = explode('.', $applianceStatus['key']);
@@ -658,13 +658,13 @@ class homeconnect extends eqLogic {
 						$available[$logicalId] = $applianceStatus;
 					}
 					foreach($eqLogic->getCmd('info') as $cmd) {
-                        if (array_key_exists($cmd->getLogicalId(), $available)) {
+						if (array_key_exists($cmd->getLogicalId(), $available)) {
 							if (isset($available[$cmd->getLogicalId()]['value'])) {
-                                log::add('homeconnect', 'debug', "│ Mise à jour du status : ".$cmd->getName() . ' valeur ' . $available[$cmd->getLogicalId()]['value']);
+								log::add('homeconnect', 'debug', "│ Mise à jour du status : ".$cmd->getName() . ' valeur ' . $available[$cmd->getLogicalId()]['value']);
 								$eqLogic->checkAndUpdateCmd($cmd, $available[$cmd->getLogicalId()]['value']);
 							}
-                        }
-                    }
+						}
+					}
 				}
 
 			}
@@ -698,7 +698,7 @@ class homeconnect extends eqLogic {
 				$response = self::request(self::API_REQUEST_URL . '/' . $eqLogic->getLogicalId() . '/settings', null, 'GET', array());
 				log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 				if ($response !== false) {
-                    $response = json_decode($response, true);
+					$response = json_decode($response, true);
 					$available = array();
 					foreach($response['data']['status'] as $applianceSetting) {
 						$parts = explode('.', $applianceSetting['key']);
@@ -706,13 +706,13 @@ class homeconnect extends eqLogic {
 						$available[$logicalId] = $applianceSetting;
 					}
 					foreach($eqLogic->getCmd('info') as $cmd) {
-                        if (array_key_exists($cmd->getLogicalId(), $available)) {
+						if (array_key_exists($cmd->getLogicalId(), $available)) {
 							if (isset($available[$cmd->getLogicalId()]['value'])) {
-                                log::add('homeconnect', 'debug', "│ Mise à jour du setting : ".$cmd->getName() . ' valeur ' . $available[$cmd->getLogicalId()]['value']);
+								log::add('homeconnect', 'debug', "│ Mise à jour du setting : ".$cmd->getName() . ' valeur ' . $available[$cmd->getLogicalId()]['value']);
 								$eqLogic->checkAndUpdateCmd($cmd, $available[$cmd->getLogicalId()]['value']);
 							}
-                        }
-                    }
+						}
+					}
 				}
 
 			}
