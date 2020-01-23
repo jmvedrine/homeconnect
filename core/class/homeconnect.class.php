@@ -350,7 +350,7 @@ class homeconnect extends eqLogic {
 
 	private static function homeappliances() {
 	/**
-	 * Récupère la liste des objects connectés et création des objets associés.
+	 * Récupère la liste des appareils connectés et création des objets associés.
 	 *
 	 * @param			|*Cette fonction ne retourne pas de valeur*|
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
@@ -425,14 +425,15 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('type', self::traduction($appliance['type']));
 				$eqLogic->save();
 				$found_eqLogics = self::findProduct($appliance);
-				// log::add('homeconnect','debug',json_encode($found_eqLogics));
+				log::add('homeconnect','debug', ' | eqLogic ' . json_encode($found_eqLogics));
 				$programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
-				if ($programs !== false) {
-					log::add('homeconnect', 'debug', "│ Programs : " . $programs);
-				}
+				log::add('homeconnect', 'debug', "│ Programs : " . $programs);
+				// A compléter pour les programmes
+				// Status
 				$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
+				log::add('homeconnect', 'debug', "│ Status : " . $status);
 				if ($status !== false) {
-					log::add('homeconnect', 'debug', "│ Status : " . $status);
+					$response = json_decode($response, true);
 					$availableStatus = array();
 					foreach($response['data']['status'] as $applianceStatus) {
 						$statusParts = explode('.', $applianceStatus['key']);
@@ -443,15 +444,19 @@ class homeconnect extends eqLogic {
 						if (array_key_exists($cmd->getLogicalId(), $availableStatus)) {
 							if (isset($availableStatus[$cmd->getLogicalId()]['name'])) {
 								$cmd->setName($availableStatus[$cmd->getLogicalId()]['name']);
+								$cmd->save();
 							}
 						} else {
+							log::add('homeconnect','debug', ' | Suppression de la commande ' . $cmd->getName());
 							$cmd->remove();
 						}
 					}
 				}
+				// Settings
 				$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
+				log::add('homeconnect', 'debug', "│ Settings : " . $settings);
 				if ($settings !== false) {
-					log::add('homeconnect', 'debug', "│ Settings : " . $settings);
+					$response = json_decode($response, true);
 					$availableSettings = array();
 					foreach($response['data']['settings'] as $applianceSetting) {
 						$settingParts = explode('.', $applianceSetting['key']);
@@ -462,8 +467,10 @@ class homeconnect extends eqLogic {
 						if (array_key_exists($cmd->getLogicalId(), $availableSettings)) {
 							if (isset($availableSettings[$cmd->getLogicalId()]['name'])) {
 								$cmd->setName($availableSettings[$cmd->getLogicalId()]['name']);
+								$cmd->save();
 							}
 						} else {
+							log::add('homeconnect','debug', ' | Suppression de la commande ' . $cmd->getName());
 							$cmd->remove();
 						}
 					}
