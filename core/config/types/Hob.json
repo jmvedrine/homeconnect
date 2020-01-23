@@ -20,9 +20,23 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
+        "request": "BSH.Common.Status",
         "repeatEventManagement" : "never"
       },
-      "logicalId": "RemoteControlStartAllowed"
+      "logicalId": "RemoteControlActive"
+    },
+    {
+      "name": "Appareil en fonctionnement",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "LocalControlActive"
     },
     {
       "name": "Programme en cours",
@@ -35,6 +49,32 @@
         "repeatEventManagement" : "never"
       },
       "logicalId": "programActive"
+    },
+    {
+      "name": "Statut de fonctionnement",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "OperationState"
+    },
+    {
+      "name": "Statut de puissance",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Setting",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "PowerState"
     }
   ]
 }
