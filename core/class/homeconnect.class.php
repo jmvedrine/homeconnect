@@ -446,6 +446,7 @@ class homeconnect extends eqLogic {
 						$logicalId = $statusParts[count($statusParts) - 1];
 						$availableStatus[$logicalId] = $applianceStatus;
 					}
+                    log::add('homeconnect', 'debug', "│ Available status : " . print_r($availableStatus, true));
 					foreach($eqLogic->getCmd() as $cmd) {
 						if (array_key_exists($cmd->getLogicalId(), $availableStatus)) {
 							if (isset($availableStatus[$cmd->getLogicalId()]['name'])) {
@@ -453,7 +454,7 @@ class homeconnect extends eqLogic {
 								$cmd->save();
 							}
 						} else {
-							log::add('homeconnect','debug', ' | Suppression de la commande ' . $cmd->getName());
+							log::add('homeconnect','debug', ' | Suppression de la commande ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
 							$cmd->remove();
 						}
 					}
@@ -469,6 +470,7 @@ class homeconnect extends eqLogic {
 						$logicalId = $settingParts[count($settingParts) - 1];
 						$availableSettings[$logicalId] = $applianceSetting;
 					}
+                    log::add('homeconnect', 'debug', "│ Available settings : " . print_r($availableSettings, true));
 					foreach($eqLogic->getCmd() as $cmd) {
 						if (array_key_exists($cmd->getLogicalId(), $availableSettings)) {
 							if (isset($availableSettings[$cmd->getLogicalId()]['name'])) {
@@ -476,7 +478,7 @@ class homeconnect extends eqLogic {
 								$cmd->save();
 							}
 						} else {
-							log::add('homeconnect','debug', ' | Suppression de la commande ' . $cmd->getName());
+							log::add('homeconnect','debug', ' | Suppression de la commande ' . $cmd->getName(). ' logicalId ' . $cmd->getLogicalId());
 							$cmd->remove();
 						}
 					}
