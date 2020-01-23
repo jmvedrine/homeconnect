@@ -27,12 +27,27 @@ $eqLogics = homeconnect::byType('homeconnect');
 			<th>{{Appareil}}</th>
 			<th>{{Type}}</th>
 			<th>{{Connecté}}</th>
+			<th>{{Programme actif}}</th>
 		</tr>
 	</thead>
 	<tbody>
 	 <?php
 foreach ($eqLogics as $eqLogic) {
 	echo '<tr><td><a href="' . $eqLogic->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqLogic->getHumanName(true) . '</a></td>';
+    echo '<tr>';
+    echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('type') . '</span></td>';
+    $cmd = $eqLogic->getCmd('info', 'connected');
+	$value = '';
+	if (is_object($cmd)) {
+		$value = $cmd->execCmd() ? 'Oui' : 'Non';
+	}
+    echo '<td><span class="label label-info" style="font-size : 1em;">' . $value . '</span></td>';
+    $cmd = $eqLogic->getCmd('info', 'programActive');
+    $value = '';
+    if (is_object($cmd)) {
+        $value = $cmd->execCmd();
+    }
+    echo '<td><span class="label label-info" style="font-size : 1em;">' . $value . '</span></td>';
 	echo '</tr>';
 }
 ?>
