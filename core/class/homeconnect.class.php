@@ -446,7 +446,7 @@ class homeconnect extends eqLogic {
 				// Status
 				$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
 				log::add('homeconnect', 'debug', "│ Status : " . $status);
-				if ($status !== false) {
+				/* if ($status !== false) {
 					$response = json_decode($response, true);
 					$availableStatus = array();
 					foreach($response['data']['status'] as $applianceStatus) {
@@ -467,11 +467,11 @@ class homeconnect extends eqLogic {
 							}
 						}
 					}
-				}
+				} */
 				// Settings
 				$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
 				log::add('homeconnect', 'debug', "│ Settings : " . $settings);
-				if ($settings !== false) {
+				/* if ($settings !== false) {
 					$response = json_decode($response, true);
 					$availableSettings = array();
 					foreach($response['data']['settings'] as $applianceSetting) {
@@ -493,7 +493,7 @@ class homeconnect extends eqLogic {
 							}
 						}
 					}
-				}
+				} */
 		}
 
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction homeappliances()");
