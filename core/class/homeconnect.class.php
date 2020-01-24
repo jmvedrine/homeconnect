@@ -120,6 +120,21 @@ class homeconnect extends eqLogic {
 
 		// Récupération des appareils.
 		self::homeappliances();
+		// MAJ du statut de connexion des appareils.
+		self::majConnected();
+
+		// MAJ des programes en cours.
+		self::majPrograms();
+
+		// MAJ des états
+		self::majStates();
+
+		// MAJ des réglages
+		self::majSettings();
+
+		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
+			$eqLogic->refreshWidget();
+		}
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction syncHomeConnect()");
 	}
 

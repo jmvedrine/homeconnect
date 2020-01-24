@@ -18,15 +18,21 @@ Connectez les appareils à votre réseau local soit à l'aide de l'app ou en uti
 
 Associez les appareils à l'app en suivant le guide joint aux appareils.
 
-Obtension d'un Home Connect application Client ID
+Précautions importantes à bien observer
 ---
-Prérequis : Il faut absolument que l'accès externe de votre Jeedom soit bien configuré. Allez dans  Administration -> Configuration puis Réseaux et vérifez que c'est bien le cas. 
+
+**Prérequis** : Il faut absolument que l'accès externe de votre Jeedom soit bien configuré. Allez dans  Administration -> Configuration puis Réseaux et vérifiez que c'est bien le cas. 
 Si votre Jeedom n'est pas accessible de l'extérieur  l'association de Jeedom au compte Home Connect ne marchera pas et le plugin ne pourra pas fonctionner.
 
-Vérifiez aussi que que dans Configuration -> API il y a bien une **Clé API Home Connect** et que l'accès API de cette clé est sur Activé.
+**IMPORTANT** Il faut faire toute la procédure de connexion en étant connecté à votre Jeedom par l'adresse externe en http://.... si vous la faites en etant connecté par l'adresse interne en 192.168.x.y, vous aurez bien les dialogues du serveur Home Coonnect
+vous demandant de vous identifier et le dialogue vous demandant de confirmer, mais au retour dans sotre Jeedom vous obtiendrez un message d'erreur.
 
-Lors des tests, il semble que le serveur d'authentification Home Connect demande que l'adresse externe de Jeedom soit en https, le moyen le plus simple est d'utiliser les DNS de Jeedom.
+Vérifiez aussi que que dans Configuration -> API il y a bien une **Clé API Home Connect** et que l'accès API de cette clé est sur **Activé**.
 
+Lors des tests, il semble que le serveur d'authentification Home Connect demande que l'adresse externe de Jeedom soit en https et pas http, le moyen le plus simple est d'utiliser les DNS de Jeedom.
+
+Obtension d'un Home Connect application Client ID
+---
 Adhérez au programme des développeurs Home Connect en créant un compte sur le site https://developer.home-connect.com/user/register, il est important que l'adresse mail soit la même que celle utilisée lors de l'étape précédente dans l'app Home Connect pour smartphone.
 
 Enregistrez une nouvelle application sur la page https://developer.home-connect.com/applications/add
@@ -36,7 +42,8 @@ Enregistrez une nouvelle application sur la page https://developer.home-connect.
 - Application ID : par exemple Jeedom
 - OAuth Flow : Authorization Code Grant Flow
 - Home Connect User Account for Testing : l'adresse mail utilisée à l'étape précédente dans l'app Home Connect pour Smartphone
-- Redirect URI : l'url de retour disponible sur la page de configuration du plugin de la forme https://xxxxxxxxxxx.jeedom.com/plugins/homeconnect/core/php/callback.php?apikey=yyyyyyyyyyyyy
+- Redirect URI : l’url de retour disponible sur la page de configuration du plugin (elle est de la forme https://xxxxxxxxxxx.jeedom.com/plugins/homeconnect/core/php/callback.php?apikey=yyyyyyyyyyyyy 
+si vous utilisez les DNS Jeedom ou https://zzzzzzz/plugins/homeconnect/core/php/callback.php?apikey=yyyyyyyyyyyyy si vous utilisez un autre moyen de sécuriser l’accès externe de votre Jeedom).
 - Surtout ne cochez pas la case Enable One Time Token Mode
 
 Si plus tard vous désirez revoir les détails de votre application ou les modifier, allez sur la page https://developer.home-connect.com/applications
