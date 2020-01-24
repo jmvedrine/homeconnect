@@ -44,8 +44,16 @@
         "Taille tasse": "Taille tasse",
         "Avancement": "Avancement",
         "Porte": "Porte",
-        "Durée restante": "Durée restante"
-        
+        "Durée restante": "Durée restante",
+        "Prêt": "Prêt",
+        "Inactif": "Inactif",
+        "Départ différé": "Départ différé",
+        "Pause": "Pause",
+        "Marche": "Marche",
+        "Terminé": "Terminé",
+        "Erreur": "Erreur",
+        "Action requise": "Action requise",
+        "Abandon": "Abandon"
     },
     "plugins\/homeconnect\/plugin_info\/configuration.php": {
         "Client ID": "Client ID",
