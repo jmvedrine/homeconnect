@@ -904,6 +904,10 @@ class homeconnect extends eqLogic {
 
 	/** *************************** Méthodes d'instance************************ */
 	public function getImage() {
+		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('vib') . '.png';
+		if(file_exists(__DIR__.'/../../../../'.$filename)){
+			return $filename;
+		}
 		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('vib') . '.jpg';
 		if(file_exists(__DIR__.'/../../../../'.$filename)){
 			return $filename;
