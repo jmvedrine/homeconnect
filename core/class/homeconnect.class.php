@@ -54,6 +54,14 @@ class homeconnect extends eqLogic {
 		return http_build_query($params, null, '&', PHP_QUERY_RFC3986);
 	}
 
+	protected static function lastSegment($key) {
+		if (strpos($key, '.') === false) {
+			return '';
+		}
+		$parts = explode('.', $key);
+		return $parts[count($parts) - 1];
+	}
+
 	public static function request($url, $payload = null, $method = 'POST', $headers = array()) {
 		$ch = curl_init(self::baseUrl() . $url);
 
@@ -442,8 +450,7 @@ class homeconnect extends eqLogic {
 					$response = json_decode($response, true);
 					$availableStatus = array();
 					foreach($response['data']['status'] as $applianceStatus) {
-						$statusParts = explode('.', $applianceStatus['key']);
-						$logicalId = $statusParts[count($statusParts) - 1];
+						$logicalId = self::lastSegment($applianceStatus['key']);
 						$availableStatus[$logicalId] = $applianceStatus;
 					}
 					log::add('homeconnect', 'debug', "│ Available status : " . print_r($availableStatus, true));
@@ -454,13 +461,9 @@ class homeconnect extends eqLogic {
 								$cmd->save();
 							}
 						} else {
-							if ($cmd->getConfiguration('request', '') !== '') {
-								$parts = explode('.', $cmd->getConfiguration('request', ''));
-								$cmdType = $parts[count($parts) - 1];
-								if ($cmdType == 'Status') {
-									log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
-									$cmd->remove();
-								}
+							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Status') {
+								log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
+								$cmd->remove();
 							}
 						}
 					}
@@ -484,13 +487,9 @@ class homeconnect extends eqLogic {
 								$cmd->save();
 							}
 						} else {
-							if ($cmd->getConfiguration('request', '') !== '') {
-								$parts = explode('.', $cmd->getConfiguration('request', ''));
-								$cmdType = $parts[count($parts) - 1];
-								if ($cmdType == 'Setting') {
-									log::add('homeconnect','debug', ' | Suppression de la commande réglage ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
-									$cmd->remove();
-								}
+							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Setting') {
+								log::add('homeconnect','debug', ' | Suppression de la commande réglage ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
+								$cmd->remove();
 							}
 						}
 					}
