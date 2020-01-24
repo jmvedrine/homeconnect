@@ -34,7 +34,6 @@ $eqLogics = homeconnect::byType('homeconnect');
 	 <?php
 foreach ($eqLogics as $eqLogic) {
 	echo '<tr><td><a href="' . $eqLogic->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqLogic->getHumanName(true) . '</a></td>';
-    echo '<tr>';
     echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('type') . '</span></td>';
     $cmd = $eqLogic->getCmd('info', 'connected');
 	$value = '';

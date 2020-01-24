@@ -147,12 +147,112 @@
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "%",
       "configuration": {
         "request": "BSH.Common.Setting",
         "repeatEventManagement" : "never"
       },
       "logicalId": "AmbientLightCustomColor"
+    },
+    {
+      "name": "Extra sec",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "Dishcare.Dishwasher.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ExtraDry"
+    },
+    {
+      "name": "Heure de départ",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "s",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "StartInRelative"
+    },
+    {
+      "name": "Hygiène Plus",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "Dishcare.Dishwasher.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "HygienePlus"
+    },
+    {
+      "name": "VarioSpeed Plus",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "Dishcare.Dishwasher.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "VarioSpeedPlus"
+    },
+    {
+      "name": "Durée restante",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "s",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "RemainingProgramTime"
+    },
+    {
+      "name": "Eau",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "WaterForecast"
+    },
+    {
+      "name": "Energie",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "EnergyForecast"
+    },
+    {
+      "name": "Avancement actuel du programme",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",
+      "configuration": {
+        "request": " BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ProgramProgress"
     }
   ]
 }
