@@ -105,27 +105,162 @@
     {
       "name": "Température",
       "type": "info",
-      "subtype": "numeric",
+      "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "°C",
       "configuration": {
         "request": "LaundryCare.Washer.Option",
         "repeatEventManagement" : "never"
       },
       "logicalId": "Temperature"
     },
+    {
       "name": "Vitesse essorage",
       "type": "info",
-      "subtype": "numeric",
+      "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "tr/min",
       "configuration": {
         "request": "LaundryCare.Washer.Option",
         "repeatEventManagement" : "never"
       },
       "logicalId": "SpinSpeed"
     },
+    {
+      "name": "Dosage i-Dos de détergent",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "IDos1DosingLevel"
+    },
+    {
+      "name": "i-DOS: dosage de lessive liquide ou d'adoucissant",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "IDos2DosingLevel"
+    },
+    {
+      "name": "Prélavage",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "Prewash"
+    },
+    {
+      "name": "Rinçage plus",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "RinsePlus1"
+    },
+    {
+      "name": "VarioPerfect",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "LaundryCare.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "VarioPerfect"
+    },
+    {
+      "name": "Eau",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "WaterForecast"
+    },
+    {
+      "name": "Energie",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "EnergyForecast"
+    },
+    {
+      "name": "Statut du processus",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ProcessPhase"
+    },
+    {
+      "name": "Durée restante",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "s",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "RemainingProgramTime"
+    },
+    {
+      "name": "Temps de programme restant estimé",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "RemainingProgramTimeIsEstimated"
+    },
+    {
+      "name": "Avancement actuel du programme",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",
+      "configuration": {
+        "request": " BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "ProgramProgress"
+    }
   ]
 }

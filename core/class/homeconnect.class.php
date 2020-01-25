@@ -616,32 +616,28 @@ class homeconnect extends eqLogic {
 					foreach ($response['data']['options'] as $value) {
 						log::add('homeconnect', 'debug', "│ option : " . print_r($value, true));
 						// Récupération du nom du programme / option.
-						$program = self::lastSegment($value['key']);
-
-						// Récupération de la valeur du programme / option.
-						switch ($program) {
-
-							case "Temperature" :
-								$reglage = substr(strrchr($value['value'], "."), 3);
-								break;
-
-							case "SpinSpeed" :
-								$reglage = substr(strrchr($value['value'], "."), 4);
-								break;
-
-							default :
-								$reglage = self::traduction($value['value']);
-
-						}
-
-						// Traduction en Français du nom du program / option.
-						$program = self::traduction($program);
-						$cmd = $eqLogic->getCmd(null, $program);
+						$logicalId = self::lastSegment($value['key']);
+						$cmd = $eqLogic->getCmd(null, $logicalId);
+						$reglage = '';
 						if (is_object($cmd)) {
-							$eqLogic->checkAndUpdateCmd($program,$reglage);
-							log::add('homeconnect', 'debug', "│ Option : ".$program." - Réglage :".$reglage);
+							// Récupération de la valeur du programme / option.
+							if (isset($value['displayvalue'])) {
+									$reglage = $value['displayvalue'];
+							} else {
+								if (isset($value['value'])) {
+									if ($cmd->getSubType() == 'string') {
+										$reglage = self::traduction($value['value']);
+									} else {
+										$reglage = $value['value'];
+									}
+								} else {
+									log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'a pas de valeur");
+								}
+							}
+							$eqLogic->checkAndUpdateCmd($logicalId, $reglage);
+							log::add('homeconnect', 'debug', "│ Option : ".$logicalId." - Valeur :".$reglage);
 						} else {
-							log::add('homeconnect', 'debug', "│ La commande : ".$program." n'existe pas");
+							log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'existe pas");
 						}
 					}
 
@@ -681,20 +677,31 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 				if ($response !== false) {
 					$response = json_decode($response, true);
-					$available = array();
-					foreach($response['data']['status'] as $applianceStatus) {
-						$available[self::lastSegment($applianceStatus['key'])] = $applianceStatus;
-					}
-					foreach($eqLogic->getCmd('info') as $cmd) {
-						if (array_key_exists($cmd->getLogicalId(), $available)) {
-							if (isset($available[$cmd->getLogicalId()]['value'])) {
-								$value = $available[$cmd->getLogicalId()]['value'];
-								if ($cmd->getSubType() == 'string') {
-									$value = self::traduction(self::lastSegment($value));
+					foreach($response['data']['status'] as $value) {
+						log::add('homeconnect', 'debug', "│ status : " . print_r($value, true));
+						// Récupération du logicalId du status.
+						$logicalId = self::lastSegment($value['key']);
+						$cmd = $eqLogic->getCmd(null, $logicalId);
+						$reglage = '';
+						if (is_object($cmd)) {
+							// Récupération de la valeur du status.
+							if (isset($value['displayvalue'])) {
+									$reglage = $value['displayvalue'];
+							} else {
+								if (isset($value['value'])) {
+									if ($cmd->getSubType() == 'string') {
+										$reglage = self::traduction($value['value']);
+									} else {
+										$reglage = $value['value'];
+									}
+								} else {
+									log::add('homeconnect', 'debug', "│ le status : ".$logicalId." n'a pas de valeur");
 								}
-								log::add('homeconnect', 'debug', "│ Mise à jour du status : ".$cmd->getName() . ' valeur ' . $value);
-								$eqLogic->checkAndUpdateCmd($cmd, $value);
 							}
+							$eqLogic->checkAndUpdateCmd($logicalId, $reglage);
+							log::add('homeconnect', 'debug', "│ mise à jour status : ".$logicalId." - Valeur :".$reglage);
+						} else {
+							log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'existe pas");
 						}
 					}
 				}
@@ -729,19 +736,31 @@ class homeconnect extends eqLogic {
 				if ($response !== false) {
 					$response = json_decode($response, true);
 					$available = array();
-					foreach($response['data']['settings'] as $applianceSetting) {
-						$available[self::lastSegment($applianceSetting['key'])] = $applianceSetting;
-					}
-					foreach($eqLogic->getCmd('info') as $cmd) {
-						if (array_key_exists($cmd->getLogicalId(), $available)) {
-							if (isset($available[$cmd->getLogicalId()]['value'])) {
-								$value = $available[$cmd->getLogicalId()]['value'];
-								if ($cmd->getSubType() == 'string') {
-									$value = self::traduction(self::lastSegment($value));
+					foreach($response['data']['settings'] as $value) {
+						log::add('homeconnect', 'debug', "│ setting : " . print_r($value, true));
+						// Récupération du logicalId du setting.
+						$logicalId = self::lastSegment($value['key']);
+						$cmd = $eqLogic->getCmd(null, $logicalId);
+						$reglage = '';
+						if (is_object($cmd)) {
+							// Récupération de la valeur du setting.
+							if (isset($value['displayvalue'])) {
+									$reglage = $value['displayvalue'];
+							} else {
+								if (isset($value['value'])) {
+									if ($cmd->getSubType() == 'string') {
+										$reglage = self::traduction($value['value']);
+									} else {
+										$reglage = $value['value'];
+									}
+								} else {
+									log::add('homeconnect', 'debug', "│ le setting : ".$logicalId." n'a pas de valeur");
 								}
-								log::add('homeconnect', 'debug', "│ Mise à jour du réglage : ".$cmd->getName() . ' valeur ' . $value);
-								$eqLogic->checkAndUpdateCmd($cmd, $value);
 							}
+							$eqLogic->checkAndUpdateCmd($logicalId, $reglage);
+							log::add('homeconnect', 'debug', "│ Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
+						} else {
+							log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'existe pas");
 						}
 					}
 				}
@@ -1068,8 +1087,47 @@ class homeconnectCmd extends cmd {
 	 */
 
 	public function execute($_options = array()) {
-		//switch ($this->getType)
-
+		if ($this->getType() == 'info') {
+			return;
+		}
+		$method = 'PUT';
+		// A voir : faut il ajouter qqchose aux headers par defaut de request
+		$headers = array();
+		$eqLogic = $this->getEqLogic();
+		$haid = $eqLogic->getConfiguration('haid', '');
+		// A voir : est-ce utile ?
+		$eqType = $eqLogic->getConfiguration('type', '');
+		// Bien penser à mettre la partie après haid de l'url dans configuration request de la commande
+		$request = $this->getConfiguration('request', '');
+		// A voir est-ce utile ?
+		$logicalId = $this->getLogicalId();
+		$replace = array();
+		switch ($this->getSubType()) {
+			case 'slider':
+			$replace['#slider#'] = intval($_options['slider']);
+			break;
+			case 'color':
+			$replace['#color#'] = $_options['color'];
+			break;
+			case 'select':
+			$replace['#select#'] = $_options['select'];
+			break;
+			case 'message':
+			$replace['#title#'] = $_options['title'];
+			$replace['#message#'] = $_options['message'];
+			if ($_options['message'] == '' && $_options['title'] == '') {
+			  throw new Exception(__('Le message et le sujet ne peuvent pas être vide', __FILE__));
+			}
+			break;
+		}
+		// A compléter avec les bons paramètres qui dépendent de la commande
+		// Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
+		$parameters = array();
+		$payload= json_encode($parameters);
+		$url = self::API_REQUEST_URL . '/'. $haid . '/' . $request;
+		log::add('homeconnect', 'debug'," | Url : " . $url);
+		$response = self::request($url, $payload, $method, $headers);
+		log::add('homeconnect', 'debug'," | Server response : " . $response);
 	}
 
 	/** *************************** Getters ********************************* */
