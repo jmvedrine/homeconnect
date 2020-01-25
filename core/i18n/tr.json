@@ -53,7 +53,8 @@
         "Terminé": "Terminé",
         "Erreur": "Erreur",
         "Action requise": "Action requise",
-        "Abandon": "Abandon"
+        "Abandon": "Abandon",
+        "Fermée": "Fermée"
     },
     "plugins\/homeconnect\/plugin_info\/configuration.php": {
         "Client ID": "Client ID",

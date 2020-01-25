@@ -101,9 +101,9 @@ class homeconnect extends eqLogic {
 		} else {
 			$response = json_decode($response, true);
 			if (isset($result['error'])){
-				log::add('homeconnect','info','La requête a échoué ' . $result['error']['description']);
+				log::add('homeconnect','info',"La requête $url a échoué " . $result['error']['description']);
 			} else {
-				log::add('homeconnect','info','La requête a échoué code = ' . $code . ' résultat = '.$result);
+				log::add('homeconnect','info',"La requête $url a échoué code = " . $code . ' résultat = '.$result);
 			}
 			return false;
 		}
@@ -440,7 +440,7 @@ class homeconnect extends eqLogic {
 					event::add('jeedom::alert', array(
 						'level' => 'warning',
 						'page' => 'homeconnect',
-						'message' => __('Nouveau produit detecté', __FILE__),
+					    'message' => __('Nouveau produit detecté', __FILE__).$_device['name'],
 					));
 					// Création de l'appareil.
 					log::add('homeconnect', 'debug', "├──────────");
