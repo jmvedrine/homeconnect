@@ -78,6 +78,17 @@ if (!isConnect()) {
 				<input type="checkbox" class="configKey tooltips" data-l1key="demo_mode">
 			</div>
 		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">
+				{{Client ID pour le mode démo}}
+				<sup>
+					<i class="fa fa-question-circle tooltips" title="{{Récupérez ce paramètre sur le site Home Connect (https://developer.home-connect.com/applications) dans le carré API Web Client}}" style="font-size : 1em;color:grey;"></i>
+				</sup>
+			</label>
+			<div class="col-sm-3">
+				<input type="text" class="configKey form-control" data-l1key="demo_client_id"/>
+			</div>
+		</div>
 		<?php
 		// if (empty(config::byKey('auth','homeconnect'))){
 			echo ('

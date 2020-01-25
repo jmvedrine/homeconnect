@@ -101,6 +101,31 @@
         "repeatEventManagement" : "never"
       },
       "logicalId": "PowerState"
-    }
+    },
+    {
+      "name": "Température",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "Temperature"
+    },
+      "name": "Vitesse essorage",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "tr/min",
+      "configuration": {
+        "request": "LaundryCare.Washer.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "SpinSpeed"
+    },
   ]
 }

@@ -216,6 +216,7 @@ class homeconnect extends eqLogic {
 				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
 				'WasherDryer-Control', 'WineCooler-Control']);
 			$parameters['user'] = 'me'; // Can be anything non-zero length
+			$parameters['client_id'] = config::byKey('demo_client_id','homeconnect','',true);
 		} else {
 			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
 				'CoffeeMaker-Control', 'CleaningRobot-Control',
@@ -224,8 +225,8 @@ class homeconnect extends eqLogic {
 				'CookProcessor-Control', 'FridgeFreezer-Control',
 				'WasherDryer-Control', 'WineCooler-Control']);
 			$parameters['redirect_uri'] = network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
+			$parameters['client_id'] = config::byKey('client_id','homeconnect','',true);
 		}
-		$parameters['client_id'] = config::byKey('client_id','homeconnect','',true);
 		$parameters['response_type'] = 'code';
 		$state = bin2hex(random_bytes(16));
 		$_SESSION['oauth2state'] = $state;
@@ -905,6 +906,9 @@ class homeconnect extends eqLogic {
 				'On' => __("Marche", __FILE__),
 				'Off' => __("Arrêt", __FILE__),
 				'Standby' => __("En attente", __FILE__),
+				'Open' => __("Ouverte", __FILE__),
+				'Closed' => __("Fermée", __FILE__),
+				'Locked' => __("Verrouillée", __FILE__),
 				];
 
 				(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
