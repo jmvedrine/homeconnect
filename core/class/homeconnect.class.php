@@ -905,6 +905,7 @@ class homeconnect extends eqLogic {
 				'On' => __("Marche", __FILE__),
 				'Off' => __("Arrêt", __FILE__),
 				'Standby' => __("En attente", __FILE__),
+		        'Closed' => __("Fermée", __FILE__)
 				];
 
 				(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
