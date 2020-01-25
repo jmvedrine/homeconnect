@@ -62,6 +62,14 @@ class homeconnect extends eqLogic {
 		return $parts[count($parts) - 1];
 	}
 
+	protected static function firstSegment($key) {
+		if (strpos($key, '.') === false) {
+			return '';
+		}
+		$parts = explode('.', $key);
+		return $parts[0];
+	}
+
 	public static function request($url, $payload = null, $method = 'POST', $headers = array()) {
 		$ch = curl_init(self::baseUrl() . $url);
 
@@ -210,20 +218,17 @@ class homeconnect extends eqLogic {
 		$clientId = config::byKey('client_id','homeconnect','',true);
 		$redirectUri = urlencode(network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
 		if (config::byKey('demo_mode','homeconnect')) {
-			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
-				'CoffeeMaker-Control', 'CleaningRobot-Control',
-				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
-				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
-				'WasherDryer-Control', 'WineCooler-Control']);
+            $parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
+				'CoffeeMaker-Control', 'Dishwasher-Control',
+				 'Dryer-Control', , 'FridgeFreezer-Control',
+				'Oven-Control', 'Washer-Control']);
 			$parameters['user'] = 'me'; // Can be anything non-zero length
 			$parameters['client_id'] = config::byKey('demo_client_id','homeconnect','',true);
 		} else {
 			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
-				'CoffeeMaker-Control', 'CleaningRobot-Control',
-				'Dishwasher-Control', 'Dryer-Control', 'Freezer-Control',
-				'Hood-Control', 'Refrigerator-Control', 'Washer-Control',
-				'CookProcessor-Control', 'FridgeFreezer-Control',
-				'WasherDryer-Control', 'WineCooler-Control']);
+				'CoffeeMaker-Control', 'Dishwasher-Control',
+				'Dryer-Control', 'Freezer-Control', 'Hood-Control',
+				'Refrigerator-Control', 'Washer-Control']);
 			$parameters['redirect_uri'] = network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 			$parameters['client_id'] = config::byKey('client_id','homeconnect','',true);
 		}
@@ -1120,10 +1125,15 @@ class homeconnectCmd extends cmd {
 			}
 			break;
 		}
-		// A compléter avec les bons paramètres qui dépendent de la commande
-		// Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
-		$parameters = array();
-		$payload= json_encode($parameters);
+
+        if (homeconnect::firstSegment($request) == 'commands') {
+            $payload = null;
+        } else {
+            // A compléter avec les bons paramètres qui dépendent de la commande
+            // Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
+            $parameters = array();
+            $payload= json_encode($parameters);
+        }
 		$url = self::API_REQUEST_URL . '/'. $haid . '/' . $request;
 		log::add('homeconnect', 'debug'," | Url : " . $url);
 		$response = self::request($url, $payload, $method, $headers);
