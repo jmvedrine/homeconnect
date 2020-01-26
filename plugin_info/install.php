@@ -18,16 +18,16 @@
 
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
-function template_install() {
+function homeconnect_install() {
     
 }
 
-function template_update() {
-    
+function homeconnect_update() {
+    message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
 }
 
 
-function template_remove() {
+function homeconnect_remove() {
     
 }
 

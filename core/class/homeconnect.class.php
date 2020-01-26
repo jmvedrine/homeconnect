@@ -107,11 +107,11 @@ class homeconnect extends eqLogic {
 			// La requête ou la création a réussi mais rien à retourner.
 			return '';
 		} else {
-			$response = json_decode($response, true);
+			$result = json_decode($result, true);
 			if (isset($result['error'])){
 				log::add('homeconnect','info',"La requête $url a échoué " . $result['error']['description']);
 			} else {
-				log::add('homeconnect','info',"La requête $url a échoué code = " . $code . ' résultat = '.$result);
+				log::add('homeconnect','debug',"La requête $url a retourné un code = " . $code . ' résultat = '.$result);
 			}
 			return false;
 		}
@@ -1120,9 +1120,9 @@ class homeconnectCmd extends cmd {
 			$payload= json_encode($parameters);
 		}
 		log::add('homeconnect', 'debug'," | Payload : " . $payload);
-		$url = self::API_REQUEST_URL . '/'. $haid . '/' . $request;
+		$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $request;
 		log::add('homeconnect', 'debug'," | Url : " . $url);
-		$response = self::request($url, $payload, $method, $headers);
+		$response = homeconnect::request($url, $payload, $method, $headers);
 		log::add('homeconnect', 'debug'," | Server response : " . $response);
 	}
 

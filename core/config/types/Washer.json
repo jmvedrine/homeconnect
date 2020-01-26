@@ -270,8 +270,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "commands/BSH.Common.Command.PauseProgram",
-        "value" : true,
-        "repeatEventManagement" : "never"
+        "key": "BSH.Common.Command.PauseProgram",
+        "value" : true
       },
       "logicalId": "PUT::BSH.Common.Command.PauseProgram"
     },
