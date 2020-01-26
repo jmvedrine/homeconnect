@@ -107,11 +107,11 @@ class homeconnect extends eqLogic {
 			// La requête ou la création a réussi mais rien à retourner.
 			return '';
 		} else {
-			$response = json_decode($response, true);
+			$result = json_decode($result, true);
 			if (isset($result['error'])){
 				log::add('homeconnect','info',"La requête $url a échoué " . $result['error']['description']);
 			} else {
-				log::add('homeconnect','info',"La requête $url a échoué code = " . $code . ' résultat = '.$result);
+				log::add('homeconnect','debug',"La requête $url a retourné un code = " . $code . ' résultat = '.$result);
 			}
 			return false;
 		}
