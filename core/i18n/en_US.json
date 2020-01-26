@@ -1,0 +1,59 @@
+{
+    "plugins\/homeconnect\/core\/ajax\/homeconnect.ajax.php": {
+        "Aucune méthode correspondante à : ": "No method corresponding to:",
+        "401 - Accès non autorisé": "401 - Unauthorized Access"
+    },
+    "plugins\/homeconnect\/desktop\/php\/homeconnect.php": {
+        "401 - Accès non autorisé": "401 - Unauthorized Access",
+        "Gestion": "Management",
+        "Synchronisation": "Synchronization",
+        "Configuration": "Setup",
+        "Santé": "Health",
+        "Mes appareils": "My devices",
+        "Sauvegarder": "Save",
+        "Supprimer": "Delete",
+        "Configuration avancée": "Advanced configuration",
+        "Equipement": "Device",
+        "Commandes": "Commands",
+        "Nom de l'appareil": "Name of the device",
+        "Identifiant": "Identifiant",
+        "Général": "General",
+        "Objet parent": "Parent object",
+        "Aucun": "None",
+        "Catégorie": "Category",
+        "Activer": "Enable",
+        "Visible": "Visible",
+        "Marque": "Brand",
+        "Modèle": "Model",
+        "Nom": "Name",
+        "Sous-Type": "Subtype",
+        "Paramètres": "Settings",
+        "Options": "Options",
+        "Action": "Action"
+    },
+    "plugins\/homeconnect\/desktop\/modal\/health.php": {
+        "Appareil": "Device",
+        "Type": "Type",
+        "Connecté": "Connected"
+    },
+    "plugins\/homeconnect\/core\/class\/homeconnect.class.php": {
+        "Connecté(e)": "Connected",
+        "Contrôle à distance": "Remote control",
+        "Programe": "Programe",
+        "Intensité café": "Intensité café",
+        "Taille tasse": "Taille tasse",
+        "Avancement": "Avancement",
+        "Porte": "Porte",
+        "Durée restante": "Remaining time"
+        
+    },
+    "plugins\/homeconnect\/plugin_info\/configuration.php": {
+        "Client ID": "Client ID",
+        "Client ID sur site développeur": "Client ID sur site développeur",
+        "Client Secret": "Client secret",
+        "Client secret sur site développeur": "Client secret sur site développeur",
+        "Client Redirect URL": "Client Redirect URL",
+        "Url de redirection sur site développeur": "Url de redirection sur site développeur",
+        "Se connecter": "Se connecter"
+    }
+}
