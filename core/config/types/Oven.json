@@ -228,32 +228,6 @@
       "logicalId": "ElapsedProgramTime"
     },
     {
-      "name": "Eau",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "WaterForecast"
-    },
-    {
-      "name": "Energie",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "EnergyForecast"
-    },
-    {
       "name": "Avancement actuel du programme",
       "type": "info",
       "subtype": "numeric",

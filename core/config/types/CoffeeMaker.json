@@ -25,6 +25,19 @@
       "logicalId": "RemoteControlStartAllowed"
     },
     {
+      "name": "Appareil en fonctionnement",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "LocalControlActive"
+    },
+    {
       "name": "Programme en cours",
       "type": "info",
       "subtype": "string",
@@ -37,6 +50,32 @@
       "logicalId": "programActive"
     },
     {
+      "name": "Statut de fonctionnement",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "OperationState"
+    },
+    {
+      "name": "Statut de puissance",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Setting",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "PowerState"
+    },
+    {
       "name": "Intensité café",
       "type": "info",
       "subtype": "string",
@@ -44,9 +83,10 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
+        "request": "ConsumerProducts.CoffeeMaker.Option",
         "repeatEventManagement" : "never"
       },
-      "logicalId": "ConsumerProducts.CoffeeMaker.Option.BeanAmount"
+      "logicalId": "BeanAmount"
     },
     {
       "name": "Taille tasse",
@@ -56,9 +96,10 @@
       "isHistorized": 0,
       "unite": "ml",
       "configuration": {
+        "request": "ConsumerProducts.CoffeeMaker.Option",
         "repeatEventManagement" : "never"
       },
-      "logicalId": "ConsumerProducts.CoffeeMaker.Option.FillQuantity"
+      "logicalId": "FillQuantity"
     },
     {
       "name": "Température",
@@ -68,9 +109,10 @@
       "isHistorized": 0,
       "unite": "°C",
       "configuration": {
+        "request": "ConsumerProducts.CoffeeMaker.Option",
         "repeatEventManagement" : "never"
       },
-      "logicalId": "ConsumerProducts.CoffeeMaker.Option.CoffeeTemperature"
+      "logicalId": "CoffeeTemperature"
     }
   ]
 }
