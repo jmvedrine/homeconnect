@@ -683,7 +683,7 @@ class homeconnect extends eqLogic {
 							} else {
 								if (isset($value['value'])) {
 									if ($cmd->getSubType() == 'string') {
-										$reglage = self::traduction($value['value']);
+										$reglage = self::traduction(self::lastSegment($value['value']));
 									} else {
 										$reglage = $value['value'];
 									}
@@ -747,7 +747,7 @@ class homeconnect extends eqLogic {
 							} else {
 								if (isset($value['value'])) {
 									if ($cmd->getSubType() == 'string') {
-										$reglage = self::traduction($value['value']);
+										$reglage = self::traduction(self::lastSegment($value['value']));
 									} else {
 										$reglage = $value['value'];
 									}
@@ -805,7 +805,7 @@ class homeconnect extends eqLogic {
 							} else {
 								if (isset($value['value'])) {
 									if ($cmd->getSubType() == 'string') {
-										$reglage = self::traduction($value['value']);
+										$reglage = self::traduction(self::lastSegment($value['value']));
 									} else {
 										$reglage = $value['value'];
 									}

@@ -3,6 +3,8 @@ Présentation
 Ce plugin permet de récupérer des informations des appareils utilisant le protocole Home Connect .
 Il a été développé à l'origine par Sartog.
 
+Un mode démo utilisant des appareils simulés est disponible vous permettant de tester le plugin même si vous ne possédez pas d'appareil ménager Home Connect.
+
 
 Installation/Configuration
 ===
@@ -70,6 +72,11 @@ Rendez vous sur la page équipement du plugin (Menu Plugins -> Objets connectés
 Vos appareils apparaissent dans la section **Mes appareils** avec une image les représentant s'ils sont connus du plugin ou une icône générique dans le cas contraire (les appareils simulés n'ont pas d'image car les modèles ne sont pas réels).
 
 Aidez-nous à améliorer le plugin: si l'image de votre appareil n’est pas disponible, signalez le sur le forum communautaire en indiquant le modèle tel qu'il apparaît dans la page de votre équipement.
+
+Commandes
+===
+
+Les commandes disponibles dépendent du type d'appareil et du modèle.
 
 FAQ
 ===
