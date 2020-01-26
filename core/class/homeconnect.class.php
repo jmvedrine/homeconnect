@@ -1120,9 +1120,9 @@ class homeconnectCmd extends cmd {
 			$payload= json_encode($parameters);
 		}
 		log::add('homeconnect', 'debug'," | Payload : " . $payload);
-		$url = self::API_REQUEST_URL . '/'. $haid . '/' . $request;
+		$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $request;
 		log::add('homeconnect', 'debug'," | Url : " . $url);
-		$response = self::request($url, $payload, $method, $headers);
+		$response = homeconnect::request($url, $payload, $method, $headers);
 		log::add('homeconnect', 'debug'," | Server response : " . $response);
 	}
 
