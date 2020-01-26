@@ -49,7 +49,7 @@
 	if($(this).value() == null){
 		return;
 	}
-	$('#img_applianceModel').attr('src','plugins/homeconnect/core/config/images/'+$(this).value()+'.jpg');
+    $('#img_device').attr("src", 'plugins/homeconnect/core/config/images/'+$(this).value()+'.jpg');
 });
 
 $("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true});

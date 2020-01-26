@@ -132,12 +132,19 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						</fieldset>
 					</form>
 				</div>
-
-				<div class="col-xs-6">
-					<center>
-						<img src="plugins/homeconnect/core/config/images/default.jpg" id="img_applianceModel" style="height : 300px;" />
-					</center>
+				<div class="col-sm-6">
+					<form class="form-horizontal">
+						<fieldset>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-8">
+                                    <img src="core/img/no_image.gif" data-original=".jpg" id="img_device" class="img-responsive" style="max-height : 250px;" onerror="this.src='plugins/homeconnect/core/config/images/default.jpg'"/>
+                                </div>
+                            </div>
+					</fieldset>
+				    </form>
 				</div>
+
 			</div>
 
 			<div role="tabpanel" class="tab-pane" id="commandtab">
