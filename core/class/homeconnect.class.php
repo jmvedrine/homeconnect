@@ -539,6 +539,7 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"│");
 		log::add('homeconnect', 'debug',"├───── Fonction majConnected()");
 
+		// A voir si l'appareil vient de se connecter n'y aurait-il pas des choses à faire ?
 		$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
 		$response = json_decode($response, true);
 		foreach($response['data']['homeappliances'] as $key) {
@@ -564,14 +565,6 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
 					log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
 				}
-			} else {
-				log::add('homeconnect', 'debug', "├───── [Erreur]");
-				log::add('homeconnect', 'debug', "│ L'appareil n'existe pas :");
-				log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
-				log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
-				log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
-				log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
-				log::add('homeconnect', 'debug', "├─────");
 			}
 		}
 
@@ -646,11 +639,12 @@ class homeconnect extends eqLogic {
 					}
 
 					log::add('homeconnect', 'debug', "├─────");
+				} else {
+					// Pas de programme actif
+					$eqLogic->checkAndUpdateCmd('programActive', __("Pas de programme actif", __FILE__));
 				}
-
-				// RAZ des info.
-				// self::razInfo($eqLogic->getLogicalId());
 			}
+			// A voir : si l'appareil n'est pas connecté, ne faudrait-il pas réinitialiser le programme actif ?
 		}
 
 		log::add('homeconnect', 'debug',"├───── Fin de la fonction majPrograms()");
@@ -1112,17 +1106,17 @@ class homeconnectCmd extends cmd {
 			// Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
 			$parameters = array('data' => array());
 			if ($this->getConfiguration('key', '') !== '') {
-                $parameters['data']['key'] = $this->getConfiguration('key', '');
-            }
+				$parameters['data']['key'] = $this->getConfiguration('key', '');
+			}
 			if ($this->getConfiguration('value', '') !== '') {
-                $parameters['data']['value'] = $this->getConfiguration('value', '');
-            }
+				$parameters['data']['value'] = $this->getConfiguration('value', '');
+			}
 			if ($this->getConfiguration('unit', '') !== '') {
-                $parameters['data']['unit'] = $this->getConfiguration('unit', '');
-            }
+				$parameters['data']['unit'] = $this->getConfiguration('unit', '');
+			}
 			if ($this->getConfiguration('type', '') !== '') {
-                $parameters['data']['type'] = $this->getConfiguration('type', '');
-            }
+				$parameters['data']['type'] = $this->getConfiguration('type', '');
+			}
 			$payload= json_encode($parameters);
 		}
 		log::add('homeconnect', 'debug'," | Payload : " . $payload);
