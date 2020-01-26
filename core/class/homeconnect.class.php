@@ -218,9 +218,9 @@ class homeconnect extends eqLogic {
 		$clientId = config::byKey('client_id','homeconnect','',true);
 		$redirectUri = urlencode(network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect'));
 		if (config::byKey('demo_mode','homeconnect')) {
-            $parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
+			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
 				'CoffeeMaker-Control', 'Dishwasher-Control',
-				 'Dryer-Control', , 'FridgeFreezer-Control',
+				 'Dryer-Control', 'FridgeFreezer-Control',
 				'Oven-Control', 'Washer-Control']);
 			$parameters['user'] = 'me'; // Can be anything non-zero length
 			$parameters['client_id'] = config::byKey('demo_client_id','homeconnect','',true);
@@ -445,7 +445,7 @@ class homeconnect extends eqLogic {
 					event::add('jeedom::alert', array(
 						'level' => 'warning',
 						'page' => 'homeconnect',
-					    'message' => __('Nouveau produit detecté', __FILE__).$_device['name'],
+						'message' => __('Nouveau produit detecté', __FILE__).$_device['name'],
 					));
 					// Création de l'appareil.
 					log::add('homeconnect', 'debug', "├──────────");
@@ -591,8 +591,7 @@ class homeconnect extends eqLogic {
 
 		// Parcours des appareils existants.
 		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
-			$cmdConnected = $eqLogic->getCmd(null, 'connected');
-			if ($eqLogic->getIsEnable() && $cmdConnected->execCmd()) {
+			if ($eqLogic->isConnected()) {
 				log::add('homeconnect', 'debug', "├─────");
 				log::add('homeconnect', 'debug', "│ MAJ du programme actif :");
 				log::add('homeconnect', 'debug', "│ Type : ".$eqLogic->getConfiguration('type'));
@@ -670,8 +669,7 @@ class homeconnect extends eqLogic {
 
 		// Parcours des appareils existants.
 		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
-			$cmdConnected = $eqLogic->getCmd(null, 'connected');
-			if ($eqLogic->getIsEnable() && $cmdConnected->execCmd()) {
+			if ($eqLogic->isConnected()) {
 				log::add('homeconnect', 'debug', "├─────");
 				log::add('homeconnect', 'debug', "│ MAJ des états :");
 				log::add('homeconnect', 'debug', "│ Type : ".$eqLogic->getConfiguration('type'));
@@ -728,8 +726,7 @@ class homeconnect extends eqLogic {
 
 		// Parcours des appareils existants.
 		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
-			$cmdConnected = $eqLogic->getCmd(null, 'connected');
-			if ($eqLogic->getIsEnable() && $cmdConnected->execCmd()) {
+			if ($eqLogic->isConnected()) {
 				log::add('homeconnect', 'debug', "├─────");
 				log::add('homeconnect', 'debug', "│ MAJ des réglages :");
 				log::add('homeconnect', 'debug', "│ Type : ".$eqLogic->getConfiguration('type'));
@@ -774,73 +771,10 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"├───── Fin de la fonction majState()");
 	}
 
-	private static function razInfo($haId) {
-	/**
-	 * Remise à zéro des informations d'une machine.
-	 *
-	 * @param	$haId		string		Id de la machine en cours.
-	 * @return			|*Cette fonction ne retourne pas de valeur*|
-	 */
-
-		log::add('homeconnect', 'debug',"/** ******************** function razInfo ******************** **/");
-
-		$eqLogic = eqLogic::byLogicalId($haId, 'homeconnect');
-
-		foreach($eqLogic->getCmd() as $cmd) {
-
-			if ($cmd->getLogicalId() == "programActive") {
-
-				log::add('homeconnect','debug',"MAJ de la valeur de ".$cmd->getLogicalId()." (NoPrg) de la machine ".$eqLogic->getConfiguration('type'));
-				$eqLogic->checkAndUpdateCmd($cmd->getLogicalId(),"NoPrg");
-
-			}else if ($cmd->getLogicalId() != "connected") {
-
-				log::add('homeconnect','debug',"MAJ de la valeur de ".$cmd->getLogicalId()." (null) de la machine ".$eqLogic->getConfiguration('type'));
-				$eqLogic->checkAndUpdateCmd($cmd->getLogicalId(), "");
-			}
-		}
-	}
-
 	public static function findProduct($_appliance) {
 		log::add('homeconnect', 'debug',"┌────────── Fonction findProduct($_appliance)");
-		if(file_exists(__DIR__.'/../config/types/'.$_appliance['type'].'.json')){
-		  log::add('homeconnect','debug','Found config file for product type ' . $_appliance['type']);
-		  $eqLogic = self::byLogicalId($_appliance['haId'], 'homeconnect');
-		  $products = json_decode(file_get_contents(__DIR__.'/../config/types/'.$_appliance['type'].'.json'),true);
-		  log::add('homeconnect','debug','Product : '.file_get_contents(__DIR__.'/../config/types/'.$_appliance['type'].'.json'));
-		  $link_cmds = array();
-		  foreach ($products['commands'] as $product) {
-			 log::add('homeconnect','debug','Commande : '.json_encode($product));
-			$cmd = $eqLogic->getCmd(null, $product['logicalId']);
-			if(is_object($cmd)){
-			  continue;
-			}
-			$cmd = new homeconnectCmd();
-			utils::a2o($cmd, $product);
-			$cmd->setLogicalId($product['logicalId']);
-			$cmd->setEqLogic_id($eqLogic->getId());
-			$cmd->setName(__($product['name'], __FILE__));
-			$cmd->save();
-			if (isset($product['value'])) {
-			  $link_cmds[$cmd->getId()] = $product['value'];
-			}
-		  }
-		} else {
-			log::add('homeconnect','debug','No config file for product type ' . $_appliance['type']);
-		}
-		if (count($link_cmds) > 0) {
-		  foreach ($eqLogic->getCmd() as $eqLogic_cmd) {
-			foreach ($link_cmds as $cmd_id => $link_cmd) {
-			  if ($link_cmd == $eqLogic_cmd->getName()) {
-				$cmd = cmd::byId($cmd_id);
-				if (is_object($cmd)) {
-				  $cmd->setValue($eqLogic_cmd->getId());
-				  $cmd->save();
-				}
-			  }
-			}
-		  }
-		}
+		$eqLogic = self::byLogicalId($_appliance['haId'], 'homeconnect');
+		$eqLogic->loadCmdFromConf($_appliance['type']);
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction findProduct()");
 		return $eqLogic;
 	}
@@ -1001,6 +935,44 @@ class homeconnect extends eqLogic {
 	public function preInsert() {
 
 	}
+	
+	public function isConnected() {
+		$cmdConnected = $this->getCmd(null, 'connected');
+		if (is_object($cmdConnected)) {
+			if ($this->getIsEnable() && $cmdConnected->execCmd()) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			log::add('homeconnect', 'debug', "├───── [Erreur]");
+			log::add('homeconnect', 'debug', "│ La commande connected n'existe pas :");
+			log::add('homeconnect', 'debug', "│ Type : " . $this->getConfiguration('type', ''));
+			log::add('homeconnect', 'debug', "│ Marque : " . $this->getConfiguration('brand', ''));
+			log::add('homeconnect', 'debug', "│ Modèle : " . $this->getConfiguration('vib', ''));
+			log::add('homeconnect', 'debug', "│ Id : " . $this->getLogicalId());
+		}
+	}
+	
+	public function loadCmdFromConf($type) {
+		log::add('homeconnect', 'debug',"├────────── loadCmdFromConf($type)");
+		if (!is_file(dirname(__FILE__) . '/../config/types/' . $type . '.json')) {
+			 log::add('homeconnect', 'debug', "│ no config file for type $type");
+			return;
+		}
+		$device = is_json(file_get_contents(dirname(__FILE__) . '/../config/types/' . $type . '.json'), array());
+		if (!is_array($device) || !isset($device['commands'])) {
+			log::add('homeconnect', 'debug', "│ no command for type $type");
+			return true;
+		}
+		$this->import($device);
+		sleep(1);
+		event::add('jeedom::alert', array(
+			'level' => 'warning',
+			'page' => 'openzwave',
+			'message' => '',
+		));
+	}
 
 	public function postInsert() {
 
@@ -1092,20 +1064,27 @@ class homeconnectCmd extends cmd {
 	 */
 
 	public function execute($_options = array()) {
+		// Bien penser dans les fichiers json à mettre dans la configuration
+		// key, value, type, constraints et à modifier findProduct
 		if ($this->getType() == 'info') {
 			return;
 		}
-		$method = 'PUT';
+		$eqLogic = $this->getEqLogic();
+		$parts = explode('::', $this->getLogicalId());
+		if (count($parts) !== 2) {
+			log::add('homeconnect', 'debug'," | Wrong number of parts in command eqLogic");
+			return;
+		}
+		$method = $parts[0];
+		$key = $parts[1];
 		// A voir : faut il ajouter qqchose aux headers par defaut de request
 		$headers = array();
-		$eqLogic = $this->getEqLogic();
+		
 		$haid = $eqLogic->getConfiguration('haid', '');
 		// A voir : est-ce utile ?
 		$eqType = $eqLogic->getConfiguration('type', '');
 		// Bien penser à mettre la partie après haid de l'url dans configuration request de la commande
 		$request = $this->getConfiguration('request', '');
-		// A voir est-ce utile ?
-		$logicalId = $this->getLogicalId();
 		$replace = array();
 		switch ($this->getSubType()) {
 			case 'slider':
@@ -1126,14 +1105,27 @@ class homeconnectCmd extends cmd {
 			break;
 		}
 
-        if (homeconnect::firstSegment($request) == 'commands') {
-            $payload = null;
-        } else {
-            // A compléter avec les bons paramètres qui dépendent de la commande
-            // Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
-            $parameters = array();
-            $payload= json_encode($parameters);
-        }
+		if ($method == 'DELETE') {
+			$payload = null;
+		} else {
+			// A compléter avec les bons paramètres qui dépendent de la commande
+			// Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
+			$parameters = array('data' => array());
+			if ($this->getConfiguration('key', '') !== '') {
+                $parameters['data']['key'] = $this->getConfiguration('key', '');
+            }
+			if ($this->getConfiguration('value', '') !== '') {
+                $parameters['data']['value'] = $this->getConfiguration('value', '');
+            }
+			if ($this->getConfiguration('unit', '') !== '') {
+                $parameters['data']['unit'] = $this->getConfiguration('unit', '');
+            }
+			if ($this->getConfiguration('type', '') !== '') {
+                $parameters['data']['type'] = $this->getConfiguration('type', '');
+            }
+			$payload= json_encode($parameters);
+		}
+		log::add('homeconnect', 'debug'," | Payload : " . $payload);
 		$url = self::API_REQUEST_URL . '/'. $haid . '/' . $request;
 		log::add('homeconnect', 'debug'," | Url : " . $url);
 		$response = self::request($url, $payload, $method, $headers);

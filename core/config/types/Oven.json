@@ -265,6 +265,32 @@
         "repeatEventManagement" : "never"
       },
       "logicalId": "ProgramProgress"
+    },
+    {
+      "name": "Pause",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "commands/BSH.Common.Command.PauseProgram",
+        "value" : true,
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "PUT::BSH.Common.Command.PauseProgram"
+    },
+    {
+      "name": "Reprendre",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "commands/BSH.Common.Command.ResumeProgram",
+        "key": "BSH.Common.Command.ResumeProgram",
+        "value": true
+      },
+      "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
     }
   ]
 }
