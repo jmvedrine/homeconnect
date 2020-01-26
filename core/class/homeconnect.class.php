@@ -109,7 +109,7 @@ class homeconnect extends eqLogic {
 		} else {
 			$result = json_decode($result, true);
 			if (isset($result['error'])){
-				log::add('homeconnect','info',"La requête $url a échoué " . $result['error']['description']);
+				log::add('homeconnect','info',"La requête $url a échoué " . print_r($result['error'], true));
 			} else {
 				log::add('homeconnect','debug',"La requête $url a retourné un code = " . $code . ' résultat = '.$result);
 			}
@@ -220,8 +220,7 @@ class homeconnect extends eqLogic {
 		if (config::byKey('demo_mode','homeconnect')) {
 			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
 				'CoffeeMaker-Control', 'Dishwasher-Control',
-				 'Dryer-Control', 'FridgeFreezer-Control',
-				'Oven-Control', 'Washer-Control']);
+				 'Dryer-Control', 'Washer-Control']);
 			$parameters['user'] = 'me'; // Can be anything non-zero length
 			$parameters['client_id'] = config::byKey('demo_client_id','homeconnect','',true);
 		} else {
@@ -243,6 +242,62 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
 		return $url;
 	}
+    
+    public static function authDemoRequest() {
+	/**
+     * Récupère un code d'authorisation à échanger contre un token.
+     *
+     * @param			|*Cette fonction ne retourne pas de valeur*|
+     * @return 			|*Cette fonction ne retourne pas de valeur*|
+     */
+	
+		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
+		
+		// Construction de l'url.
+		$url = self::authRequest();
+		
+		// Envoie d'une requête GET et récupération du header.
+		$curl = curl_init();
+		$options = [
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => True,
+			CURLOPT_SSL_VERIFYPEER => False,
+			CURLOPT_HEADER => True,
+			CURLINFO_HEADER_OUT => true,
+			];
+		curl_setopt_array($curl, $options);
+		$response = curl_exec($curl);
+		$info = curl_getinfo($curl);
+		curl_close($curl);
+
+		// Vérification du code réponse.
+		if ($info['http_code'] != 302) {
+			
+			// Récupération du message d'erreur pour log.
+			preg_match("/[\{].*[\}]/", $response, $matches);
+			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$info['http_code'].") : ".print_r($matches, true));
+			throw new Exception("Erreur : " . print_r($matches));
+			return;
+		}
+
+		$params = parse_url($info['redirect_url']); // Récupération de l'url de redirection avec paramêtre.
+		$params = explode("&",$params['query']); // Explode des paramêtres de l'url afin d'isoler l'authorize code.
+
+		// Récupération du code d'authorisation.
+		foreach($params as $key => $value) {
+			
+			$explode = explode("=", $value);
+			
+			if ($explode[0] == "code") {
+				
+				config::save('auth', $explode[1], 'homeconnect');
+				log::add('homeconnect', 'debug', "│ Code d'authorisation récupéré (".$explode[1].".");
+                homeconnect::tokenRequest();
+			}	
+		}
+		
+		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
+	}
 
 	public static function tokenRequest() {
 	/**
@@ -253,8 +308,11 @@ class homeconnect extends eqLogic {
 	 */
 
 		log::add('homeconnect', 'debug',"├────────── Fonction tokenRequest()");
-		$clientId = config::byKey('client_id','homeconnect','',true);
-
+        if (!config::byKey('demo_mode','homeconnect')) {
+		    $clientId = config::byKey('client_id','homeconnect','',true);
+        } else {
+            $clientId = config::byKey('demo_client_id','homeconnect','',true);
+        }
 		// Vérification de la présence du code d'authorisation avant de demander le token.
 		if (empty(config::byKey('auth','homeconnect'))) {
 
@@ -266,7 +324,9 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug', "│ Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. $clientId;
-		$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
+        if (!config::byKey('demo_mode','homeconnect')) {
+		    $post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
+        }
 		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');

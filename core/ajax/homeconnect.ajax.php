@@ -27,8 +27,13 @@ try {
 	ajax::init();
 
 	if (init('action') == 'loginHomeConnect') {
-		$url = homeconnect::authRequest();
-		ajax::success(array('redirect' => $url));
+        if (config::byKey('demo_mode','homeconnect')) {
+            homeconnect::authDemoRequest();
+            ajax::success();
+        } else {
+		    $url = homeconnect::authRequest();
+		    ajax::success(array('redirect' => $url));
+        }
 	}
 
 	if (init('action') == 'syncHomeConnect') {

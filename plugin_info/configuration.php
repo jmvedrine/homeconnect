@@ -89,18 +89,13 @@ if (!isConnect()) {
 				<input type="text" class="configKey form-control" data-l1key="demo_client_id"/>
 			</div>
 		</div>
-		<?php
-		// if (empty(config::byKey('auth','homeconnect'))){
-			echo ('
-				<div class="form-group">
-					<label class="col-sm-3 control-label">{{Se connecter}}</label>
-					<div class="col-sm 3">
-						<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Se connecter}}</a>
-					</div>
-				</div>
-			');
-		// }
-		?>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">{{Se connecter}}</label>
+            <div class="col-sm 3">
+                <a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Appareils réels}}</a>                <a class="btn btn-warning" id="bt_loginDemoHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Démo (Simulateurs)}}</a>
+            </div>
+        </div>
+
 
   </fieldset>
 </form>
@@ -123,6 +118,25 @@ $('#bt_loginHomeConnect').on('click', function () {
 				return;
 			}
 			window.location.href = data.result.redirect;
+		}
+	});
+});
+$('#bt_loginDemoHomeConnect').on('click', function () {
+	$.ajax({ // fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+		data: {
+			action: "loginHomeConnect"
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) {
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
+			}
 		}
 	});
 });
