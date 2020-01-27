@@ -32,7 +32,7 @@ class homeconnect extends eqLogic {
 
 	/** *************************** Attributs ********************************* */
 
-
+	public static $_widgetPossibility = array('custom' => true);
 
 	/** *************************** Attributs statiques *********************** */
 
@@ -103,15 +103,26 @@ class homeconnect extends eqLogic {
 		if ($code =='200') {
 			return $result;
 		} else if ($code =='201' || $code =='204') {
+			log::add('homeconnect','debug',"Pas de programme actif");
 			// Cas d'un POST ou d'un PUT
 			// La requête ou la création a réussi mais rien à retourner.
 			return '';
+		} else if ($code =='404') {
+			// Traitement du cas pas de programme actif
+			$result = json_decode($result, true);
+			if (isset($result['error']['key']) && $result['error']['key'] == 'SDK.Error.NoProgramActive') {
+				log::add('homeconnect','debug'," | Pas de programme actif");
+				return 'NoProgramActive';
+			} else {
+				log::add('homeconnect','debug'," | La requête $url a échoué code " . $code . ' résultat '. print_r($result, true));
+				return false;
+			}
 		} else {
 			$result = json_decode($result, true);
 			if (isset($result['error'])){
-				log::add('homeconnect','info',"La requête $url a échoué " . print_r($result['error'], true));
+				log::add('homeconnect','debug'," | La requête $url a échoué code " . $code . ' erreur '. print_r($result['error'], true));
 			} else {
-				log::add('homeconnect','debug',"La requête $url a retourné un code = " . $code . ' résultat = '.$result);
+				log::add('homeconnect','debug'," | La requête $url a retourné un code = " . $code . ' résultat = '.print_r($result, true));
 			}
 			return false;
 		}
@@ -242,20 +253,20 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
 		return $url;
 	}
-    
-    public static function authDemoRequest() {
+
+	public static function authDemoRequest() {
 	/**
-     * Récupère un code d'authorisation à échanger contre un token.
-     *
-     * @param			|*Cette fonction ne retourne pas de valeur*|
-     * @return 			|*Cette fonction ne retourne pas de valeur*|
-     */
-	
+	 * Récupère un code d'authorisation à échanger contre un token.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
+
 		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
-		
+
 		// Construction de l'url.
 		$url = self::authRequest();
-		
+
 		// Envoie d'une requête GET et récupération du header.
 		$curl = curl_init();
 		$options = [
@@ -272,7 +283,7 @@ class homeconnect extends eqLogic {
 
 		// Vérification du code réponse.
 		if ($info['http_code'] != 302) {
-			
+
 			// Récupération du message d'erreur pour log.
 			preg_match("/[\{].*[\}]/", $response, $matches);
 			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$info['http_code'].") : ".print_r($matches, true));
@@ -285,17 +296,17 @@ class homeconnect extends eqLogic {
 
 		// Récupération du code d'authorisation.
 		foreach($params as $key => $value) {
-			
+
 			$explode = explode("=", $value);
-			
+
 			if ($explode[0] == "code") {
-				
+
 				config::save('auth', $explode[1], 'homeconnect');
 				log::add('homeconnect', 'debug', "│ Code d'authorisation récupéré (".$explode[1].".");
-                homeconnect::tokenRequest();
-			}	
+				homeconnect::tokenRequest();
+			}
 		}
-		
+
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
 	}
 
@@ -308,11 +319,11 @@ class homeconnect extends eqLogic {
 	 */
 
 		log::add('homeconnect', 'debug',"├────────── Fonction tokenRequest()");
-        if (!config::byKey('demo_mode','homeconnect')) {
-		    $clientId = config::byKey('client_id','homeconnect','',true);
-        } else {
-            $clientId = config::byKey('demo_client_id','homeconnect','',true);
-        }
+		if (!config::byKey('demo_mode','homeconnect')) {
+			$clientId = config::byKey('client_id','homeconnect','',true);
+		} else {
+			$clientId = config::byKey('demo_client_id','homeconnect','',true);
+		}
 		// Vérification de la présence du code d'authorisation avant de demander le token.
 		if (empty(config::byKey('auth','homeconnect'))) {
 
@@ -324,9 +335,9 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug', "│ Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. $clientId;
-        if (!config::byKey('demo_mode','homeconnect')) {
-		    $post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
-        }
+		if (!config::byKey('demo_mode','homeconnect')) {
+			$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
+		}
 		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');
@@ -652,7 +663,7 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "│");
 
 				$response = self::request(self::API_REQUEST_URL . '/' . $eqLogic->getLogicalId() . '/programs/active', null, 'GET', array());
-				if ($response !== false) {
+				if ($response !== false && $response !== 'NoProgramActive') {
 					log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 
 					$response = json_decode($response, true);
@@ -699,7 +710,7 @@ class homeconnect extends eqLogic {
 					}
 
 					log::add('homeconnect', 'debug', "├─────");
-				} else {
+				} else if ($response == 'NoProgramActive') {
 					// Pas de programme actif
 					$eqLogic->checkAndUpdateCmd('programActive', __("Pas de programme actif", __FILE__));
 				}
@@ -989,7 +1000,7 @@ class homeconnect extends eqLogic {
 	public function preInsert() {
 
 	}
-	
+
 	public function isConnected() {
 		$cmdConnected = $this->getCmd(null, 'connected');
 		if (is_object($cmdConnected)) {
@@ -1007,7 +1018,7 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│ Id : " . $this->getLogicalId());
 		}
 	}
-	
+
 	public function loadCmdFromConf($type) {
 		log::add('homeconnect', 'debug',"├────────── loadCmdFromConf($type)");
 		if (!is_file(dirname(__FILE__) . '/../config/types/' . $type . '.json')) {
@@ -1133,7 +1144,7 @@ class homeconnectCmd extends cmd {
 		$key = $parts[1];
 		// A voir : faut il ajouter qqchose aux headers par defaut de request
 		$headers = array();
-		
+
 		$haid = $eqLogic->getConfiguration('haid', '');
 		// A voir : est-ce utile ?
 		$eqType = $eqLogic->getConfiguration('type', '');
