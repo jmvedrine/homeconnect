@@ -602,7 +602,9 @@ class homeconnect extends eqLogic {
 											log::add('homeconnect', 'debug', " │ Création d'une commande slider");
 											$cmd->setSubType('slider');
 											// commande slider.
+                                            $cmd->setConfiguration('value', '#slider#');
 											if (isset($programOption['unit'])) {
+                                                $cmd->setConfiguration('unit', $programOption['unit']);
 												if ($programOption['unit'] == 'seconds') {
 													$cmd->setUnite('s');
 												} else {
@@ -623,6 +625,7 @@ class homeconnect extends eqLogic {
 										} else if (strpos($programOption['type'], 'EnumType') !== false) {
 											// Commande select
 											$cmd->setSubType('select');
+                                            $cmd->setConfiguration('value', '#select#');
 											$optionValues = array();
 											foreach ($programOption['constraints']['allowedvalues'] as $optionValue) {
 												$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment($optionValue));
@@ -1287,7 +1290,7 @@ class homeconnectCmd extends cmd {
 				$parameters['data']['key'] = $this->getConfiguration('key', '');
 			}
 			if ($this->getConfiguration('value', '') !== '') {
-				$parameters['data']['value'] = $this->getConfiguration('value', '');
+				$parameters['data']['value'] = $value = str_replace(array_keys($replace),$replace,$this->getConfiguration('value', ''));
 			}
 			if ($this->getConfiguration('unit', '') !== '') {
 				$parameters['data']['unit'] = $this->getConfiguration('unit', '');

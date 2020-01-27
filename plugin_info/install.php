@@ -52,6 +52,21 @@ function homeconnect_update() {
 			shell_exec("cp $srcDir$file $resuDir");
 		}
 	}
+    // Fix pour mon oubli
+     foreach (eqLogic::byType('homeconnect') as $homeconnect) {
+        $allCmd = cmd::byEqLogicId($homeconnect->getId());
+		foreach($allCmd as $cmd) {
+            if ($cmd->getType() == 'action' && $cmd->getSubType() == 'cursor') {
+                $cmd->setConfiguration('value', '#slider#');
+                $cmd->save();
+            }
+            if ($cmd->getType() == 'action' && $cmd->getSubType() == 'select') {
+                $cmd->setConfiguration('value', '#select#');
+                $cmd->save();
+            }
+        }
+    }
+    $cmd->setConfiguration('value', '#select#');
     message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
 }
 
