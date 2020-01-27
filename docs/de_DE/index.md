@@ -3,6 +3,8 @@ Présentation
 Ce plugin permet de récupérer des informations des appareils utilisant le protocole Home Connect .
 Il a été développé à l'origine par Sartog.
 
+Un mode démo utilisant des appareils simulés est disponible vous permettant de tester le plugin même si vous ne possédez pas d'appareil ménager Home Connect.
+
 
 Installation/Configuration
 ===
@@ -37,6 +39,8 @@ Adhérez au programme des développeurs Home Connect en créant un compte sur le
 
 Enregistrez une nouvelle application sur la page https://developer.home-connect.com/applications/add
 
+
+
 ![Application](../images/register.png)
 
 - Application ID : par exemple Jeedom
@@ -48,20 +52,31 @@ si vous utilisez les DNS Jeedom ou https://zzzzzzz/plugins/homeconnect/core/php/
 
 Si plus tard vous désirez revoir les détails de votre application ou les modifier, allez sur la page https://developer.home-connect.com/applications
 
-Enregistrez le Client ID et le Client secret Obtenus et reportez les dans le champs correspondants de la page configuration du plugin. Sauvegardez.
+Si vous désirez utiliser le mode démo avec des appareils simulés il vous suffit de noter le client ID inscrit dans le rectangle API Web Client et de le reporter dans le champ **Client ID pour le mode démo**de la page configuration du plugin et de cocher la case**Mode démo (appareils simulés)**. Sauvegardez.
+
+Sinon pour fonctionner avec vos appareils réels, copiez le Client ID et le Client secret inscrits dans le rectangle Jeedom et reportez les dans le champs correspondants de la page configuration du plugin. Sauvegardez.
+
+
 
 ![configuration](../images/configuration.png)
 
-Cliquez sur le bouton **Se connecter** indiquez l'adresse mail et le mot de passe de votre compte Home Connect (celui donné dans l'app sur le smartphone pas celui du site développeur) et confirmer que vous autorisez l'accès.
+Suivant le mode choisi, cliquez sur le bouton **Appareils réels** et indiquez l'adresse mail et le mot de passe de votre compte Home Connect (celui donné dans l'app sur le smartphone pas celui du site développeur) et confirmer que vous autorisez l'accès.
+
+Pour le mode démo cliquez sur le bouton **Démo (Simulateurs** vous n'aurez rien à indiquer.
 
 Découverte de vos appareils Home Connect
 ---
 
 Rendez vous sur la page équipement du plugin (Menu Plugins -> Objets connectés _> Home Connect) et cliquez sur le bouton Synchronisation.
 
-Vos appareils apparaissent dans la section **Mes appareils** avec une image les représentant s'ils sont connus du plugin ou une icône générique dans le cas contraire.
+Vos appareils apparaissent dans la section **Mes appareils** avec une image les représentant s'ils sont connus du plugin ou une icône générique dans le cas contraire (les appareils simulés n'ont pas d'image car les modèles ne sont pas réels).
 
 Aidez-nous à améliorer le plugin: si l'image de votre appareil n’est pas disponible, signalez le sur le forum communautaire en indiquant le modèle tel qu'il apparaît dans la page de votre équipement.
+
+Commandes
+===
+
+Les commandes disponibles dépendent du type d'appareil et du modèle.
 
 FAQ
 ===
