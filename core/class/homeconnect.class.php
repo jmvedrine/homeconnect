@@ -599,9 +599,9 @@ class homeconnect extends eqLogic {
 										// $cmd->setValue(...);
 										$cmd->setType('action');
 										if ($programOption['type'] == 'Int') {
+											// commande slider.
 											log::add('homeconnect', 'debug', " │ Création d'une commande slider");
 											$cmd->setSubType('slider');
-											// commande slider.
                                             $cmd->setConfiguration('value', '#slider#');
 											if (isset($programOption['unit'])) {
                                                 $cmd->setConfiguration('unit', $programOption['unit']);
@@ -624,6 +624,7 @@ class homeconnect extends eqLogic {
 											$cmd->save();
 										} else if (strpos($programOption['type'], 'EnumType') !== false) {
 											// Commande select
+                                            log::add('homeconnect', 'debug', " │ Création d'une commande select");
 											$cmd->setSubType('select');
                                             $cmd->setConfiguration('value', '#select#');
 											$optionValues = array();
@@ -1076,11 +1077,7 @@ class homeconnect extends eqLogic {
 		return false;
 	}
 	public function getImage() {
-		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('vib') . '.png';
-		if(file_exists(__DIR__.'/../../../../'.$filename)){
-			return $filename;
-		}
-		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('vib') . '.jpg';
+		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('type') . '.png';
 		if(file_exists(__DIR__.'/../../../../'.$filename)){
 			return $filename;
 		}

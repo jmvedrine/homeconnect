@@ -45,11 +45,11 @@
 	$('#md_modal').load('index.php?v=d&plugin=homeconnect&modal=health').dialog('open');
 });
 
- $('.eqLogicAttr[data-l1key=configuration][data-l2key=vib]').on('change',function(){
+ $('.eqLogicAttr[data-l1key=configuration][data-l2key=type]').on('change',function(){
 	if($(this).value() == null){
 		return;
 	}
-    $('#img_device').attr("src", 'plugins/homeconnect/core/config/images/'+$(this).value()+'.jpg');
+    $('#img_device').attr("src", 'plugins/homeconnect/core/config/images/'+$(this).value()+'.png');
 });
 
 $("#table_cmd").sortable({axis: "y", cursor: "move", items: ".cmd", placeholder: "ui-state-highlight", tolerance: "intersect", forcePlaceholderSize: true});

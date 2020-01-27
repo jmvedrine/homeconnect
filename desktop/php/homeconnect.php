@@ -107,7 +107,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 
 							<br />
-
+							<div class="form-group">
+								<label class="col-lg-3 control-label">{{Type : }}</label>
+								<div class="col-sm-6">
+									<span class="eqLogicAttr label label-info" style="font-size:1em;cursor: default;" data-l1key="configuration" data-l2key="type"></span>
+								</div>
+							</div>
 							<div class="form-group">
 								<label class="col-lg-3 control-label">{{Marque : }}</label>
 								<div class="col-sm-6">
@@ -138,7 +143,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
                             <div class="form-group">
                                 <label class="col-sm-2 control-label"></label>
                                 <div class="col-sm-8">
-                                    <img src="core/img/no_image.gif" data-original=".jpg" id="img_device" class="img-responsive" style="max-height : 250px;" onerror="this.src='plugins/homeconnect/core/config/images/default.jpg'"/>
+                                    <img src="core/img/no_image.gif" data-original=".png" id="img_device" class="img-responsive" style="max-height : 250px;" onerror="this.src='plugins/homeconnect/plugin_info/homeconnect_icon.png'"/>
                                 </div>
                             </div>
 					</fieldset>
