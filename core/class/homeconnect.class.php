@@ -500,99 +500,112 @@ class homeconnect extends eqLogic {
 		$response = json_decode($response, true);
 
 		foreach($response['data']['homeappliances'] as $key => $appliance) {
-			/*	haId = Id de l'appareil
-				vib = modèle de l'appareil
-				brand = marque de l'appareil
-				type = type de l'appareil
-				name = nom de l'appareil
-				enumber = N° de série
-				connected = boolean */
+		/*	haId = Id de l'appareil
+			vib = modèle de l'appareil
+			brand = marque de l'appareil
+			type = type de l'appareil
+			name = nom de l'appareil
+			enumber = N° de série
+			connected = boolean */
 
-				// Vérification que l'appareil n'est pas déjà créé.
-				$eqLogic = eqLogic::byLogicalId($appliance['haId'], 'homeconnect');
+			// Vérification que l'appareil n'est pas déjà créé.
+			$eqLogic = eqLogic::byLogicalId($appliance['haId'], 'homeconnect');
 
-				if (!is_object($eqLogic)) {
-					log::add('homeconnect','info','Nouvel appareil : '.$_device['name']);
-					event::add('jeedom::alert', array(
-						'level' => 'warning',
-						'page' => 'homeconnect',
-						'message' => __('Nouveau produit detecté', __FILE__).$_device['name'],
-					));
-					// Création de l'appareil.
-					log::add('homeconnect', 'debug', "├──────────");
-					log::add('homeconnect', 'debug', "│ Création d'un appareil :");
-					log::add('homeconnect', 'debug', "│ Type : ".self::traduction($appliance['type']));
-					log::add('homeconnect', 'debug', "│ Marque : ".$appliance['brand']);
-					log::add('homeconnect', 'debug', "│ Modèle : ".$appliance['vib']);
-					log::add('homeconnect', 'debug', "├──────────");
-					$eqLogic = new homeconnect();
-					$eqLogic->setLogicalId($appliance['haId']);
-					$eqLogic->setIsEnable(1);
-					$eqLogic->setIsVisible(1);
-					$eqLogic->setEqType_name('homeconnect');
-					$eqLogic->setName($appliance['name']);
+			if (!is_object($eqLogic)) {
+				log::add('homeconnect','info','Nouvel appareil : '.$_device['name']);
+				event::add('jeedom::alert', array(
+					'level' => 'warning',
+					'page' => 'homeconnect',
+					'message' => __('Nouveau produit detecté', __FILE__).$_device['name'],
+				));
+				// Création de l'appareil.
+				log::add('homeconnect', 'debug', "├──────────");
+				log::add('homeconnect', 'debug', "│ Création d'un appareil :");
+				log::add('homeconnect', 'debug', "│ Type : ".self::traduction($appliance['type']));
+				log::add('homeconnect', 'debug', "│ Marque : ".$appliance['brand']);
+				log::add('homeconnect', 'debug', "│ Modèle : ".$appliance['vib']);
+				log::add('homeconnect', 'debug', "├──────────");
+				$eqLogic = new homeconnect();
+				$eqLogic->setLogicalId($appliance['haId']);
+				$eqLogic->setIsEnable(1);
+				$eqLogic->setIsVisible(1);
+				$eqLogic->setEqType_name('homeconnect');
+				$eqLogic->setName($appliance['name']);
+			}
+			$eqLogic->setConfiguration('haid', $appliance['haId']);
+			$eqLogic->setConfiguration('vib', $appliance['vib']);
+			$eqLogic->setConfiguration('brand', $appliance['brand']);
+			$eqLogic->setConfiguration('type', self::traduction($appliance['type']));
+			$eqLogic->save();
+			$found_eqLogics = self::findProduct($appliance);
+			log::add('homeconnect','debug', ' | eqLogic ' . json_encode($found_eqLogics));
+			// Programs
+			$programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
+			log::add('homeconnect', 'debug', " │ Programs : " . $programs);
+			if ($programs !== false) {
+				$programs = json_decode($programs, true);
+				if (isset($programs['data']['programs'])) {
+					foreach($programs['data']['programs'] as $applianceProgram) {
+						$programdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
+						log::add('homeconnect','debug', ' | Appliance Program ' . print_r($programdata, true));
+						// Créer la commande action programme et les commandes action options
+						// il nous faut son nom, son logigalId
+						// dans configuration request, key, value
+						// Mettre son type et son subType, son eqLogic_id, isvisible, ishistorized
+						// pour les options si option type int mettre unité min et max
+						// si option type contient EnumType créer une liste de valeurs
+						// Structure de programdata:
+						// "data":{"key":
+						//		   "options": []
+						// }
+					}
 				}
-				$eqLogic->setConfiguration('haid', $appliance['haId']);
-				$eqLogic->setConfiguration('vib', $appliance['vib']);
-				$eqLogic->setConfiguration('brand', $appliance['brand']);
-				$eqLogic->setConfiguration('type', self::traduction($appliance['type']));
-				$eqLogic->save();
-				$found_eqLogics = self::findProduct($appliance);
-				log::add('homeconnect','debug', ' | eqLogic ' . json_encode($found_eqLogics));
-				$programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
-				log::add('homeconnect', 'debug', "│ Programs : " . $programs);
-				// A compléter pour les programmes
-				// Status
-				$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
-				log::add('homeconnect', 'debug', "│ Status : " . $status);
-				/* if ($status !== false) {
-					$response = json_decode($response, true);
+			}
+			// Status
+			$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
+			log::add('homeconnect', 'debug', " │ Status : " . $status);
+			if ($status !== false) {
+				$status = json_decode($status, true);
+				log::add('homeconnect','debug', ' | Suppression des états inexistants');
+				if (isset($status['data']['status'])) {
 					$availableStatus = array();
-					foreach($response['data']['status'] as $applianceStatus) {
+					foreach($status['data']['status'] as $applianceStatus) {
 						$logicalId = self::lastSegment($applianceStatus['key']);
 						$availableStatus[$logicalId] = $applianceStatus;
 					}
-					log::add('homeconnect', 'debug', "│ Available status : " . print_r($availableStatus, true));
 					foreach($eqLogic->getCmd() as $cmd) {
-						if (array_key_exists($cmd->getLogicalId(), $availableStatus)) {
-							if (isset($availableStatus[$cmd->getLogicalId()]['name'])) {
-								$cmd->setName($availableStatus[$cmd->getLogicalId()]['name']);
-								$cmd->save();
-							}
-						} else {
+						$id = $cmd->getLogicalId();
+						if (!array_key_exists($id, $availableStatus)) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Status') {
-								log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
+								log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId = ' . $cmd->getLogicalId());
 								$cmd->remove();
 							}
 						}
 					}
-				} */
-				// Settings
-				$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
-				log::add('homeconnect', 'debug', "│ Settings : " . $settings);
-				/* if ($settings !== false) {
-					$response = json_decode($response, true);
+				}
+			}
+			// Settings
+			$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
+			log::add('homeconnect', 'debug', " │ Settings : " . $settings);
+			if ($settings !== false) {
+				$settings = json_decode($settings, true);
+				log::add('homeconnect','debug', ' | Suppression des réglages inexistants');
+				if (isset($settings['data']['settings'])) {
 					$availableSettings = array();
-					foreach($response['data']['settings'] as $applianceSetting) {
-						$settingParts = explode('.', $applianceSetting['key']);
-						$logicalId = $settingParts[count($settingParts) - 1];
+					foreach($settings['data']['settings'] as $applianceSetting) {
+						$logicalId = self::lastSegment($applianceSetting['key']);
 						$availableSettings[$logicalId] = $applianceSetting;
 					}
-					log::add('homeconnect', 'debug', "│ Available settings : " . print_r($availableSettings, true));
 					foreach($eqLogic->getCmd() as $cmd) {
-						if (array_key_exists($cmd->getLogicalId(), $availableSettings)) {
-							if (isset($availableSettings[$cmd->getLogicalId()]['name'])) {
-								$cmd->setName($availableSettings[$cmd->getLogicalId()]['name']);
-								$cmd->save();
-							}
-						} else {
+						if (!array_key_exists($cmd->getLogicalId(), $availableSettings)) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Setting') {
 								log::add('homeconnect','debug', ' | Suppression de la commande réglage ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
 								$cmd->remove();
 							}
 						}
 					}
-				} */
+				}
+			}
 		}
 
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction homeappliances()");
