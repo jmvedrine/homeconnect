@@ -159,6 +159,7 @@
       "subtype": "numeric",
       "isVisible": 1,
       "isHistorized": 0,
+      "unite": "°C",
       "configuration": {
         "request": "Cooking.Oven.Status",
         "repeatEventManagement" : "never"
@@ -171,6 +172,7 @@
       "subtype": "numeric",
       "isVisible": 1,
       "isHistorized": 0,
+      "unite": "°C",
       "configuration": {
         "request": "Cooking.Oven.Status",
         "repeatEventManagement" : "never"
