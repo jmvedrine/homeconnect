@@ -103,9 +103,10 @@ class homeconnect extends eqLogic {
 		if ($code =='200') {
 			return $result;
 		} else if ($code =='201' || $code =='204') {
-			log::add('homeconnect','debug',"Pas de programme actif");
 			// Cas d'un POST ou d'un PUT
 			// La requête ou la création a réussi mais rien à retourner.
+            // 201 = ressource créée et 204 = Requête traitée avec succès
+			log::add('homeconnect','debug'," | La requête $url a retourné un code = " . $code . ' résultat = '.$result);
 			return '';
 		} else if ($code =='404') {
 			// Traitement du cas pas de programme actif
@@ -1033,6 +1034,18 @@ class homeconnect extends eqLogic {
 				'Duration' => __("Durée", __FILE__),
 				'PreHeating' => __("Préchauffage", __FILE__),
 				'Temperature' => __("Température", __FILE__),
+                'DryingTarget' => __("Cible de séchage", __FILE__),
+                'Cold' => __("Froid", __FILE__),
+                'CoffeTemperature' => __("Température du café", __FILE__),
+                'SpinSpeed' => __("Vitesse d'essorage", __FILE__),
+                'RPM400' => __("400 tr/min", __FILE__),
+                'RPM600' => __("600 tr/min", __FILE__),
+                'RPM800' => __("800 tr/min", __FILE__),
+                'RPM1000' => __("1000 tr/min", __FILE__),
+                'RPM1200' => __("1200 tr/min", __FILE__),
+                'RPM1400' => __("1400 tr/min", __FILE__),
+                'RPM1600' => __("1600 tr/min", __FILE__),
+                'StartInRelative' => __("Départ différé", __FILE__),
 				];
 
 				(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
