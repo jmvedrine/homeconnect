@@ -1100,7 +1100,7 @@ class homeconnect extends eqLogic {
 		}
 	}
 
-	public function updateStettings() {
+	public function updateSettings() {
 		if ($this->isConnected()) {
 			log::add('homeconnect', 'debug', "├─────");
 			log::add('homeconnect', 'debug', "│ MAJ des réglages :");
@@ -1157,7 +1157,7 @@ class homeconnect extends eqLogic {
             }
             $this->updateProgram();
             $this->updateStates();
-            $this->updateStettings();
+            $this->updateSettings();
         }
     }
 
@@ -1281,6 +1281,7 @@ class homeconnectCmd extends cmd {
 		}
 		if ($this->getLogicalId() == 'refresh') {
 			$eqLogic->updateApplianceData();
+            return;
 		}
 		$parts = explode('::', $this->getLogicalId());
 		if (count($parts) !== 2) {

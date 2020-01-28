@@ -134,6 +134,17 @@
       "isVisible": 1,
       "isHistorized": 0,
       "logicalId": "refresh"
+    },
+    {
+      "name": "Arrêter",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "programs/active"
+      },
+      "logicalId": "DELETE::StopActiveProgram"
     }
   ]
 }
