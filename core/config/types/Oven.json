@@ -230,6 +230,19 @@
       "logicalId": "ElapsedProgramTime"
     },
     {
+      "name": "Durée de cuisson",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "s",
+      "configuration": {
+        "request": "BSH.Common.Option",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "Duration"
+    },
+    {
       "name": "Avancement actuel du programme",
       "type": "info",
       "subtype": "numeric",
@@ -241,6 +254,19 @@
         "repeatEventManagement" : "never"
       },
       "logicalId": "ProgramProgress"
+    },
+    {
+      "name": "Lancer",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "commands/BSH.Common.Command.PauseProgram",
+        "key": "BSH.Common.Command.PauseProgram",
+        "value" : true
+      },
+      "logicalId": "start"
     },
     {
       "name": "Pause",
