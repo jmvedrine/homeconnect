@@ -293,6 +293,14 @@
         "value": true
       },
       "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }

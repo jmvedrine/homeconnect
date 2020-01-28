@@ -268,11 +268,6 @@
       "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
-      "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
-        "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
-      },
       "logicalId": "start"
     },
     {
@@ -300,6 +295,14 @@
         "value": true
       },
       "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }

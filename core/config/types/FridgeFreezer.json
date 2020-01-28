@@ -35,6 +35,14 @@
         "repeatEventManagement" : "never"
     },
       "logicalId": "programActive"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }
