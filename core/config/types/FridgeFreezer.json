@@ -13,28 +13,56 @@
       "logicalId": "connected"
     },
     {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlStartAllowed"
-    },
-    {
-      "name": "Programme en cours",
+      "name": "Statut de la porte",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
+        "request": "BSH.Common.Status",
         "repeatEventManagement" : "never"
+      },
+      "logicalId": "DoorState"
     },
-      "logicalId": "programActive"
+    {
+      "name": "Température congélateur",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.FridgeFreezer.Setting",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "SetpointTemperatureFreezer"
+    },
+    {
+      "name": "Température congélateur",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.FridgeFreezer.Setting",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "SetpointTemperatureFreezer"
+    },
+    {
+      "name": "Température compartiment boissons",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.Common.Setting.BottleCooler",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "SetpointTemperatureFreezer"
     },
     {
       "name": "Rafraichir",

@@ -91,7 +91,7 @@
     {
       "name": "Taille tasse",
       "type": "info",
-      "subtype": "string",
+      "subtype": "numeric",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "ml",

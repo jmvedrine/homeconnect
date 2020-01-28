@@ -83,30 +83,6 @@
       "isVisible": 1,
       "isHistorized": 0,
       "logicalId": "refresh"
-    },
-    {
-      "name": "Lancer",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
-        "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
-      },
-      "logicalId": "start"
-    },
-    {
-      "name": "Arrêter",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "programs/active"
-      },
-      "logicalId": "DELETE::StopActiveProgram"
     }
   ]
 }

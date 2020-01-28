@@ -528,6 +528,8 @@ class homeconnect extends eqLogic {
 				$eqLogic->setLogicalId($appliance['haId']);
 				$eqLogic->setIsEnable(1);
 				$eqLogic->setIsVisible(1);
+				$defaultRoom = intval(config::byKey('defaultParentObject','homeconnect','',true));
+				if($defaultRoom) $eqLogic->setObject_id($defaultRoom);
 				$eqLogic->setEqType_name('homeconnect');
 				$eqLogic->setName($appliance['name']);
 			}
@@ -600,16 +602,6 @@ class homeconnect extends eqLogic {
 											$cmdAction->setConfiguration('key', $optionKey);
 											$cmdAction->setEqLogic_id($eqLogic->getId());
 											$cmdAction->setType('action');
-											$infoLogicalId = self::lastSegment($optionKey);
-											$cmdInfo = $eqLogic->getCmd('info', $infoLogicalId);
-											if (is_object($cmdInfo)) {
-												// On a trouvé la commande info associée.
-												log::add('homeconnect', 'debug', " │ Commande action logicalId " . 'PUT::' . $optionKey . " associée à la commande info logicalId " . $infoLogicalId);
-												$cmdAction->setValue($cmdInfo->getId());
-											} else {
-												// A voir si on la crée par programme ou dans le fichier json
-												log::add('homeconnect', 'debug', " │ Pas de commande info logicalId " . $infoLogicalId . " associée à la commande action logicalId " . 'PUT::' . $optionKey );
-											}
 											if ($programOption['type'] == 'Int') {
 												// commande slider.
 												log::add('homeconnect', 'debug', " │ Création d'une commande slider");
@@ -630,7 +622,7 @@ class homeconnect extends eqLogic {
 												if (isset($programOption['constraints']['min']) && isset($programOption['constraints']['max'])) {
 													$cmdAction->setConfiguration('minValue', $programOption['constraints']['min']);
 													$cmdAction->setConfiguration('maxValue', $programOption['constraints']['max']);
-													log::add('homeconnect', 'debug', " │ Min " . $cmdAction->getConfiguration('minValue') . " Max " .$cmdAction->getConfiguration('maxValue'));
+													log::add('homeconnect', 'debug', " │ Min = " . $cmdAction->getConfiguration('minValue') . " Max = " .$cmdAction->getConfiguration('maxValue'));
 												}
 												$cmdAction->setTemplate('dashboard', 'button');
 												$cmdAction->setTemplate('mobile', 'button');
@@ -642,10 +634,15 @@ class homeconnect extends eqLogic {
 													}
 													$arr['step'] =	$programOption['constraints']['stepsize'];
 													$cmdAction->setDisplay('parameters', $arr);
-													$arr = $cmdAction->getDisplay('parameters');
+												} else {
+													$cmdAction->setDisplay('parameters', array('step' => 1));
 												}
 												log::add('homeconnect', 'debug', " │ On sauve la commande action slider");
 												$cmdAction->save();
+												if (isset($programOption['constraints']['min']) && $programOption['constraints']['min'] > 0) {
+													log::add('homeconnect', 'debug', " │ On met la valeur au min");
+													$eqLogic->checkAndUpdateCmd($cmdAction->getLogicalId(), $programOption['constraints']['min']);
+												}
 											} else if (strpos($programOption['type'], 'EnumType') !== false) {
 												// Commande select
 												log::add('homeconnect', 'debug', " │ Création d'une commande select");
@@ -662,7 +659,19 @@ class homeconnect extends eqLogic {
 											} else {
 												log::add('homeconnect', 'debug', " │ Problème avec le type " .$programOption['type']);
 											}
-
+                                            log::add('homeconnect', 'debug', " │ Recherche d'une commande info associée");
+											$infoLogicalId = self::lastSegment($optionKey);
+											$cmdInfo = $eqLogic->getCmd('info', $infoLogicalId);
+											if (is_object($cmdInfo)) {
+                                                log::add('homeconnect', 'debug', " │ On a trouvé la info associée");
+												// On a trouvé la commande info associée.
+												log::add('homeconnect', 'debug', " │ Commande action logicalId " . $cmdAction->getLogicalId() . " associée à la commande info logicalId " . $infoLogicalId . ' id ' . $cmdInfo->getId());
+												$cmdAction->setValue($cmdInfo->getId());
+												$cmdAction->save();
+											} else {
+												// A voir si on la crée par programme ou dans le fichier json
+												log::add('homeconnect', 'debug', " │ Pas de commande info logicalId " . $infoLogicalId . " associée à la commande action logicalId " . 'PUT::' . $optionKey );
+											}
 										}
 									}
 								} else {
@@ -1145,21 +1154,21 @@ class homeconnect extends eqLogic {
 
 	public function updateApplianceData() {
 		if ($this->getIsEnable()){
-            $response = self::request(self::API_REQUEST_URL, null, 'GET', array());
-            $response = json_decode($response, true);
-            foreach($response['data']['homeappliances'] as $appliance) {
-                if ($this->getLogicalId() == $appliance['haId']) {
-                    $cmd = $this->getCmd(null, 'connected');
-                    if (is_object($cmd)) {
-                        $this->checkAndUpdateCmd('connected', $appliance['connected']);
-                    }
-                }
-            }
-            $this->updateProgram();
-            $this->updateStates();
-            $this->updateSettings();
-        }
-    }
+			$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
+			$response = json_decode($response, true);
+			foreach($response['data']['homeappliances'] as $appliance) {
+				if ($this->getLogicalId() == $appliance['haId']) {
+					$cmd = $this->getCmd(null, 'connected');
+					if (is_object($cmd)) {
+						$this->checkAndUpdateCmd('connected', $appliance['connected']);
+					}
+				}
+			}
+			$this->updateProgram();
+			$this->updateStates();
+			$this->updateSettings();
+		}
+	}
 
 	public function postInsert() {
 
@@ -1281,7 +1290,7 @@ class homeconnectCmd extends cmd {
 		}
 		if ($this->getLogicalId() == 'refresh') {
 			$eqLogic->updateApplianceData();
-            return;
+			return;
 		}
 		$parts = explode('::', $this->getLogicalId());
 		if (count($parts) !== 2) {

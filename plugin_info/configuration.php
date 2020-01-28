@@ -25,6 +25,19 @@ if (!isConnect()) {
 
 <form class="form-horizontal">
 	<fieldset>
+        <div class="form-group">
+            <label class="col-lg-3 control-label" >{{Pièce par défaut pour les appareils}}</label>
+            <div class="col-lg-3">
+            <select id="sel_object" class="configKey form-control" data-l1key="defaultParentObject">
+              <option value="">{{Aucune}}</option>
+              <?php
+                foreach (jeeObject::all() as $object) {
+                  echo '<option value="' . $object->getId() . '">' . $object->getName() . '</option>';
+                }
+              ?>
+            </select>
+            </div>
+		</div>
 		<div class="form-group">
 			<label class="col-lg-3 control-label">
 				{{Creation de l'application Jeedom sur le siteHome Connect}}
