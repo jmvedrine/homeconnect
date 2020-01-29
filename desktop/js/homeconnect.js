@@ -36,7 +36,7 @@
 				$('#div_alert').showAlert({message: data.result, level: 'danger'});
 				return;
 			}
-			$('#div_alert').showAlert({message: '{{Synchronisation réussie}} : '+what, level: 'success'});
+			$('#div_alert').showAlert({message: '{{Synchronisation réussie}}', level: 'success'});
 			location.reload();
 		}
 	});
