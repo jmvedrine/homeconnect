@@ -117,6 +117,10 @@ class homeconnect extends eqLogic {
 					throw new \Exception(__("Accès à cette ressource non autorisé ou appareil non lié à cet utilisateur.",__FILE__));
 					break;
 				case 404:
+					$result = json_decode($result, true);
+					if ($result['error']['key'] == 'SDK.Error.NoProgramActive' || $result['error']['key'] ='SDK.Error.NoProgramSelected') {
+						return $result['error']['key'];
+					}
 					// Not Found", desc: "This resource is not available (e.g. no images on washing machine)"
 					throw new \Exception(__("Cette ressource n'est pas disponible.",__FILE__));
 					break;
@@ -572,6 +576,7 @@ class homeconnect extends eqLogic {
 				if ($programs !== false) {
 					$programs = json_decode($programs, true);
 					if (isset($programs['data']['programs'])) {
+						$eqLogic->setConfiguration('hasPrograms', true);
 						foreach($programs['data']['programs'] as $applianceProgram) {
 							$programdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
 							log::add('homeconnect','debug', ' | Appliance Program ' . print_r($programdata, true));
@@ -582,7 +587,12 @@ class homeconnect extends eqLogic {
 									$programKey = $programdata['data']['key'];
 									$cmd = $eqLogic->getCmd(null, 'PUT::' . $programKey);
 									if (!is_object($cmd)) {
-										$programName = self::traduction(self::lastSegment($programKey));
+										if (isset($applianceProgram['name'])) {
+											log::add('homeconnect','debug', 'Nom trouvé pour le programme ' . $applianceProgram['name']);
+											$programName = $applianceProgram['name'];
+										} else {
+											$programName = self::traduction(self::lastSegment($programKey));
+										}
 										if ($eqLogic->cmdNameExists($programName)) {
 											$programName = 'Programme ' . $programName;
 										}
@@ -596,7 +606,7 @@ class homeconnect extends eqLogic {
 										$cmd->setConfiguration('request', 'programs/selected');
 										$cmd->setConfiguration('key', $programKey);
 										$cmd->setEqLogic_id($eqLogic->getId());
-										// $cmd->setValue($hotwateractive->getId());
+										// $cmd->setValue(...);
 										$cmd->setType('action');
 										// A changer selon le type
 										$cmd->setSubType('other');
@@ -712,8 +722,14 @@ class homeconnect extends eqLogic {
 								}
 							}
 						}
+					} else {
+						$eqLogic->setConfiguration('hasPrograms', false);
 					}
+				} else {
+					$eqLogic->setConfiguration('hasPrograms', false);
 				}
+			} else {
+				$eqLogic->setConfiguration('hasPrograms', false);
 			}
 			// Status
 
@@ -734,12 +750,14 @@ class homeconnect extends eqLogic {
 					}
 					foreach($eqLogic->getCmd() as $cmd) {
 						$id = $cmd->getLogicalId();
-                        // Attention il y a des status qu'il ne faut pas supprimer. A voir comment faire pour leur valeur.
+						// Attention il y a des status qu'il ne faut pas supprimer. A voir comment faire pour leur valeur.
 						if (!array_key_exists($id, $availableStatus) && !$cmd->dontRemoveCmd()) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Status') {
 								// log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId = ' . $cmd->getLogicalId());
 								$cmd->remove();
 							}
+						} else {
+							log::add('homeconnect','debug', 'Status pour nom ' . print_r($availableStatus[$id], true));
 						}
 					}
 				}
@@ -756,11 +774,14 @@ class homeconnect extends eqLogic {
 						$availableSettings[$logicalId] = $applianceSetting;
 					}
 					foreach($eqLogic->getCmd() as $cmd) {
-						if (!array_key_exists($cmd->getLogicalId(), $availableSettings)) {
+						$id = $cmd->getLogicalId();
+						if (!array_key_exists($id, $availableSettings)&& !$cmd->dontRemoveCmd()) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Setting') {
 								// log::add('homeconnect','debug', ' | Suppression de la commande réglage ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
 								$cmd->remove();
 							}
+						} else {
+							log::add('homeconnect','debug', 'Status pour nom ' . print_r($availableSettings[$id], true));
 						}
 					}
 				}
@@ -941,6 +962,11 @@ class homeconnect extends eqLogic {
 				return $word;
 	}
 
+	public static function deleteEqLogic() {
+		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
+			$eqLogic->remove();
+		}
+	}
 	/*
 	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
 	  public static function cron15() {
@@ -1048,7 +1074,7 @@ class homeconnect extends eqLogic {
 	public function updateProgram() {
 		if ($this->isConnected()) {
 			$eqLogicType = $this->getConfiguration('type');
-			if ($eqLogicType == 'Refrigerator' || $eqLogicType == 'FridgeFreezer' || $eqLogicType == 'WineCooler'){
+			if ($eqLogicType == 'Refrigerator' || $eqLogicType == 'FridgeFreezer' || $eqLogicType == 'WineCooler' || !$eqLogic->getConfiguration('hasPrograms', true)) {
 				// Pas de programme pour ces types d'appareils
 				return;
 			}
@@ -1058,16 +1084,24 @@ class homeconnect extends eqLogic {
 			log::add('homeconnect', 'debug', "│");
 
 			$response = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/active', null, 'GET', array());
-			if ($response !== false && $response !== 'NoProgramActive') {
+			if ($response !== false && $response !== 'SDK.Error.NoProgramActive') {
 				log::add('homeconnect', 'debug', "│ Réponse : " . $response);
 
 				$response = json_decode($response, true);
+				$key = $response['data']['key'];
+				// recherche du programme action associé
+				$cmdAction = $this->getCmd('action', $key);
+				if (!is_object($cmdAction)) {
+					log::add('homeconnect', 'debug', "│ dans updateProgram pas de commande action " . $key);
+					$programName = self::traduction(self::lastSegment($key));
+				} else {
+					$programName =$cmdAction->getName();
+				}
 				// MAJ du programme en cours.
-				$program = self::traduction(self::lastSegment($response['data']['key']));
 				$cmd = $this->getCmd(null, 'programActive');
 				if (is_object($cmd)) {
-					$this->checkAndUpdateCmd('programActive',$program);
-					log::add('homeconnect', 'debug', "│ Programme en cours : ".$program);
+					$this->checkAndUpdateCmd('programActive',$programName);
+					log::add('homeconnect', 'debug', "│ Programme en cours : ".$programName);
 				} else {
 					log::add('homeconnect', 'debug', "│ La commande programActive n'existe pas :");
 					log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
@@ -1105,7 +1139,7 @@ class homeconnect extends eqLogic {
 				}
 
 				log::add('homeconnect', 'debug', "├─────");
-			} else if ($response == 'NoProgramActive') {
+			} else {
 				// Pas de programme actif
 				$this->checkAndUpdateCmd('programActive', __("Pas de programme actif", __FILE__));
 			}
@@ -1309,15 +1343,31 @@ class homeconnectCmd extends cmd {
 		}
 		$eqLogic = $this->getEqLogic();
 		$haid = $eqLogic->getConfiguration('haid', '');
+
+		if ($this->getLogicalId() == 'DELETE::StopActiveProgram') {
+				// Si l'appareil n'a pas de programme on ne peut pas arrêter
+				if (!$eqLogic->getConfiguration('hasPrograms', true)) {
+					return;
+				}
+				// S'il n'y a pas de programme sélectionné on ne peut pas lancer
+				$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/actif', null, 'GET', array());
+				if ($response !== false && $response !== 'SDK.Error.NoProgramActive') {
+					log::add('homeconnect', 'debug'," | Pas de programme actif impossible d'arrêter");
+				return;
+			}
+		}
+		// S'il n'y a pas de programme sélectionné on ne peut ni lancer ni arrêter
+
 		if ($this->getLogicalId() == 'start') {
-			// On lance le programme sélectionné
+			// Si l'appareil n'a pas de programme on ne peut pas lancer
+			if (!$eqLogic->getConfiguration('hasPrograms', true)) {
+				return;
+			}
+			// On lance le programme sélectionné à condition qu'il existe
 			log::add('homeconnect', 'debug'," | Lancement du programme sélectionné");
-			$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/programs/selected';
-			log::add('homeconnect', 'debug'," | Url : " . $url);
-			$response = homeconnect::request($url, null, 'GET', array());
-			log::add('homeconnect', 'debug'," | Server response : " . $response);
-			if ($response == false || $response == 'NoProgramActive') {
-				log::add('homeconnect', 'debug'," | Pas de programme sélectionné");
+			$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/selected', null, 'GET', array());
+			if ($response == false || $response == 'SDK.Error.NoProgramSelected') {
+				log::add('homeconnect', 'debug'," | Pas de programme sélectionné impossible de lancer");
 				return;
 			}
 			$decodedResponse = json_decode($response, true);
