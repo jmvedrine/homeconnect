@@ -100,31 +100,65 @@ class homeconnect extends eqLogic {
 		$result = curl_exec($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
-		if ($code =='200') {
+		if ($code =='200' || $code = '204') {
 			return $result;
-		} else if ($code =='201' || $code =='204') {
-			// Cas d'un POST ou d'un PUT
-			// La requête ou la création a réussi mais rien à retourner.
-			// 201 = ressource créée et 204 = Requête traitée avec succès
-			log::add('homeconnect','debug'," | La requête $url a retourné un code = " . $code . ' résultat = '.$result);
-			return '';
-		} else if ($code =='404') {
-			// Traitement du cas pas de programme actif
-			$result = json_decode($result, true);
-			if (isset($result['error']['key']) && $result['error']['key'] == 'SDK.Error.NoProgramActive') {
-				log::add('homeconnect','debug'," | Pas de programme actif");
-				return 'NoProgramActive';
-			} else {
-				log::add('homeconnect','debug'," | La requête $url a échoué code " . $code . ' résultat '. print_r($result, true));
-				return false;
-			}
 		} else {
-			$result = json_decode($result, true);
-			if (isset($result['error'])){
-				log::add('homeconnect','debug'," | La requête $url a échoué code " . $code . ' erreur '. print_r($result['error'], true));
-			} else {
-				log::add('homeconnect','debug'," | La requête $url a retourné un code = " . $code . ' résultat = '.print_r($result, true));
+			// Traitement des erreurs
+			switch ($code) {
+				case 400:
+					// "Bad Request", desc: "Error occurred (e.g. validation error - value is out of range)"
+					break;
+				case 401:
+					// "Unauthorized", desc: "No or invalid access token"
+                    throw new \Exception(__("Le jeton d'authentification au serveur est absent ou invalide. Reconnectez-vous.",__FILE__));
+					break;
+				case 403:
+					// Forbidden", desc: "Scope has not been granted or home appliance is not assigned to HC account"
+					throw new \Exception(__("Accès à cette ressource non autorisé ou appareil non lié à cet utilisateur.",__FILE__));
+					break;
+				case 404:
+					// Not Found", desc: "This resource is not available (e.g. no images on washing machine)"
+                    throw new \Exception(__("Cette ressource n'est pas disponible.",__FILE__));
+					break;
+				case 405:
+					// "Method not allowed", desc: "The HTTP Method is not allowed for this resource" },
+                    throw new \Exception(__("La méthode $method n'est pas permise pour cette ressource.",__FILE__));
+					break;
+				case 406:
+					// "Not Acceptable", desc: "The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request."
+                    throw new \Exception(__("Impossible de fournir une réponse Les entêtes 'Accept' de la requête ne sont pas acceptés.",__FILE__));
+					break;
+				case 408:
+					// "Request Timeout", desc: "API Server failed to produce an answer or has no connection to backend service"
+                    throw new \Exception(__("Le serveur n'a pas fourni de réponse dans le temps imparti.",__FILE__));
+					break;
+				case 409:
+					// "Conflict", desc: "Command/Query cannot be executed for the home appliance, the error response contains the error details"
+                    $result = json_decode($result, true);
+                    $errorMsg = isset($result['error']['description']) ? $result['error']['description'] : '';
+                    throw new \Exception(__("Cette requête ne peut pas être exécutée pour cet appareil. " . $errorMsg));
+					break;
+				case 415:
+					// "Unsupported Media Type", desc: "The request's Content-Type is not supported"
+                    throw new \Exception(__("Le type de contenu de la requête n'est pas pris en charge.",__FILE__));
+					break;
+				case 429:
+					//	"Too Many Requests", desc: "E.g. the number of requests for a specific endpoint exceeded the quota of the client"
+                    throw new \Exception(__("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h.",__FILE__));
+					break;
+				case 500:
+					// "Internal Server Error", desc: "E.g. in case of a server configuration error or any errors in resource files"
+                    throw new \Exception(__("Erreur interne du serveur.",__FILE__));
+					break;
+				case 503:
+					// "Service Unavailable", desc: "E.g. if a required backend service is not available"
+                    throw new \Exception(__("Service indisponible.",__FILE__));
+					break;
+				default:
+				   // Erreur inconnue
+                   throw new \Exception(__("Erreur inconnue code $code.",__FILE__));
 			}
+			log::add('homeconnect','debug'," | La requête $method  : $url a retourné un code = " . $code . ' résultat = '.$result);
 			return false;
 		}
 	}
