@@ -88,6 +88,7 @@ FAQ
 C'est tout à fait possible via le forum communautaire Jeedom https://community.jeedom.com/ catégorie Plugins -> Objets connectés. Créez un nouveau sujet et n'oubliez pas de lui ajouter le tag "plugin-homeconect".
 
 LIMITATIONS ET BUGS
+===
 
 - l'actualisation des états des appareils se fait par un cron toutes les 15 minutes. Ce n'est vraiment pas idéal. Dans le futur un démon recevant les événements envoyés par le serveur permettra de résoudre ce problème.
 - Il faudrait des widgets personnalisés pour certaines commandes. Si vous utilisez Jeedom V4 vous pouvez améliorer cela en utilisant l'outil Widget.
