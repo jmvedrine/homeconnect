@@ -603,7 +603,11 @@ class homeconnect extends eqLogic {
 										$cmd->setName($programName);
 										$cmd->setIsHistorized(0);
 										$cmd->setDisplay('generic_type', 'DONT');
-										$cmd->setConfiguration('request', 'programs/selected');
+                                        if ($eqLogic->getConfiguration('type','') == 'Hood') {
+										    $cmd->setConfiguration('request', 'programs/active');
+                                        } else {
+                                            $cmd->setConfiguration('request', 'programs/selected');
+                                        }
 										$cmd->setConfiguration('key', $programKey);
 										$cmd->setEqLogic_id($eqLogic->getId());
 										// $cmd->setValue(...);
