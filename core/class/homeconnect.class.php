@@ -110,7 +110,7 @@ class homeconnect extends eqLogic {
 					break;
 				case 401:
 					// "Unauthorized", desc: "No or invalid access token"
-                    throw new \Exception(__("Le jeton d'authentification au serveur est absent ou invalide. Reconnectez-vous.",__FILE__));
+					throw new \Exception(__("Le jeton d'authentification au serveur est absent ou invalide. Reconnectez-vous.",__FILE__));
 					break;
 				case 403:
 					// Forbidden", desc: "Scope has not been granted or home appliance is not assigned to HC account"
@@ -118,45 +118,45 @@ class homeconnect extends eqLogic {
 					break;
 				case 404:
 					// Not Found", desc: "This resource is not available (e.g. no images on washing machine)"
-                    throw new \Exception(__("Cette ressource n'est pas disponible.",__FILE__));
+					throw new \Exception(__("Cette ressource n'est pas disponible.",__FILE__));
 					break;
 				case 405:
 					// "Method not allowed", desc: "The HTTP Method is not allowed for this resource" },
-                    throw new \Exception(__("La méthode $method n'est pas permise pour cette ressource.",__FILE__));
+					throw new \Exception(__("La méthode $method n'est pas permise pour cette ressource.",__FILE__));
 					break;
 				case 406:
 					// "Not Acceptable", desc: "The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request."
-                    throw new \Exception(__("Impossible de fournir une réponse Les entêtes 'Accept' de la requête ne sont pas acceptés.",__FILE__));
+					throw new \Exception(__("Impossible de fournir une réponse Les entêtes 'Accept' de la requête ne sont pas acceptés.",__FILE__));
 					break;
 				case 408:
 					// "Request Timeout", desc: "API Server failed to produce an answer or has no connection to backend service"
-                    throw new \Exception(__("Le serveur n'a pas fourni de réponse dans le temps imparti.",__FILE__));
+					throw new \Exception(__("Le serveur n'a pas fourni de réponse dans le temps imparti.",__FILE__));
 					break;
 				case 409:
 					// "Conflict", desc: "Command/Query cannot be executed for the home appliance, the error response contains the error details"
-                    $result = json_decode($result, true);
-                    $errorMsg = isset($result['error']['description']) ? $result['error']['description'] : '';
-                    throw new \Exception(__("Cette requête ne peut pas être exécutée pour cet appareil. " . $errorMsg));
+					$result = json_decode($result, true);
+					$errorMsg = isset($result['error']['description']) ? $result['error']['description'] : '';
+					throw new \Exception(__("Cette requête ne peut pas être exécutée pour cet appareil. " . $errorMsg));
 					break;
 				case 415:
 					// "Unsupported Media Type", desc: "The request's Content-Type is not supported"
-                    throw new \Exception(__("Le type de contenu de la requête n'est pas pris en charge.",__FILE__));
+					throw new \Exception(__("Le type de contenu de la requête n'est pas pris en charge.",__FILE__));
 					break;
 				case 429:
 					//	"Too Many Requests", desc: "E.g. the number of requests for a specific endpoint exceeded the quota of the client"
-                    throw new \Exception(__("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h.",__FILE__));
+					throw new \Exception(__("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h.",__FILE__));
 					break;
 				case 500:
 					// "Internal Server Error", desc: "E.g. in case of a server configuration error or any errors in resource files"
-                    throw new \Exception(__("Erreur interne du serveur.",__FILE__));
+					throw new \Exception(__("Erreur interne du serveur.",__FILE__));
 					break;
 				case 503:
 					// "Service Unavailable", desc: "E.g. if a required backend service is not available"
-                    throw new \Exception(__("Service indisponible.",__FILE__));
+					throw new \Exception(__("Service indisponible.",__FILE__));
 					break;
 				default:
 				   // Erreur inconnue
-                   throw new \Exception(__("Erreur inconnue code $code.",__FILE__));
+				   throw new \Exception(__("Erreur inconnue code $code.",__FILE__));
 			}
 			log::add('homeconnect','debug'," | La requête $method  : $url a retourné un code = " . $code . ' résultat = '.$result);
 			return false;
@@ -649,19 +649,27 @@ class homeconnect extends eqLogic {
 													$cmdAction->setConfiguration('maxValue', $programOption['constraints']['max']);
 												}
 												log::add('homeconnect', 'debug', " │ Min = " . $cmdAction->getConfiguration('minValue') . " Max = " .$cmdAction->getConfiguration('maxValue') . " Unité = " . $cmdAction->getUnite());
-												$cmdAction->setTemplate('dashboard', 'button');
-												$cmdAction->setTemplate('mobile', 'button');
+												if ($cmdAction->getConfiguration('maxValue') < 1000) {
+													$cmdAction->setTemplate('dashboard', 'button');
+													$cmdAction->setTemplate('mobile', 'button');
+												} else {
+													$cmdAction->setTemplate('dashboard', 'bigbutton');
+													$cmdAction->setTemplate('mobile', 'bigbutton');
+												}
+												$arr = $cmdAction->getDisplay('parameters');
+												if (!is_array($arr)) {
+													$arr = array();
+												}
 												if (isset($programOption['constraints']['stepsize'])) {
 													$cmdAction->setConfiguration('step', $programOption['constraints']['stepsize']);
-													$arr = $cmdAction->getDisplay('parameters');
-													if (!is_array($arr)) {
-														$arr = array();
-													}
-													$arr['step'] =	$programOption['constraints']['stepsize'];
-													$cmdAction->setDisplay('parameters', $arr);
+													$arr['step'] = $programOption['constraints']['stepsize'];
 												} else {
-													$cmdAction->setDisplay('parameters', array('step' => 1));
+													$$arr['step'] = 1;
 												}
+												if ($cmdAction->getConfiguration('maxValue') >= 1000) {
+														$arr['bigstep'] = 900;
+												}
+												$cmdAction->setDisplay('parameters', $arr);
 												$cmdAction->save();
 												if (isset($programOption['constraints']['min']) && $programOption['constraints']['min'] > 0) {
 													$eqLogic->checkAndUpdateCmd($cmdAction->getLogicalId(), $programOption['constraints']['min']);
@@ -682,8 +690,13 @@ class homeconnect extends eqLogic {
 												log::add('homeconnect', 'debug', " │ Problème avec le type " .$programOption['type']);
 											}
 											$infoLogicalId = self::lastSegment($optionKey);
+											if ($appliance['type'] == 'Oven') {
+												log::add('homeconnect', 'debug', "Recherche commande info eqLogic = " . $infoLogicalId);
+											}
 											$cmdInfo = $eqLogic->getCmd('info', $infoLogicalId);
 											if (is_object($cmdInfo)) {
+												log::add('homeconnect', 'debug', "Trouvé nom " . $cmdInfo->getName());
+												log::add('homeconnect', 'debug', "Trouvé logicalId " . $cmdInfo->getLogicalId());
 												// On a trouvé la commande info associée.
 												log::add('homeconnect', 'debug', " │ Commande action logicalId " . $cmdAction->getLogicalId() . " associée à la commande info logicalId " . $infoLogicalId . ' id ' . $cmdInfo->getId());
 												$cmdAction->setValue($cmdInfo->getId());
@@ -703,7 +716,7 @@ class homeconnect extends eqLogic {
 				}
 			}
 			// Status
-			
+
 			$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
 			log::add('homeconnect', 'debug', " │ Status : " . $status);
 			if ($status !== false) {
@@ -721,7 +734,8 @@ class homeconnect extends eqLogic {
 					}
 					foreach($eqLogic->getCmd() as $cmd) {
 						$id = $cmd->getLogicalId();
-						if (!array_key_exists($id, $availableStatus)) {
+                        // Attention il y a des status qu'il ne faut pas supprimer. A voir comment faire pour leur valeur.
+						if (!array_key_exists($id, $availableStatus) && !$cmd->dontRemoveCmd()) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Status') {
 								// log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId = ' . $cmd->getLogicalId());
 								$cmd->remove();
@@ -1280,6 +1294,12 @@ class homeconnectCmd extends cmd {
 	  return true;
 	  }
 	 */
+	public function dontRemoveCmd() {
+		if (in_array($this->getLogicalId(), array('SetpointTemperature'))) {
+			return true;
+		}
+		return false;
+	}
 
 	public function execute($_options = array()) {
 		// Bien penser dans les fichiers json à mettre dans la configuration
