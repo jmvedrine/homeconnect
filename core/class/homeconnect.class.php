@@ -478,7 +478,7 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRefresh()");
 	}
 
-	private static function verifyToken() {
+	public static function verifyToken() {
 		// Vérification si le token est expiré.
 		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
 
@@ -622,7 +622,9 @@ class homeconnect extends eqLogic {
 											}
 											$cmdAction->setIsHistorized(0);
 											$cmdAction->setDisplay('generic_type', 'DONT');
-											$cmdAction->setConfiguration('request', 'programs/selected/options');
+											
+											$cmdAction->setConfiguration('request', 'programs/selected/options/'. $optionKey);
+											log::add('homeconnect', 'debug', " │ Request de la commande option " . $cmdAction->getConfiguration('request', ''));
 											$cmdAction->setConfiguration('key', $optionKey);
 											$cmdAction->setEqLogic_id($eqLogic->getId());
 											$cmdAction->setType('action');
@@ -1328,25 +1330,26 @@ class homeconnectCmd extends cmd {
 		// Bien penser dans les fichiers json à mettre dans la configuration
 		// key, value, type, constraints et à modifier findProduct
 		log::add('homeconnect', 'debug',"├────────── Fonction execute()");
-		log::add('homeconnect', 'debug',"| Options : " . print_r($_options));
 		homeconnect::verifyToken();
 
 		if ($this->getType() == 'info') {
-			log::add('homeconnect', 'debug',"| Pas d'execute pour une commande info");
+			log::add('homeconnect', 'debug'," | Pas d'execute pour une commande info");
 			return;
 		}
 		$eqLogic = $this->getEqLogic();
 		$haid = $eqLogic->getConfiguration('haid', '');
+		log::add('homeconnect', 'debug'," | logicalId : " . $this->getLogicalId());
+		log::add('homeconnect', 'debug',"| Options : " . print_r($_options, true));
 
 		if ($this->getLogicalId() == 'DELETE::StopActiveProgram') {
-				log::add('homeconnect', 'debug',"| Commande arrêter");
+				log::add('homeconnect', 'debug'," | Commande arrêter");
 				// Si l'appareil n'a pas de programme on ne peut pas arrêter
 				if (!$eqLogic->getConfiguration('hasPrograms', true)) {
-					log::add('homeconnect', 'debug',"| L'appareil n'a pas de programmes impossible d'arrêter");
+					log::add('homeconnect', 'debug'," | L'appareil n'a pas de programmes impossible d'arrêter");
 					return;
 				}
 				// S'il n'y a pas de programme sélectionné on ne peut pas lancer
-				$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/actif', null, 'GET', array());
+				$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $haid . '/programs/actif', null, 'GET', array());
 				if ($response !== false && $response !== 'SDK.Error.NoProgramActive') {
 					log::add('homeconnect', 'debug'," | Pas de programme actif impossible d'arrêter");
 				return;
@@ -1355,16 +1358,17 @@ class homeconnectCmd extends cmd {
 		// S'il n'y a pas de programme sélectionné on ne peut ni lancer ni arrêter
 
 		if ($this->getLogicalId() == 'start') {
-			log::add('homeconnect', 'debug',"| Commande arrêter");
+			log::add('homeconnect', 'debug'," | Commande lancer");
 			// Si l'appareil n'a pas de programme on ne peut pas lancer
 			if (!$eqLogic->getConfiguration('hasPrograms', true)) {
-				log::add('homeconnect', 'debug',"| L'appareil n'a pas de programmes, imposible de lancer");
+				log::add('homeconnect', 'debug'," | L'appareil n'a pas de programmes, imposible de lancer");
 				return;
 			}
 			// On lance le programme sélectionné à condition qu'il existe
 			log::add('homeconnect', 'debug'," | Lancement du programme sélectionné");
-			$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/selected', null, 'GET', array());
-			if ($response == false || $response == 'SDK.Error.NoProgramSelected') {
+			$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $haid . '/programs/selected', null, 'GET', array());
+			log::add('homeconnect', 'debug'," | Réponse du serveur pour le programme sélectionné " . $response);
+			if ($response == false) {
 				log::add('homeconnect', 'debug'," | Pas de programme sélectionné impossible de lancer");
 				// Mettre un message à l'utilisateur
 				return;
@@ -1374,16 +1378,18 @@ class homeconnectCmd extends cmd {
 				log::add('homeconnect', 'debug'," | Pas de programme dans la réponse impossible de lancer");
 				return;
 			}
-			log::add('homeconnect', 'debug',"| Programme sélectionné " . $response);
+
 			$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/programs/active';
 			$response = homeconnect::request($url, $response, 'PUT', array());
 			return;
 
 		}
 		if ($this->getLogicalId() == 'refresh') {
+			log::add('homeconnect', 'debug',"| Commande refresh");
 			$eqLogic->updateApplianceData();
 			return;
 		}
+		log::add('homeconnect', 'debug',"| Commande générique");
 		$parts = explode('::', $this->getLogicalId());
 		if (count($parts) !== 2) {
 			log::add('homeconnect', 'debug'," | Wrong number of parts in command eqLogic");
