@@ -1327,18 +1327,22 @@ class homeconnectCmd extends cmd {
 	public function execute($_options = array()) {
 		// Bien penser dans les fichiers json à mettre dans la configuration
 		// key, value, type, constraints et à modifier findProduct
-
+		log::add('homeconnect', 'debug',"├────────── Fonction execute()");
+		log::add('homeconnect', 'debug',"| Options : " . print_r($_options));
 		homeconnect::verifyToken();
 
 		if ($this->getType() == 'info') {
+			log::add('homeconnect', 'debug',"| Pas d'execute pour une commande info");
 			return;
 		}
 		$eqLogic = $this->getEqLogic();
 		$haid = $eqLogic->getConfiguration('haid', '');
 
 		if ($this->getLogicalId() == 'DELETE::StopActiveProgram') {
+				log::add('homeconnect', 'debug',"| Commande arrêter");
 				// Si l'appareil n'a pas de programme on ne peut pas arrêter
 				if (!$eqLogic->getConfiguration('hasPrograms', true)) {
+					log::add('homeconnect', 'debug',"| L'appareil n'a pas de programmes impossible d'arrêter");
 					return;
 				}
 				// S'il n'y a pas de programme sélectionné on ne peut pas lancer
@@ -1351,8 +1355,10 @@ class homeconnectCmd extends cmd {
 		// S'il n'y a pas de programme sélectionné on ne peut ni lancer ni arrêter
 
 		if ($this->getLogicalId() == 'start') {
+			log::add('homeconnect', 'debug',"| Commande arrêter");
 			// Si l'appareil n'a pas de programme on ne peut pas lancer
 			if (!$eqLogic->getConfiguration('hasPrograms', true)) {
+				log::add('homeconnect', 'debug',"| L'appareil n'a pas de programmes, imposible de lancer");
 				return;
 			}
 			// On lance le programme sélectionné à condition qu'il existe
@@ -1365,9 +1371,10 @@ class homeconnectCmd extends cmd {
 			}
 			$decodedResponse = json_decode($response, true);
 			if(!isset($decodedResponse['data']['key'])) {
-				log::add('homeconnect', 'debug'," | Pas de programme dans la réponse");
+				log::add('homeconnect', 'debug'," | Pas de programme dans la réponse impossible de lancer");
 				return;
 			}
+			log::add('homeconnect', 'debug',"| Programme sélectionné " . $response);
 			$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/programs/active';
 			$response = homeconnect::request($url, $response, 'PUT', array());
 			return;
@@ -1430,11 +1437,12 @@ class homeconnectCmd extends cmd {
 			}
 			$payload= json_encode($parameters);
 		}
+		log::add('homeconnect', 'debug'," | Paramètres de la requête pour exécuter la commande :");
 		log::add('homeconnect', 'debug'," | Payload : " . $payload);
 		$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $request;
 		log::add('homeconnect', 'debug'," | Url : " . $url);
 		$response = homeconnect::request($url, $payload, $method, $headers);
-		log::add('homeconnect', 'debug'," | Server response : " . $response);
+		log::add('homeconnect', 'debug'," | Réponse du serveur : " . $response);
 	}
 
 	/** *************************** Getters ********************************* */
