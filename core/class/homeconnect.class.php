@@ -181,6 +181,8 @@ class homeconnect extends eqLogic {
 			return;
 		}
 
+		// Pas besoin de vérifier le token, homeappliances le fait
+
 		// Récupération des appareils.
 		self::homeappliances();
 		// MAJ du statut de connexion des appareils.
@@ -210,29 +212,7 @@ class homeconnect extends eqLogic {
 
 		log::add('homeconnect', 'debug',"┌────────── Fonction updateAppliances()");
 
-		// Vérification si le token est expiré.
-		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
-
-			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
-
-			// Récupération du token d'accès aux serveurs.
-			self::tokenRefresh();
-		}
-
-		// Vérification de la présence du token et tentative de récupération si absent.
-		if (empty(config::byKey('access_token','homeconnect'))) {
-
-			log::add('homeconnect', 'debug', "│ [Warning] : Le token est manquant, recupération de ce dernier.");
-
-			// Récupération du token d'accès aux serveurs.
-			self::tokenRequest();
-
-			if (empty(config::byKey('access_token','homeconnect'))) {
-
-				log::add('homeconnect', 'debug', "│ [Erreur ]: La récupération du token a échouée.");
-				return;
-			}
-		}
+		self::verifyToken();
 
 		// MAJ du statut de connexion des appareils.
 		self::majConnected();
@@ -498,16 +478,7 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRefresh()");
 	}
 
-	private static function homeappliances() {
-	/**
-	 * Récupère la liste des appareils connectés et création des objets associés.
-	 *
-	 * @param			|*Cette fonction ne retourne pas de valeur*|
-	 * @return			|*Cette fonction ne retourne pas de valeur*|
-	 */
-
-		log::add('homeconnect', 'debug',"┌────────── Fonction homeappliances()");
-
+	private static function verifyToken() {
 		// Vérification si le token est expiré.
 		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
 
@@ -531,6 +502,19 @@ class homeconnect extends eqLogic {
 				return;
 			}
 		}
+	}
+
+	private static function homeappliances() {
+	/**
+	 * Récupère la liste des appareils connectés et création des objets associés.
+	 *
+	 * @param			|*Cette fonction ne retourne pas de valeur*|
+	 * @return			|*Cette fonction ne retourne pas de valeur*|
+	 */
+
+		log::add('homeconnect', 'debug',"┌────────── Fonction homeappliances()");
+
+		self::verifyToken();
 
 		$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
 		$response = json_decode($response, true);
@@ -603,11 +587,11 @@ class homeconnect extends eqLogic {
 										$cmd->setName($programName);
 										$cmd->setIsHistorized(0);
 										$cmd->setDisplay('generic_type', 'DONT');
-                                        if ($eqLogic->getConfiguration('type','') == 'Hood') {
-										    $cmd->setConfiguration('request', 'programs/active');
-                                        } else {
-                                            $cmd->setConfiguration('request', 'programs/selected');
-                                        }
+										if ($eqLogic->getConfiguration('type','') == 'Hood') {
+											$cmd->setConfiguration('request', 'programs/active');
+										} else {
+											$cmd->setConfiguration('request', 'programs/selected');
+										}
 										$cmd->setConfiguration('key', $programKey);
 										$cmd->setEqLogic_id($eqLogic->getId());
 										// $cmd->setValue(...);
@@ -1343,6 +1327,9 @@ class homeconnectCmd extends cmd {
 	public function execute($_options = array()) {
 		// Bien penser dans les fichiers json à mettre dans la configuration
 		// key, value, type, constraints et à modifier findProduct
+
+		homeconnect::verifyToken();
+
 		if ($this->getType() == 'info') {
 			return;
 		}
@@ -1373,6 +1360,7 @@ class homeconnectCmd extends cmd {
 			$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/selected', null, 'GET', array());
 			if ($response == false || $response == 'SDK.Error.NoProgramSelected') {
 				log::add('homeconnect', 'debug'," | Pas de programme sélectionné impossible de lancer");
+				// Mettre un message à l'utilisateur
 				return;
 			}
 			$decodedResponse = json_decode($response, true);
