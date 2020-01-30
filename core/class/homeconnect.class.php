@@ -1001,16 +1001,16 @@ class homeconnect extends eqLogic {
 		$this->setConfiguration('applyType', $this->getConfiguration('type'));
 		$this->save();
 		if ($this->getConfiguration('type') == '') {
-		  log::add('homeconnect', 'debug', ' │ applyModuleConfiguration type is empty');
+		  log::add('homeconnect', 'debug', 'applyModuleConfiguration type is empty');
 		  return true;
 		}
-		log::add('homeconnect', 'debug', ' │ applyModuleConfiguration call devicesParameters');
+		log::add('homeconnect', 'debug', 'applyModuleConfiguration call devicesParameters');
 		$device = self::devicesParameters($this->getConfiguration('type'));
 		if (!is_array($device)) {
-			log::add('homeconnect', 'debug', ' │ deviceParameters result is not an array');
+			log::add('homeconnect', 'debug', 'deviceParameters result is not an array');
 			return true;
 		}
-		log::add('homeconnect', 'debug', ' │ applyModuleConfiguration import' . print_r($device, true));
+		log::add('homeconnect', 'debug', 'applyModuleConfiguration import' . print_r($device, true));
 		$this->import($device);
 	}
 
@@ -1390,6 +1390,7 @@ class homeconnectCmd extends cmd {
 
 			$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/programs/active';
 			$response = homeconnect::request($url, $response, 'PUT', array());
+			$eqLogic->updateApplianceData();
 			return;
 
 		}
