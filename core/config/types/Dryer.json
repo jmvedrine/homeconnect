@@ -103,6 +103,19 @@
       "logicalId": "PowerState"
     },
     {
+      "name": "Séchage",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "LaundryCare.Dryer.Setting",
+        "repeatEventManagement" : "never"
+      },
+      "logicalId": "DryingTarget"
+    },
+    {
       "name": "Rafraichir",
       "type": "action",
       "subtype": "other",

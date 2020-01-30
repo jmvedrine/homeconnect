@@ -162,7 +162,7 @@ class homeconnect extends eqLogic {
 				   // Erreur inconnue
 				   throw new \Exception(__("Erreur inconnue code $code.",__FILE__));
 			}
-			log::add('homeconnect','debug'," | La requête $method  : $url a retourné un code = " . $code . ' résultat = '.$result);
+			log::add('homeconnect','debug',"La requête $method  : $url a retourné un code = " . $code . ' résultat = '.$result);
 			return false;
 		}
 	}
@@ -174,9 +174,9 @@ class homeconnect extends eqLogic {
 	 * @param			|*Cette fonction ne retourne pas de valeur*|
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
-		log::add('homeconnect', 'debug',"┌────────── Fonction syncHomeConnect()");
+		log::add('homeconnect', 'debug',"Fonction syncHomeConnect()");
 		if (empty(config::byKey('auth','homeconnect'))) {
-			log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
+			log::add('homeconnect', 'debug', "[Erreur] : Code d'authorisation vide.");
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
@@ -199,7 +199,7 @@ class homeconnect extends eqLogic {
 				$eqLogic->refreshWidget();
 			}
 		}
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction syncHomeConnect()");
+		log::add('homeconnect', 'debug',"Fin de la fonction syncHomeConnect()");
 	}
 
 	public static function updateAppliances(){
@@ -210,7 +210,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"┌────────── Fonction updateAppliances()");
+		log::add('homeconnect', 'debug',"Fonction updateAppliances()");
 
 		self::verifyToken();
 
@@ -228,7 +228,7 @@ class homeconnect extends eqLogic {
 				$eqLogic->refreshWidget();
 			}
 		}
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction updateAppliances()");
+		log::add('homeconnect', 'debug',"Fin de la fonction updateAppliances()");
 	}
 
 	public static function authRequest() {
@@ -238,7 +238,7 @@ class homeconnect extends eqLogic {
 	 * @param			|*Cette fonction ne prend pas de paramètres*|
 	 * @return			|*Cette fonction retourne l'url d'authentification*|
 	 */
-		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
+		log::add('homeconnect', 'debug',"Fonction authRequest()");
 		@session_start();
 		$authorizationUrl = self::baseUrl() . self::API_AUTH_URL;
 		$clientId = config::byKey('client_id','homeconnect','',true);
@@ -264,8 +264,8 @@ class homeconnect extends eqLogic {
 
 		// Construction de l'url.
 		$url = $authorizationUrl ."?" . self::buildQueryString($parameters);
-		log::add('homeconnect', 'debug',"│ url = " . $url);
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
+		log::add('homeconnect', 'debug',"url = " . $url);
+		log::add('homeconnect', 'debug',"Fin de la fonction authRequest()");
 		return $url;
 	}
 
@@ -277,7 +277,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"┌────────── Fonction authRequest()");
+		log::add('homeconnect', 'debug',"Fonction authRequest()");
 
 		// Construction de l'url.
 		$url = self::authRequest();
@@ -301,7 +301,7 @@ class homeconnect extends eqLogic {
 
 			// Récupération du message d'erreur pour log.
 			preg_match("/[\{].*[\}]/", $response, $matches);
-			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$info['http_code'].") : ".print_r($matches, true));
+			log::add('homeconnect', 'debug', "[Erreur] (code erreur : ".$info['http_code'].") : ".print_r($matches, true));
 			throw new Exception("Erreur : " . print_r($matches));
 			return;
 		}
@@ -317,12 +317,12 @@ class homeconnect extends eqLogic {
 			if ($explode[0] == "code") {
 
 				config::save('auth', $explode[1], 'homeconnect');
-				log::add('homeconnect', 'debug', "│ Code d'authorisation récupéré (".$explode[1].".");
+				log::add('homeconnect', 'debug', "Code d'authorisation récupéré (".$explode[1].".");
 				homeconnect::tokenRequest();
 			}
 		}
 
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction authRequest()");
+		log::add('homeconnect', 'debug',"Fin de la fonction authRequest()");
 	}
 
 	public static function tokenRequest() {
@@ -333,7 +333,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"├────────── Fonction tokenRequest()");
+		log::add('homeconnect', 'debug',"Fonction tokenRequest()");
 		if (!config::byKey('demo_mode','homeconnect')) {
 			$clientId = config::byKey('client_id','homeconnect','',true);
 		} else {
@@ -342,12 +342,12 @@ class homeconnect extends eqLogic {
 		// Vérification de la présence du code d'authorisation avant de demander le token.
 		if (empty(config::byKey('auth','homeconnect'))) {
 
-			log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
+			log::add('homeconnect', 'debug', "[Erreur] : Code d'authorisation vide.");
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
 		$url = self::baseUrl() . self::API_TOKEN_URL;
-		log::add('homeconnect', 'debug', "│ Url = ". $url);
+		log::add('homeconnect', 'debug', "Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'client_id='. $clientId;
 		if (!config::byKey('demo_mode','homeconnect')) {
@@ -356,7 +356,7 @@ class homeconnect extends eqLogic {
 		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 		$post_fields .= '&grant_type=authorization_code';
 		$post_fields .= '&code='.config::byKey('auth','homeconnect');
-		log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
+		log::add('homeconnect', 'debug', "Post fields = ". $post_fields);
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
@@ -368,20 +368,20 @@ class homeconnect extends eqLogic {
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
-		log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
+		log::add('homeconnect', 'debug', "Response = ". print_r($response, true));
 		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
 
 		// Vérification du code réponse.
 		if($http_code != 200) {
 
-			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") : Impossible de récupérer le token.");
+			log::add('homeconnect', 'debug', "[Erreur] (code erreur : ".$http_code.") : Impossible de récupérer le token.");
 			throw new Exception("Erreur : Impossible de récupérer le token (code erreur : ".$http_code.").");
 			return;
 
 		} else {
 
-			log::add('homeconnect', 'debug', "│ Token récupéré.");
+			log::add('homeconnect', 'debug', "Token récupéré.");
 		}
 
 		// Calcul de l'expiration du token.
@@ -395,13 +395,13 @@ class homeconnect extends eqLogic {
 		config::save('expires_in', $expires_in, 'homeconnect');
 		config::save('id_token', $response['id_token'], 'homeconnect');
 
-		log::add('homeconnect', 'debug',"│ Access token : ".$response['access_token']);
-		log::add('homeconnect', 'debug',"│ Refresh token : ".$response['refresh_token']);
-		log::add('homeconnect', 'debug',"│ Token type : ".$response['token_type']);
-		log::add('homeconnect', 'debug',"│ scope : ".$response['scope']);
-		log::add('homeconnect', 'debug',"│ Expires in : ".$expires_in);
-		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
-		log::add('homeconnect', 'debug',"├────────── Fin de la fonction tokenRequest()");
+		log::add('homeconnect', 'debug',"Access token : ".$response['access_token']);
+		log::add('homeconnect', 'debug',"Refresh token : ".$response['refresh_token']);
+		log::add('homeconnect', 'debug',"Token type : ".$response['token_type']);
+		log::add('homeconnect', 'debug',"scope : ".$response['scope']);
+		log::add('homeconnect', 'debug',"Expires in : ".$expires_in);
+		log::add('homeconnect', 'debug',"Id token : ".$response['id_token']);
+		log::add('homeconnect', 'debug',"Fin de la fonction tokenRequest()");
 	}
 
 	public static function tokenRefresh() {
@@ -412,17 +412,17 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"┌────────── Fonction tokenRefresh()");
+		log::add('homeconnect', 'debug',"Fonction tokenRefresh()");
 
 		// Vérification de la présence du code d'authorisation avant de demander le token.
 		if (empty(config::byKey('auth','homeconnect'))) {
 
-			log::add('homeconnect', 'debug', "│ [Erreur] : Code d'authorisation vide.");
+			log::add('homeconnect', 'debug', "[Erreur] : Code d'authorisation vide.");
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
 		$url = self::baseUrl() . self::API_TOKEN_URL;
-		log::add('homeconnect', 'debug', "│ Url = ". $url);
+		log::add('homeconnect', 'debug', "Url = ". $url);
 		// Création du paramêtre POSTFIELDS.
 		$post_fields = 'grant_type=refresh_token';
 		if (!config::byKey('demo_mode','homeconnect')) {
@@ -430,7 +430,7 @@ class homeconnect extends eqLogic {
 		}
 		$post_fields .= '&refresh_token='.	config::byKey('refresh_token','homeconnect','',true);
 
-		log::add('homeconnect', 'debug', "│ Post fields = ". $post_fields);
+		log::add('homeconnect', 'debug', "Post fields = ". $post_fields);
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
@@ -442,20 +442,20 @@ class homeconnect extends eqLogic {
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
-		log::add('homeconnect', 'debug', "│ Response = ". print_r($response, true));
+		log::add('homeconnect', 'debug', "Response = ". print_r($response, true));
 		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
 
 		// Vérification du code réponse.
 		if($http_code != 200) {
 
-			log::add('homeconnect', 'debug', "│ [Erreur] (code erreur : ".$http_code.") : Impossible de rafraichir le token.");
+			log::add('homeconnect', 'debug', "[Erreur] (code erreur : ".$http_code.") : Impossible de rafraichir le token.");
 			throw new Exception("Erreur : Impossible de rafraichir le token (code erreur : ".$http_code.").");
 			return;
 
 		} else {
 
-			log::add('homeconnect', 'debug', "│ Token rafraichi.");
+			log::add('homeconnect', 'debug', "Token rafraichi.");
 		}
 
 		// Calcul de l'expiration du token.
@@ -469,20 +469,20 @@ class homeconnect extends eqLogic {
 		config::save('expires_in', $expires_in, 'homeconnect');
 		config::save('id_token', $response['id_token'], 'homeconnect');
 
-		log::add('homeconnect', 'debug',"│ Access token : ".$response['access_token']);
-		log::add('homeconnect', 'debug',"│ Refresh token : ".$response['refresh_token']);
-		log::add('homeconnect', 'debug',"│ Token type : ".$response['token_type']);
-		log::add('homeconnect', 'debug',"│ scope : ".$response['scope']);
-		log::add('homeconnect', 'debug',"│ Expires in : ".$expires_in);
-		log::add('homeconnect', 'debug',"│ Id token : ".$response['id_token']);
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction tokenRefresh()");
+		log::add('homeconnect', 'debug',"Access token : ".$response['access_token']);
+		log::add('homeconnect', 'debug',"Refresh token : ".$response['refresh_token']);
+		log::add('homeconnect', 'debug',"Token type : ".$response['token_type']);
+		log::add('homeconnect', 'debug',"scope : ".$response['scope']);
+		log::add('homeconnect', 'debug',"Expires in : ".$expires_in);
+		log::add('homeconnect', 'debug',"Id token : ".$response['id_token']);
+		log::add('homeconnect', 'debug',"Fin de la fonction tokenRefresh()");
 	}
 
 	public static function verifyToken() {
 		// Vérification si le token est expiré.
 		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
 
-			log::add('homeconnect', 'debug', "│ [Warning] : Le token est expiré, renouvellement de ce dernier.");
+			log::add('homeconnect', 'debug', "[Warning] : Le token est expiré, renouvellement de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
 			self::tokenRefresh();
@@ -491,14 +491,14 @@ class homeconnect extends eqLogic {
 		// Vérification de la présence du token et tentative de récupération si absent.
 		if (empty(config::byKey('access_token','homeconnect'))) {
 
-			log::add('homeconnect', 'debug', "│ [Warning] : Le token est manquant, recupération de ce dernier.");
+			log::add('homeconnect', 'debug', "[Warning] : Le token est manquant, recupération de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
 			self::tokenRequest();
 
 			if (empty(config::byKey('access_token','homeconnect'))) {
 
-				log::add('homeconnect', 'debug', "│ [Erreur ]: La récupération du token à échouée.");
+				log::add('homeconnect', 'debug', "[Erreur ]: La récupération du token à échouée.");
 				return;
 			}
 		}
@@ -512,7 +512,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"┌────────── Fonction homeappliances()");
+		log::add('homeconnect', 'debug',"Fonction homeappliances()");
 
 		self::verifyToken();
 
@@ -531,14 +531,13 @@ class homeconnect extends eqLogic {
 			$eqLogic = eqLogic::byLogicalId($appliance['haId'], 'homeconnect');
 
 			if (!is_object($eqLogic)) {
-				log::add('homeconnect','info','Nouvel appareil : '.$_device['name']);
+				log::add('homeconnect','debug',"Nouvel appareil : ".$appliance['name'] . ' de type ' .self::traduction($appliance['type']));
 				event::add('jeedom::alert', array(
 					'level' => 'warning',
 					'page' => 'homeconnect',
-					'message' => __('Nouvel appareil detecté', __FILE__).$_device['name'],
+					'message' => __('Nouvel appareil detecté', __FILE__). ' ' .$appliance['name'],
 				));
 				// Création de l'appareil.
-				log::add('homeconnect', 'debug', "│ Création d'un appareil Type : ".self::traduction($appliance['type']));
 				$eqLogic = new homeconnect();
 				$eqLogic->setLogicalId($appliance['haId']);
 				$eqLogic->setIsEnable(1);
@@ -563,7 +562,7 @@ class homeconnect extends eqLogic {
 						$eqLogic->setConfiguration('hasPrograms', true);
 						foreach($programs['data']['programs'] as $applianceProgram) {
 							$programdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
-							log::add('homeconnect','debug', ' | Appliance Program ' . print_r($programdata, true));
+							log::add('homeconnect','debug', 'Appliance Program ' . print_r($programdata, true));
 							if ($programdata !== false) {
 								$programdata = json_decode($programdata, true);
 								if (isset($programdata['data']['key'])) {
@@ -580,7 +579,7 @@ class homeconnect extends eqLogic {
 										if ($eqLogic->cmdNameExists($programName)) {
 											$programName = 'Programme ' . $programName;
 										}
-										log::add('homeconnect', 'debug', " │ Création de la commande action programme : logicalId " . $programKey . ' nom ' . $programName);
+										log::add('homeconnect', 'debug', "Création de la commande action programme : logicalId " . $programKey . ' nom ' . $programName);
 										$cmd = new homeconnectCmd();
 										$cmd->setLogicalId('PUT::' . $programKey);
 										$cmd->setIsVisible(1);
@@ -602,20 +601,21 @@ class homeconnect extends eqLogic {
 									}
 								}
 								if (isset($programdata['data']['options'])) {
-									log::add('homeconnect', 'debug', " │ Création des commandes options " . print_r($programdata['data']['options'], true));
+									log::add('homeconnect', 'debug', "Création des commandes options " . print_r($programdata['data']['options'], true));
 									// creation des commandes option action et info
 									foreach($programdata['data']['options'] as $programOption) {
 										$optionKey = $programOption['key'];
-										$cmdAction = $eqLogic->getCmd(null, 'PUT::' . $optionKey);
+										$optionLogicalId = 'PUT::' . $optionKey;
+										$cmdAction = $eqLogic->getCmd(null, $optionLogicalId);
 										if (!is_object($cmdAction)) {
 											$name = self::traduction(self::lastSegment($optionKey));
-											log::add('homeconnect', 'debug', " │ Création de la commande action option : logicalId " . $optionKey . ' nom ' . $name);
+											log::add('homeconnect', 'debug', "Commande action option : logicalId " . $optionLogicalId . ' et nom ' . $name);
 											$cmdAction = new homeconnectCmd();
-											$cmdAction->setLogicalId('PUT::' . $optionKey);
+											$cmdAction->setLogicalId($optionLogicalId);
 											$cmdAction->setIsVisible(1);
 
 											if ($eqLogic->cmdNameExists($name) || $eqLogic->cmdNameExists(self::lastSegment($optionKey))) {
-												log::add('homeconnect', 'debug', " │ Nom changé en Option " . $name );
+												log::add('homeconnect', 'debug', "Nom changé en Option " . $name );
 												$cmdAction->setName('Option ' . $name);
 											} else {
 												$cmdAction->setName($name);
@@ -624,13 +624,12 @@ class homeconnect extends eqLogic {
 											$cmdAction->setDisplay('generic_type', 'DONT');
 											
 											$cmdAction->setConfiguration('request', 'programs/selected/options/'. $optionKey);
-											log::add('homeconnect', 'debug', " │ Request de la commande option " . $cmdAction->getConfiguration('request', ''));
 											$cmdAction->setConfiguration('key', $optionKey);
 											$cmdAction->setEqLogic_id($eqLogic->getId());
 											$cmdAction->setType('action');
 											if ($programOption['type'] == 'Int') {
 												// commande slider.
-												log::add('homeconnect', 'debug', " │ Création d'une commande slider");
+												log::add('homeconnect', 'debug', "Création d'une commande slider");
 												$cmdAction->setSubType('slider');
 												$cmdAction->setConfiguration('value', '#slider#');
 												if (isset($programOption['unit'])) {
@@ -648,7 +647,7 @@ class homeconnect extends eqLogic {
 													$cmdAction->setConfiguration('minValue', $programOption['constraints']['min']);
 													$cmdAction->setConfiguration('maxValue', $programOption['constraints']['max']);
 												}
-												log::add('homeconnect', 'debug', " │ Min = " . $cmdAction->getConfiguration('minValue') . " Max = " .$cmdAction->getConfiguration('maxValue') . " Unité = " . $cmdAction->getUnite());
+												log::add('homeconnect', 'debug', "Min = " . $cmdAction->getConfiguration('minValue') . " Max = " .$cmdAction->getConfiguration('maxValue') . " Unité = " . $cmdAction->getUnite());
 												if ($cmdAction->getConfiguration('maxValue') < 1000) {
 													$cmdAction->setTemplate('dashboard', 'button');
 													$cmdAction->setTemplate('mobile', 'button');
@@ -671,12 +670,12 @@ class homeconnect extends eqLogic {
 												}
 												$cmdAction->setDisplay('parameters', $arr);
 												$cmdAction->save();
-												if (isset($programOption['constraints']['min']) && $programOption['constraints']['min'] > 0) {
+												if (isset($programOption['constraints']['min'])) {
 													$eqLogic->checkAndUpdateCmd($cmdAction->getLogicalId(), $programOption['constraints']['min']);
 												}
 											} else if (strpos($programOption['type'], 'EnumType') !== false) {
 												// Commande select
-												log::add('homeconnect', 'debug', " │ Création d'une commande select");
+												log::add('homeconnect', 'debug', "Création d'une commande select");
 												$cmdAction->setSubType('select');
 												$cmdAction->setConfiguration('value', '#select#');
 												$optionValues = array();
@@ -687,50 +686,49 @@ class homeconnect extends eqLogic {
 												$cmdAction->setConfiguration('listValue', $listValue);
 												$cmdAction->save();
 											} else {
-												log::add('homeconnect', 'debug', " │ Problème avec le type " .$programOption['type']);
+												log::add('homeconnect', 'debug', "Problème avec le type " .$programOption['type']);
 											}
 											$infoLogicalId = self::lastSegment($optionKey);
-											if ($appliance['type'] == 'Oven') {
-												log::add('homeconnect', 'debug', "Recherche commande info eqLogic = " . $infoLogicalId);
-											}
 											$cmdInfo = $eqLogic->getCmd('info', $infoLogicalId);
 											if (is_object($cmdInfo)) {
-												log::add('homeconnect', 'debug', "Trouvé nom " . $cmdInfo->getName());
-												log::add('homeconnect', 'debug', "Trouvé logicalId " . $cmdInfo->getLogicalId());
 												// On a trouvé la commande info associée.
-												log::add('homeconnect', 'debug', " │ Commande action logicalId " . $cmdAction->getLogicalId() . " associée à la commande info logicalId " . $infoLogicalId . ' id ' . $cmdInfo->getId());
+												log::add('homeconnect', 'debug', "Commande action logicalId " . $cmdAction->getLogicalId() . " associée à la commande info logicalId " . $infoLogicalId . ' id ' . $cmdInfo->getId());
 												$cmdAction->setValue($cmdInfo->getId());
 												$cmdAction->save();
 											} else {
 												// A voir si on la crée par programme ou dans le fichier json
-												log::add('homeconnect', 'debug', " │ Pas de commande info logicalId " . $infoLogicalId . " associée à la commande action logicalId " . 'PUT::' . $optionKey );
+												log::add('homeconnect', 'debug', "Pas de commande info logicalId " . $infoLogicalId . " associée à la commande action logicalId " . 'PUT::' . $optionKey );
 											}
+										} else {
+											log::add('homeconnect', 'debug', "La commande " . $optionLogicalId . ' et nom ' . $name . " existe déjà" );
 										}
 									}
 								} else {
-									log::add('homeconnect', 'debug', " │ Aucune commande option");
+									log::add('homeconnect', 'debug', "Aucune commande option");
 								}
 							}
 						}
 					} else {
+						log::add('homeconnect', 'debug',"Cet appareil n'a pas de programmes");
 						$eqLogic->setConfiguration('hasPrograms', false);
 					}
 				} else {
+					log::add('homeconnect', 'debug',"La requête pour trouver les programmes a retourné false");
 					$eqLogic->setConfiguration('hasPrograms', false);
 				}
 			} else {
+				log::add('homeconnect', 'debug',"Ce type d'appareil n'a pas de programme");
 				$eqLogic->setConfiguration('hasPrograms', false);
 			}
 			// Status
 
 			$status = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
-			log::add('homeconnect', 'debug', " │ Status : " . $status);
 			if ($status !== false) {
 				$status = json_decode($status, true);
 				if (isset($status['data']['status'])) {
 					foreach($status['data']['status'] as $applianceStatus) {
 						$statusdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status/' . $applianceStatus['key'], null, 'GET', array());
-						log::add('homeconnect','debug', ' | Appliance status ' . print_r($statusdata, true));
+						log::add('homeconnect','debug', 'Appliance status ' . print_r($statusdata, true));
 					}
 
 					$availableStatus = array();
@@ -743,18 +741,20 @@ class homeconnect extends eqLogic {
 						// Attention il y a des status qu'il ne faut pas supprimer. A voir comment faire pour leur valeur.
 						if (!array_key_exists($id, $availableStatus) && !$cmd->dontRemoveCmd()) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Status') {
-								// log::add('homeconnect','debug', ' | Suppression de la commande état ' . $cmd->getName() . ' logicalId = ' . $cmd->getLogicalId());
+								log::add('homeconnect','debug', 'Suppression de la commande status ' . $cmd->getName() . ' logicalId = ' . $cmd->getLogicalId());
 								$cmd->remove();
 							}
 						} else {
 							log::add('homeconnect','debug', 'Status pour nom ' . print_r($availableStatus[$id], true));
 						}
 					}
+				} else {
+					log::add('homeconnect','debug', "Aucun status");
 				}
 			}
 			// Settings
+			
 			$settings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
-			log::add('homeconnect', 'debug', " │ Settings : " . $settings);
 			if ($settings !== false) {
 				$settings = json_decode($settings, true);
 				if (isset($settings['data']['settings'])) {
@@ -767,18 +767,20 @@ class homeconnect extends eqLogic {
 						$id = $cmd->getLogicalId();
 						if (!array_key_exists($id, $availableSettings)&& !$cmd->dontRemoveCmd()) {
 							if (self::lastSegment($cmd->getConfiguration('request', '')) == 'Setting') {
-								// log::add('homeconnect','debug', ' | Suppression de la commande réglage ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
+								log::add('homeconnect','debug', 'Suppression de la commande status ' . $cmd->getName() . ' logicalId ' . $cmd->getLogicalId());
 								$cmd->remove();
 							}
 						} else {
-							log::add('homeconnect','debug', 'Status pour nom ' . print_r($availableSettings[$id], true));
+							log::add('homeconnect','debug', 'Setting pour nom ' . print_r($availableSettings[$id], true));
 						}
 					}
+				} else {
+					log::add('homeconnect','debug', "Aucun setting");
 				}
 			}
 		}
 
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction homeappliances()");
+		log::add('homeconnect', 'debug',"Fin de la fonction homeappliances()");
 	}
 
 	private static function majConnected() {
@@ -789,8 +791,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"│");
-		log::add('homeconnect', 'debug',"├───── Fonction majConnected()");
+		log::add('homeconnect', 'debug',"Fonction majConnected()");
 
 		// A voir si l'appareil vient de se connecter n'y aurait-il pas des choses à faire ?
 		$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
@@ -804,35 +805,33 @@ class homeconnect extends eqLogic {
 				if (is_object($cmd)) {
 					$eqLogic->checkAndUpdateCmd('connected', $key['connected']);
 
-					log::add('homeconnect', 'debug', "│ MAJ d'un appareil :");
-					log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
-					log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
-					log::add('homeconnect', 'debug', "│ Connecté : ".$key['connected']);
+					log::add('homeconnect', 'debug', "MAJ d'un appareil :");
+					log::add('homeconnect', 'debug', "Type : ".self::traduction($key['type']));
+					log::add('homeconnect', 'debug', "Id : ".$key['haId']);
+					log::add('homeconnect', 'debug', "Connecté : ".$key['connected']);
 
 				} else {
-					log::add('homeconnect', 'debug', "├───── [Erreur]");
-					log::add('homeconnect', 'debug', "│ La commande connected n'existe pas :");
-					log::add('homeconnect', 'debug', "│ Type : ".self::traduction($key['type']));
-					log::add('homeconnect', 'debug', "│ Marque : ".$key['brand']);
-					log::add('homeconnect', 'debug', "│ Modèle : ".$key['vib']);
-					log::add('homeconnect', 'debug', "│ Id : ".$key['haId']);
+					log::add('homeconnect', 'debug', "Erreur La commande connected n'existe pas :");
+					log::add('homeconnect', 'debug', "Type : ".self::traduction($key['type']));
+					log::add('homeconnect', 'debug', "Marque : ".$key['brand']);
+					log::add('homeconnect', 'debug', "Modèle : ".$key['vib']);
+					log::add('homeconnect', 'debug', "Id : ".$key['haId']);
 				}
 			}
 		}
 
-		log::add('homeconnect', 'debug',"├───── Fin de la fonction majConnected()");
+		log::add('homeconnect', 'debug',"Fin de la fonction majConnected()");
 	}
 
 	public static function findProduct($_appliance) {
-		log::add('homeconnect', 'debug',"┌────────── Fonction findProduct($_appliance)");
+		log::add('homeconnect', 'debug',"Fonction findProduct($_appliance)");
 		$eqLogic = self::byLogicalId($_appliance['haId'], 'homeconnect');
 		$eqLogic->loadCmdFromConf($_appliance['type']);
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction findProduct()");
+		log::add('homeconnect', 'debug',"Fin de la fonction findProduct()");
 		return $eqLogic;
 	}
 
 	public static function devicesParameters($_type = '') {
-		log::add('homeconnect', 'debug',"┌────────── Fonction devicesParameters($_type)");
 		$return = array();
 		foreach (ls(dirname(__FILE__) . '/../config/types', '*') as $dir) {
 			$path = dirname(__FILE__) . '/../config/types/' . $dir;
@@ -854,15 +853,15 @@ class homeconnect extends eqLogic {
 		if (isset($_type) && $_type != '') {
 			if (isset($return[$_type])) {
 				log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return[$_type]));
-				log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
+				log::add('homeconnect', 'debug',"Fin de la fonction devicesParameters()");
 				return $return[$_type];
 			}
 			log::add('homeconnect', 'debug', 'devicesParameters return empty array');
-			log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
+			log::add('homeconnect', 'debug',"Fin de la fonction devicesParameters()");
 			return array();
 		}
 		log::add('homeconnect', 'debug', 'devicesParameters return '.json_encode($return));
-		log::add('homeconnect', 'debug',"└────────── Fin de la fonction devicesParameters()");
+		log::add('homeconnect', 'debug',"Fin de la fonction devicesParameters()");
 		return $return;
 	}
 
@@ -999,25 +998,20 @@ class homeconnect extends eqLogic {
 	}
 
 	public function applyModuleConfiguration() {
-		log::add('homeconnect', 'debug',"├────────── Fonction applyModuleConfiguration()");
-		log::add('homeconnect', 'debug', '│ type = '.$this->getConfiguration('type'));
 		$this->setConfiguration('applyType', $this->getConfiguration('type'));
 		$this->save();
 		if ($this->getConfiguration('type') == '') {
-		  log::add('homeconnect', 'debug', '│ applyModuleConfiguration type is empty');
-		  log::add('homeconnect', 'debug',"├────────── Fin de la fonction applyModuleConfiguration()");
+		  log::add('homeconnect', 'debug', ' │ applyModuleConfiguration type is empty');
 		  return true;
 		}
-		log::add('homeconnect', 'debug', '│ applyModuleConfiguration call devicesParameters');
+		log::add('homeconnect', 'debug', ' │ applyModuleConfiguration call devicesParameters');
 		$device = self::devicesParameters($this->getConfiguration('type'));
 		if (!is_array($device)) {
-			log::add('homeconnect', 'debug', '│ deviceParameters result is not an array');
-			log::add('homeconnect', 'debug',"├────────── Fin de la fonction applyModuleConfiguration()");
+			log::add('homeconnect', 'debug', ' │ deviceParameters result is not an array');
 			return true;
 		}
-		log::add('homeconnect', 'debug', '│ applyModuleConfiguration import' . print_r($device, true));
+		log::add('homeconnect', 'debug', ' │ applyModuleConfiguration import' . print_r($device, true));
 		$this->import($device);
-		log::add('homeconnect', 'debug',"├────────── Fin de la fonction applyModuleConfiguration()");
 	}
 
 	public function preInsert() {
@@ -1033,24 +1027,23 @@ class homeconnect extends eqLogic {
 				return false;
 			}
 		} else {
-			log::add('homeconnect', 'debug', "├───── [Erreur]");
-			log::add('homeconnect', 'debug', "│ La commande connected n'existe pas :");
-			log::add('homeconnect', 'debug', "│ Type : " . $this->getConfiguration('type', ''));
-			log::add('homeconnect', 'debug', "│ Marque : " . $this->getConfiguration('brand', ''));
-			log::add('homeconnect', 'debug', "│ Modèle : " . $this->getConfiguration('vib', ''));
-			log::add('homeconnect', 'debug', "│ Id : " . $this->getLogicalId());
+			log::add('homeconnect', 'debug', "[Erreur] La commande connected n'existe pas :");
+			log::add('homeconnect', 'debug', "Type : " . $this->getConfiguration('type', ''));
+			log::add('homeconnect', 'debug', "Marque : " . $this->getConfiguration('brand', ''));
+			log::add('homeconnect', 'debug', "Modèle : " . $this->getConfiguration('vib', ''));
+			log::add('homeconnect', 'debug', "Id : " . $this->getLogicalId());
 		}
 	}
 
 	public function loadCmdFromConf($type) {
-		log::add('homeconnect', 'debug',"├────────── loadCmdFromConf($type)");
+		log::add('homeconnect', 'debug',"Fonction loadCmdFromConf($type)");
 		if (!is_file(dirname(__FILE__) . '/../config/types/' . $type . '.json')) {
-			 log::add('homeconnect', 'debug', "│ no config file for type $type");
+			 log::add('homeconnect', 'debug', "no config file for type $type");
 			return;
 		}
 		$device = is_json(file_get_contents(dirname(__FILE__) . '/../config/types/' . $type . '.json'), array());
 		if (!is_array($device) || !isset($device['commands'])) {
-			log::add('homeconnect', 'debug', "│ no command for type $type");
+			log::add('homeconnect', 'debug', "no command for type $type");
 			return true;
 		}
 		$this->import($device);
@@ -1065,46 +1058,46 @@ class homeconnect extends eqLogic {
 		if ($this->isConnected()) {
 			$eqLogicType = $this->getConfiguration('type');
 			if ($eqLogicType == 'Refrigerator' || $eqLogicType == 'FridgeFreezer' || $eqLogicType == 'WineCooler' || !$this->getConfiguration('hasPrograms', true)) {
-				log::add('homeconnect', 'debug', "│ Pas de programme pour ce type d'appareil");
+				log::add('homeconnect', 'debug', "Pas de programme pour ce type d'appareil");
 				return;
 			}
-			log::add('homeconnect', 'debug', "│ MAJ du programme actif :");
-			log::add('homeconnect', 'debug', "│ Type : ".$this->getConfiguration('type'));
-			log::add('homeconnect', 'debug', "│ Id : ".$this->getLogicalId());
+			log::add('homeconnect', 'debug', "MAJ du programme actif :");
+			log::add('homeconnect', 'debug', "Type : ".$this->getConfiguration('type'));
+			log::add('homeconnect', 'debug', "Id : ".$this->getLogicalId());
 
 			$programActive = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/active', null, 'GET', array());
 			if ($programActive !== false) {
-				log::add('homeconnect', 'debug', "│ Réponse dans updateProgram " . $programActive);
+				log::add('homeconnect', 'debug', "Réponse dans updateProgram " . $programActive);
 				$programActive = json_decode($programActive, true);
 				if (isset($programActive['data']['key']) && $programActive['data']['key'] !== 'SDK.Error.NoProgramActive') {
 					$key = $programActive['data']['key'];
-					log::add('homeconnect', 'debug', "│ key = " . $key);
+					log::add('homeconnect', 'debug', "key = " . $key);
 					// recherche du programme action associé
 					$cmdAction = $this->getCmd('action', 'PUT::' . $key);
 					if (!is_object($cmdAction)) {
-						log::add('homeconnect', 'debug', "│ dans updateProgram pas de commande action " . $key);
+						log::add('homeconnect', 'debug', "dans updateProgram pas de commande action " . $key);
 						$programName = self::traduction(self::lastSegment($key));
 					} else {
 						$programName =$cmdAction->getName();
-						log::add('homeconnect', 'debug', "│ Nom de la commande action " . $programName);
+						log::add('homeconnect', 'debug', "Nom de la commande action " . $programName);
 					}
 					// MAJ du programme en cours.
 					$cmd = $this->getCmd(null, 'programActive');
 					if (is_object($cmd)) {
-						log::add('homeconnect', 'debug', "│ Programme en cours : ".$programName);
+						log::add('homeconnect', 'debug', "Programme en cours : ".$programName);
 						$this->checkAndUpdateCmd('programActive',$programName);
 
 					} else {
-						log::add('homeconnect', 'debug', "│ La commande programActive n'existe pas :");
+						log::add('homeconnect', 'debug', "La commande programActive n'existe pas :");
 					}
 					
 					$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/active/options', null, 'GET', array());
 					if ($programOptions !== false) {
-						log::add('homeconnect', 'debug', "│ options : " . $programOptions);
+						log::add('homeconnect', 'debug', "options : " . $programOptions);
 						$programOptions = json_decode($programOptions, true);
 						// MAJ des options et autres informations du programme en cours.
 						foreach ($programOptions['data']['options'] as $value) {
-							log::add('homeconnect', 'debug', "│ option : " . print_r($value, true));
+							log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 							// Récupération du nom du programme / option.
 							$logicalId = self::lastSegment($value['key']);
 							$cmd = $this->getCmd(null, $logicalId);
@@ -1121,23 +1114,23 @@ class homeconnect extends eqLogic {
 											$reglage = $value['value'];
 										}
 									} else {
-										log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'a pas de valeur");
+										log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'a pas de valeur");
 									}
 								}
 								$this->checkAndUpdateCmd($logicalId, $reglage);
-								log::add('homeconnect', 'debug', "│ Option : ".$logicalId." - Valeur :".$reglage);
+								log::add('homeconnect', 'debug', "Option : ".$logicalId." - Valeur :".$reglage);
 							} else {
-								log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'existe pas");
+								log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'existe pas");
 							}
 						}
 					}
 				} else {
 					// Pas de programme actif
-					log::add('homeconnect', 'debug', "│ pas de key ou key = SDK.Error.NoProgramActive");
+					log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.NoProgramActive");
 					$this->checkAndUpdateCmd('programActive', __("Pas de programme actif", __FILE__));
 				}
 			} else {
-				log::add('homeconnect', 'debug', "│ réponse à la requête vaut faux");
+				log::add('homeconnect', 'debug', "réponse à la requête vaut faux");
 				$this->checkAndUpdateCmd('programActive', __("Pas de programme actif", __FILE__));
 			}
 		}
@@ -1145,14 +1138,14 @@ class homeconnect extends eqLogic {
 
 	public function updateStates() {
 		if ($this->isConnected()) {
-			log::add('homeconnect', 'debug', "│ MAJ des états ".$this->getLogicalId());
+			log::add('homeconnect', 'debug', "MAJ des états ".$this->getLogicalId());
 
 			$response = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/status', null, 'GET', array());
-			log::add('homeconnect', 'debug', "│ Réponse dans updateStates : " . $response);
+			log::add('homeconnect', 'debug', "Réponse dans updateStates : " . $response);
 			if ($response !== false) {
 				$response = json_decode($response, true);
 				foreach($response['data']['status'] as $value) {
-					log::add('homeconnect', 'debug', "│ status : " . print_r($value, true));
+					log::add('homeconnect', 'debug', "status : " . print_r($value, true));
 					// Récupération du logicalId du status.
 					$logicalId = self::lastSegment($value['key']);
 					$cmd = $this->getCmd(null, $logicalId);
@@ -1169,31 +1162,31 @@ class homeconnect extends eqLogic {
 									$reglage = $value['value'];
 								}
 							} else {
-								log::add('homeconnect', 'debug', "│ le status : ".$logicalId." n'a pas de valeur");
+								log::add('homeconnect', 'debug', "le status : ".$logicalId." n'a pas de valeur");
 							}
 						}
 						$this->checkAndUpdateCmd($logicalId, $reglage);
-						log::add('homeconnect', 'debug', "│ mise à jour status : ".$logicalId." - Valeur :".$reglage);
+						log::add('homeconnect', 'debug', "mise à jour status : ".$logicalId." - Valeur :".$reglage);
 					} else {
-						log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'existe pas");
+						log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'existe pas");
 					}
 				}
 			}
 		} else {
-			log::add('homeconnect', 'debug', "│ Non connecté, pas de mise à jour des états");
+			log::add('homeconnect', 'debug', "Non connecté, pas de mise à jour des états");
 		}
 	}
 
 	public function updateSettings() {
 		if ($this->isConnected()) {
-			log::add('homeconnect', 'debug', "│ MAJ des réglages ".$this->getLogicalId());
+			log::add('homeconnect', 'debug', "MAJ des réglages ".$this->getLogicalId());
 
 			$response = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/settings', null, 'GET', array());
-			log::add('homeconnect', 'debug', "│ Réponse updateSettings : " . $response);
+			log::add('homeconnect', 'debug', "Réponse updateSettings : " . $response);
 			if ($response !== false) {
 				$response = json_decode($response, true);
 				foreach($response['data']['settings'] as $value) {
-					log::add('homeconnect', 'debug', "│ setting : " . print_r($value, true));
+					log::add('homeconnect', 'debug', "setting : " . print_r($value, true));
 					// Récupération du logicalId du setting.
 					$logicalId = self::lastSegment($value['key']);
 					$cmd = $this->getCmd(null, $logicalId);
@@ -1210,34 +1203,34 @@ class homeconnect extends eqLogic {
 									$reglage = $value['value'];
 								}
 							} else {
-								log::add('homeconnect', 'debug', "│ le setting : ".$logicalId." n'a pas de valeur");
+								log::add('homeconnect', 'debug', "le setting : ".$logicalId." n'a pas de valeur");
 							}
 						}
 						$this->checkAndUpdateCmd($logicalId, $reglage);
-						log::add('homeconnect', 'debug', "│ Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
+						log::add('homeconnect', 'debug', "Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
 					} else {
-						log::add('homeconnect', 'debug', "│ La commande : ".$logicalId." n'existe pas");
+						log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'existe pas");
 					}
 				}
 			}
 		} else {
-			log::add('homeconnect', 'debug', "│ Non connecté, pas de mise à jour des états");
+			log::add('homeconnect', 'debug', "Non connecté, pas de mise à jour des états");
 		}
 	}
 
 	public function updateApplianceData() {
-		log::add('homeconnect', 'debug',"├────────── Fonction updateApplianceData()");
+		log::add('homeconnect', 'debug',"Fonction updateApplianceData()");
 		if ($this->getIsEnable()){
-			log::add('homeconnect', 'debug'," | Mise à jour du status connecté");
+			log::add('homeconnect', 'debug',"Mise à jour du status connecté");
 			$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
 			$response = json_decode($response, true);
 			foreach($response['data']['homeappliances'] as $appliance) {
-				log::add('homeconnect', 'debug'," | Appareil " . print_r($appliance, true));
+				log::add('homeconnect', 'debug',"Appareil " . print_r($appliance, true));
 				if ($this->getLogicalId() == $appliance['haId']) {
-					log::add('homeconnect', 'debug'," | On a trouvé le bon");
+					log::add('homeconnect', 'debug',"On a trouvé le bon");
 					$cmd = $this->getCmd(null, 'connected');
 					if (is_object($cmd)) {
-						log::add('homeconnect', 'debug'," | Mise à jour commande connectée valeur " . $appliance['connected']);
+						log::add('homeconnect', 'debug',"Mise à jour commande connectée valeur " . $appliance['connected']);
 						$this->checkAndUpdateCmd('connected', $appliance['connected']);
 					}
 				}
@@ -1345,53 +1338,53 @@ class homeconnectCmd extends cmd {
 	public function execute($_options = array()) {
 		// Bien penser dans les fichiers json à mettre dans la configuration
 		// key, value, type, constraints et à modifier findProduct
-		log::add('homeconnect', 'debug',"├────────── Fonction execute()");
+		log::add('homeconnect', 'debug',"Fonction execute()");
 		homeconnect::verifyToken();
 
 		if ($this->getType() == 'info') {
-			log::add('homeconnect', 'debug'," | Pas d'execute pour une commande info");
+			log::add('homeconnect', 'debug',"Pas d'execute pour une commande info");
 			return;
 		}
 		$eqLogic = $this->getEqLogic();
 		$haid = $eqLogic->getConfiguration('haid', '');
-		log::add('homeconnect', 'debug'," | logicalId : " . $this->getLogicalId());
+		log::add('homeconnect', 'debug',"logicalId : " . $this->getLogicalId());
 		log::add('homeconnect', 'debug',"| Options : " . print_r($_options, true));
 
 		if ($this->getLogicalId() == 'DELETE::StopActiveProgram') {
-				log::add('homeconnect', 'debug'," | Commande arrêter");
+				log::add('homeconnect', 'debug',"Commande arrêter");
 				// Si l'appareil n'a pas de programme on ne peut pas arrêter
 				if (!$eqLogic->getConfiguration('hasPrograms', true)) {
-					log::add('homeconnect', 'debug'," | L'appareil n'a pas de programmes impossible d'arrêter");
+					log::add('homeconnect', 'debug',"L'appareil n'a pas de programmes impossible d'arrêter");
 					return;
 				}
 				// S'il n'y a pas de programme sélectionné on ne peut pas lancer
 				$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $haid . '/programs/actif', null, 'GET', array());
 				if ($response !== false && $response !== 'SDK.Error.NoProgramActive') {
-					log::add('homeconnect', 'debug'," | Pas de programme actif impossible d'arrêter");
+					log::add('homeconnect', 'debug',"Pas de programme actif impossible d'arrêter");
 				return;
 			}
 		}
 		// S'il n'y a pas de programme sélectionné on ne peut ni lancer ni arrêter
 
 		if ($this->getLogicalId() == 'start') {
-			log::add('homeconnect', 'debug'," | Commande lancer");
+			log::add('homeconnect', 'debug',"Commande lancer");
 			// Si l'appareil n'a pas de programme on ne peut pas lancer
 			if (!$eqLogic->getConfiguration('hasPrograms', true)) {
-				log::add('homeconnect', 'debug'," | L'appareil n'a pas de programmes, imposible de lancer");
+				log::add('homeconnect', 'debug',"L'appareil n'a pas de programmes, imposible de lancer");
 				return;
 			}
 			// On lance le programme sélectionné à condition qu'il existe
-			log::add('homeconnect', 'debug'," | Lancement du programme sélectionné");
+			log::add('homeconnect', 'debug',"Lancement du programme sélectionné");
 			$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $haid . '/programs/selected', null, 'GET', array());
-			log::add('homeconnect', 'debug'," | Réponse du serveur pour le programme sélectionné " . $response);
+			log::add('homeconnect', 'debug',"Réponse du serveur pour le programme sélectionné " . $response);
 			if ($response == false) {
-				log::add('homeconnect', 'debug'," | Pas de programme sélectionné impossible de lancer");
+				log::add('homeconnect', 'debug',"Pas de programme sélectionné impossible de lancer");
 				// Mettre un message à l'utilisateur
 				return;
 			}
 			$decodedResponse = json_decode($response, true);
 			if(!isset($decodedResponse['data']['key'])) {
-				log::add('homeconnect', 'debug'," | Pas de programme dans la réponse impossible de lancer");
+				log::add('homeconnect', 'debug',"Pas de programme dans la réponse impossible de lancer");
 				return;
 			}
 
@@ -1408,7 +1401,7 @@ class homeconnectCmd extends cmd {
 		log::add('homeconnect', 'debug',"| Commande générique");
 		$parts = explode('::', $this->getLogicalId());
 		if (count($parts) !== 2) {
-			log::add('homeconnect', 'debug'," | Wrong number of parts in command eqLogic");
+			log::add('homeconnect', 'debug',"Wrong number of parts in command eqLogic");
 			return;
 		}
 		$method = $parts[0];
@@ -1459,12 +1452,12 @@ class homeconnectCmd extends cmd {
 			}
 			$payload= json_encode($parameters);
 		}
-		log::add('homeconnect', 'debug'," | Paramètres de la requête pour exécuter la commande :");
-		log::add('homeconnect', 'debug'," | Payload : " . $payload);
+		log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
+		log::add('homeconnect', 'debug',"Payload : " . $payload);
 		$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $request;
-		log::add('homeconnect', 'debug'," | Url : " . $url);
+		log::add('homeconnect', 'debug',"Url : " . $url);
 		$response = homeconnect::request($url, $payload, $method, $headers);
-		log::add('homeconnect', 'debug'," | Réponse du serveur : " . $response);
+		log::add('homeconnect', 'debug',"Réponse du serveur : " . $response);
 	}
 
 	/** *************************** Getters ********************************* */
