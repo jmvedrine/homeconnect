@@ -7,7 +7,8 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "subtype": "binary",
       "logicalId": "connected"
@@ -21,7 +22,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "DoorState"
     },
@@ -34,12 +36,13 @@
       "unite": "°C",
       "configuration": {
         "request": "Refrigeration.FridgeFreezer.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "SetpointTemperatureFreezer"
     },
     {
-      "name": "Température congélateur",
+      "name": "Température réfrigérateur",
       "type": "info",
       "subtype": "numeric",
       "isVisible": 1,
@@ -47,22 +50,94 @@
       "unite": "°C",
       "configuration": {
         "request": "Refrigeration.FridgeFreezer.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
-      "logicalId": "SetpointTemperatureFreezer"
+      "logicalId": "SetpointTemperatureRefrigerator"
     },
     {
-      "name": "Température compartiment boissons",
+      "name": "Température compartiment fraîcheur gauche",
       "type": "info",
       "subtype": "numeric",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "°C",
       "configuration": {
-        "request": "Refrigeration.Common.Setting.BottleCooler",
-        "repeatEventManagement" : "never"
+        "request": "Refrigeration.Common.Setting",
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
-      "logicalId": "SetpointTemperatureFreezer"
+      "logicalId": "ChillerLeft.SetpointTemperature"
+    },
+    {
+      "name": "Température compartiment fraîcheur commun",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.Common.Setting",
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
+      },
+      "logicalId": "ChillerCommon.SetpointTemperature"
+    },
+    {
+      "name": "Température compartiment fraîcheur droit",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.Common.Setting",
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
+      },
+      "logicalId": "ChillerRight.SetpointTemperature"
+    },
+    {
+      "name": "Température compartiment boissons 1",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.Common.Setting",
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
+      },
+      "logicalId": "WineCompartment.SetpointTemperature"
+    },
+    {
+      "name": "Température compartiment boissons 2",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.Common.Setting",
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
+      },
+      "logicalId": "WineCompartment2.SetpointTemperature"
+    },
+    {
+      "name": "Température compartiment boissons 3",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "°C",
+      "configuration": {
+        "request": "Refrigeration.Common.Setting",
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
+      },
+      "logicalId": "WineCompartment3.SetpointTemperature"
     },
     {
       "name": "Rafraichir",

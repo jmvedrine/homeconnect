@@ -7,20 +7,23 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "subtype": "binary",
       "logicalId": "connected"
     },
     {
-      "name": "Contrôle à distance",
+      "name": "Démarrage à distance",
       "type": "info",
       "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "RemoteControlStartAllowed"
     },
@@ -33,7 +36,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "LocalControlActive"
     },
@@ -45,7 +49,8 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "logicalId": "programActive"
     },
@@ -58,7 +63,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "OperationState"
     },
@@ -71,7 +77,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "PowerState"
     },
@@ -84,7 +91,8 @@
       "unite": "",
       "configuration": {
         "request": "ConsumerProducts.CoffeeMaker.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "BeanAmount"
     },
@@ -97,7 +105,8 @@
       "unite": "ml",
       "configuration": {
         "request": "ConsumerProducts.CoffeeMaker.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "FillQuantity"
     },
@@ -110,22 +119,10 @@
       "unite": "°C",
       "configuration": {
         "request": "ConsumerProducts.CoffeeMaker.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "CoffeeTemperature"
-    },
-    {
-      "name": "Lancer",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
-        "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
-      },
-      "logicalId": "start"
     },
     {
       "name": "Rafraichir",
@@ -136,13 +133,28 @@
       "logicalId": "refresh"
     },
     {
+      "name": "Lancer",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "request": "commands/BSH.Common.Command.PauseProgram",
+        "key": "BSH.Common.Command.PauseProgram",
+        "value" : true,
+        "category": "Command"
+      },
+      "logicalId": "start"
+    },
+    {
       "name": "Arrêter",
       "type": "action",
       "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "programs/active"
+        "request": "programs/active",
+        "category": "Command"
       },
       "logicalId": "DELETE::StopActiveProgram"
     }

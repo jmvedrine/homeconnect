@@ -7,7 +7,8 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "subtype": "binary",
       "logicalId": "connected"
@@ -21,7 +22,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "RemoteControlStartAllowed"
     },
@@ -34,7 +36,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "RemoteControlActive"
     },
@@ -47,7 +50,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "LocalControlActive"
     },
@@ -59,7 +63,8 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "logicalId": "programActive"
     },
@@ -72,7 +77,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "OperationState"
     },
@@ -85,7 +91,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "DoorState"
     },
@@ -98,7 +105,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "PowerState"
     },
@@ -111,7 +119,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "AmbientLightEnabled"
     },
@@ -124,7 +133,8 @@
       "unite": "%",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "AmbientLightBrightness"
     },
@@ -137,7 +147,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "AmbientLightColor"
     },
@@ -149,7 +160,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "AmbientLightCustomColor"
     },
@@ -162,7 +174,8 @@
       "unite": "°C",
       "configuration": {
         "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "CurrentCavityTemperature"
     },
@@ -175,7 +188,8 @@
       "unite": "°C",
       "configuration": {
         "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "SetpointTemperature"
     },
@@ -187,7 +201,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "FastPreHeat"
     },
@@ -199,7 +214,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "SteamAssistLevel"
     },         
@@ -212,7 +228,8 @@
       "unite": "s",
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "StartInRelative"
     },
@@ -225,7 +242,8 @@
       "unite": "s",
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "ElapsedProgramTime"
     },
@@ -238,7 +256,8 @@
       "unite": "s",
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "Duration"
     },
@@ -251,7 +270,8 @@
       "unite": "%",
       "configuration": {
         "request": " BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "ProgramProgress"
     },
@@ -264,7 +284,8 @@
       "configuration": {
         "request": "commands/BSH.Common.Command.PauseProgram",
         "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
+        "value" : true,
+        "category": "Command"
       },
       "logicalId": "start"
     },
@@ -277,7 +298,8 @@
       "configuration": {
         "request": "commands/BSH.Common.Command.PauseProgram",
         "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
+        "value" : true,
+        "category": "Command"
       },
       "logicalId": "PUT::BSH.Common.Command.PauseProgram"
     },
@@ -290,30 +312,10 @@
       "configuration": {
         "request": "commands/BSH.Common.Command.ResumeProgram",
         "key": "BSH.Common.Command.ResumeProgram",
-        "value": true
+        "value": true,
+        "category": "Command"
       },
       "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
-    },
-    {
-      "name": "Rafraichir",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "logicalId": "refresh"
-    },
-    {
-      "name": "Lancer",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
-        "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
-      },
-      "logicalId": "start"
     },
     {
       "name": "Arrêter",
@@ -322,9 +324,18 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "programs/active"
+        "request": "programs/active",
+        "category": "Command"
       },
       "logicalId": "DELETE::StopActiveProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }

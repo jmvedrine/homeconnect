@@ -7,10 +7,25 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "subtype": "binary",
       "logicalId": "connected"
+    },
+    {
+      "name": "Démarrage à distance",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "request": "BSH.Common.Status",
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
+      },
+      "logicalId": "RemoteControlStartAllowed"
     },
     {
       "name": "Contrôle à distance",
@@ -21,7 +36,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "RemoteControlActive"
     },
@@ -34,21 +50,10 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "LocalControlActive"
-    },
-    {
-      "name": "Programme en cours",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "programActive"
     },
     {
       "name": "Statut de fonctionnement",
@@ -59,7 +64,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "OperationState"
     },
@@ -72,7 +78,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "PowerState"
     },

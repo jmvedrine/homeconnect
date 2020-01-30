@@ -7,7 +7,8 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "subtype": "binary",
       "logicalId": "connected"
@@ -21,7 +22,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "RemoteControlStartAllowed"
     },
@@ -34,7 +36,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "RemoteControlActive"
     },
@@ -47,7 +50,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "LocalControlActive"
     },
@@ -59,7 +63,8 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "logicalId": "programActive"
     },
@@ -72,7 +77,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "OperationState"
     },
@@ -85,7 +91,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "StatusInfo"
       },
       "logicalId": "DoorState"
     },
@@ -98,7 +105,8 @@
       "unite": "",
       "configuration": {
         "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "SettingInfo"
       },
       "logicalId": "PowerState"
     },
@@ -122,7 +130,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Washer.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "SpinSpeed"
     },
@@ -134,7 +143,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Washer.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "IDos1DosingLevel"
     },
@@ -146,7 +156,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Washer.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "IDos2DosingLevel"
     },
@@ -158,7 +169,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Washer.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "Prewash"
     },
@@ -170,7 +182,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Washer.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "RinsePlus1"
     },
@@ -182,7 +195,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "VarioPerfect"
     },
@@ -195,7 +209,8 @@
       "unite": "%",
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "WaterForecast"
     },
@@ -208,7 +223,8 @@
       "unite": "%",
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "EnergyForecast"
     },
@@ -220,7 +236,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "LaundryCare.Washer.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "ProcessPhase"
     },
@@ -233,7 +250,8 @@
       "unite": "s",
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "RemainingProgramTime"
     },
@@ -245,7 +263,8 @@
       "isHistorized": 0,
       "configuration": {
         "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "RemainingProgramTimeIsEstimated"
     },
@@ -258,7 +277,8 @@
       "unite": "%",
       "configuration": {
         "request": " BSH.Common.Option",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "OptionInfo"
       },
       "logicalId": "ProgramProgress"
     },
@@ -268,6 +288,12 @@
       "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
+      "configuration": {
+        "request": "commands/BSH.Common.Command.PauseProgram",
+        "key": "BSH.Common.Command.PauseProgram",
+        "value" : true,
+        "category": "Command"
+      },
       "logicalId": "start"
     },
     {
@@ -279,7 +305,8 @@
       "configuration": {
         "request": "commands/BSH.Common.Command.PauseProgram",
         "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
+        "value" : true,
+        "category": "Command"
       },
       "logicalId": "PUT::BSH.Common.Command.PauseProgram"
     },
@@ -292,30 +319,10 @@
       "configuration": {
         "request": "commands/BSH.Common.Command.ResumeProgram",
         "key": "BSH.Common.Command.ResumeProgram",
-        "value": true
+        "value": true,
+        "category": "Command"
       },
       "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
-    },
-    {
-      "name": "Rafraichir",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "logicalId": "refresh"
-    },
-    {
-      "name": "Lancer",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
-        "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
-      },
-      "logicalId": "start"
     },
     {
       "name": "Arrêter",
@@ -324,9 +331,18 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "programs/active"
+        "request": "programs/active",
+        "category": "Command"
       },
       "logicalId": "DELETE::StopActiveProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }
