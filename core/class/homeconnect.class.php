@@ -586,10 +586,15 @@ class homeconnect extends eqLogic {
 										$cmd->setName($programName);
 										$cmd->setIsHistorized(0);
 										$cmd->setDisplay('generic_type', 'DONT');
-										if ($eqLogic->getConfiguration('type','') == 'Hood') {
-											$cmd->setConfiguration('request', 'programs/active');
+										if (isset($applianceProgram['constraints']['execution'])) {
+											log::add('homeconnect','debug', "Mode d'exécution du programme " . $applianceProgram['constraints']['execution']);
+											if ($applianceProgram['constraints']['execution'] == 'selectandstart') {
+												$cmd->setConfiguration('request', 'programs/selected');
+											} else {
+												$cmd->setConfiguration('request', 'programs/active');
+											}
 										} else {
-											$cmd->setConfiguration('request', 'programs/selected');
+											$cmd->setConfiguration('request', 'programs/active');
 										}
 										$cmd->setConfiguration('key', $programKey);
 										$cmd->setConfiguration('category', 'Program');
