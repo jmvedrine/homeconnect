@@ -88,7 +88,7 @@ if (!isConnect()) {
 		<div class="form-group">
 			<label class="col-sm-3 control-label">{{Mode démo (appareils simulés)}}</label>
 			<div class="col-sm-2">
-				<input type="checkbox" class="configKey tooltips" data-l1key="demo_mode">
+				<input id="input_demo_mode" type="checkbox" class="configKey tooltips" data-l1key="demo_mode">
 			</div>
 		</div>
 		<div class="form-group">
@@ -114,6 +114,9 @@ if (!isConnect()) {
 </form>
 
 <script>
+$('.configKey[data-l1key=demo_mode]').on('change', function() {
+	if ($(this).value()=='1') { $('#bt_loginDemoHomeConnect').show(); $('#bt_loginHomeConnect').hide();} else { $('#bt_loginDemoHomeConnect').hide(); $('#bt_loginHomeConnect').show();}
+});
 $('#bt_loginHomeConnect').on('click', function () {
 	$.ajax({ // fonction permettant de faire de l'ajax
 		type: "POST", // methode de transmission des données au fichier php

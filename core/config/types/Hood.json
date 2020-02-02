@@ -3,6 +3,7 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
@@ -10,162 +11,7 @@
         "repeatEventManagement" : "never",
         "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
-    },
-    {
-      "name": "Démarrage à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "RemoteControlStartAllowed"
-    },
-    {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "RemoteControlActive"
-    },
-    {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "LocalControlActive"
-    },
-     {
-      "name": "Statut de fonctionnement",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "OperationState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "PowerState"
-    },
-    {
-      "name": "Eclairage ambiance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "AmbientLightEnabled"
-    },
-    {
-      "name": "Luminosité ambiance",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "AmbientLightBrightness"
-    },
-    {
-      "name": "Couleur ambiance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "AmbientLightColor"
-    },
-    {
-      "name": "Couleur personnalisée",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "AmbientLightCustomColor"
-    },
-    {
-      "name": "Eclairage",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "Cooking.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "Lighting"
-    },
-    {
-      "name": "Luminosité",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "Cooking.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "LightingBrightness"
     },
     {
       "name": "Lancer",
@@ -174,9 +20,6 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
-        "key": "BSH.Common.Command.PauseProgram",
-        "value" : true,
         "category": "Command"
       },
       "logicalId": "start"
@@ -188,7 +31,7 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "programs/active",
+        "path": "programs/active",
         "category": "Command"
       },
       "logicalId": "DELETE::StopActiveProgram"
@@ -201,8 +44,5 @@
       "isHistorized": 0,
       "logicalId": "refresh"
     }
-  ]
-}
-
   ]
 }

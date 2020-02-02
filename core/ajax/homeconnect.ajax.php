@@ -27,20 +27,23 @@ try {
 	ajax::init();
 
 	if (init('action') == 'loginHomeConnect') {
-        if (config::byKey('demo_mode','homeconnect')) {
-            homeconnect::authDemoRequest();
-            ajax::success();
-        } else {
-		    $url = homeconnect::authRequest();
-		    ajax::success(array('redirect' => $url));
-        }
+		if (network::getUserLocation() == 'internal') {
+			throw new Exception(__("Connexion impossible : connectez vous à votre Jeedom par l'accès externe pas par l'accès interne", __FILE__));
+		}
+		if (config::byKey('demo_mode','homeconnect')) {
+			homeconnect::authDemoRequest();
+			ajax::success();
+		} else {
+			$url = homeconnect::authRequest();
+			ajax::success(array('redirect' => $url));
+		}
 	}
 
 	if (init('action') == 'syncHomeConnect') {
 		homeconnect::syncHomeConnect();
 		ajax::success();
 	}
-    
+
 	if (init('action') == 'deleteEqLogic') {
 		homeconnect::deleteEqLogic();
 		ajax::success();

@@ -3,6 +3,7 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
@@ -10,134 +11,7 @@
         "repeatEventManagement" : "never",
         "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
-    },
-    {
-      "name": "Statut de la porte",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "DoorState"
-    },
-    {
-      "name": "Température congélateur",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.FridgeFreezer.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "SetpointTemperatureFreezer"
-    },
-    {
-      "name": "Température réfrigérateur",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.FridgeFreezer.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "SetpointTemperatureRefrigerator"
-    },
-    {
-      "name": "Température compartiment fraîcheur gauche",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "ChillerLeft.SetpointTemperature"
-    },
-    {
-      "name": "Température compartiment fraîcheur commun",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "ChillerCommon.SetpointTemperature"
-    },
-    {
-      "name": "Température compartiment fraîcheur droit",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "ChillerRight.SetpointTemperature"
-    },
-    {
-      "name": "Température compartiment boissons 1",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "WineCompartment.SetpointTemperature"
-    },
-    {
-      "name": "Température compartiment boissons 2",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "WineCompartment2.SetpointTemperature"
-    },
-    {
-      "name": "Température compartiment boissons 3",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "Refrigeration.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "WineCompartment3.SetpointTemperature"
     },
     {
       "name": "Rafraichir",

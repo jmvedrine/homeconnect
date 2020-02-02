@@ -14,34 +14,6 @@
       "logicalId": "connected"
     },
     {
-      "name": "Démarrage à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "RemoteControlStartAllowed"
-    },
-    {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "LocalControlActive"
-    },
-    {
       "name": "Programme en cours",
       "type": "info",
       "subtype": "string",
@@ -55,82 +27,17 @@
       "logicalId": "programActive"
     },
     {
-      "name": "Statut de fonctionnement",
+      "name": "Programme sélectionné",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "request": "BSH.Common.Status",
         "repeatEventManagement" : "never",
-        "category": "StatusInfo"
+        "category": "CommonInfo"
       },
-      "logicalId": "OperationState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "PowerState"
-    },
-    {
-      "name": "Intensité café",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "ConsumerProducts.CoffeeMaker.Option",
-        "repeatEventManagement" : "never",
-        "category": "OptionInfo"
-      },
-      "logicalId": "BeanAmount"
-    },
-    {
-      "name": "Taille tasse",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "ml",
-      "configuration": {
-        "request": "ConsumerProducts.CoffeeMaker.Option",
-        "repeatEventManagement" : "never",
-        "category": "OptionInfo"
-      },
-      "logicalId": "FillQuantity"
-    },
-    {
-      "name": "Température",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "°C",
-      "configuration": {
-        "request": "ConsumerProducts.CoffeeMaker.Option",
-        "repeatEventManagement" : "never",
-        "category": "OptionInfo"
-      },
-      "logicalId": "CoffeeTemperature"
-    },
-    {
-      "name": "Rafraichir",
-      "type": "action",
-      "subtype": "other",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "logicalId": "refresh"
+      "logicalId": "programSelected"
     },
     {
       "name": "Lancer",
@@ -139,12 +46,37 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
+        "category": "Command"
+      },
+      "logicalId": "start"
+    },
+    {
+      "name": "Pause",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "commands/BSH.Common.Command.PauseProgram",
         "key": "BSH.Common.Command.PauseProgram",
         "value" : true,
         "category": "Command"
       },
-      "logicalId": "start"
+      "logicalId": "PUT::BSH.Common.Command.PauseProgram"
+    },
+    {
+      "name": "Reprendre",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "commands/BSH.Common.Command.ResumeProgram",
+        "key": "BSH.Common.Command.ResumeProgram",
+        "value": true,
+        "category": "Command"
+      },
+      "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
     },
     {
       "name": "Arrêter",
@@ -153,10 +85,18 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "programs/active",
+        "path": "programs/active",
         "category": "Command"
       },
       "logicalId": "DELETE::StopActiveProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }

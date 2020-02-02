@@ -3,6 +3,7 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
@@ -10,50 +11,7 @@
         "repeatEventManagement" : "never",
         "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
-    },
-    {
-      "name": "Démarrage à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "RemoteControlStartAllowed"
-    },
-    {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "RemoteControlActive"
-    },
-    {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "LocalControlActive"
     },
     {
       "name": "Programme en cours",
@@ -69,60 +27,17 @@
       "logicalId": "programActive"
     },
     {
-      "name": "Statut de fonctionnement",
+      "name": "Programme sélectionné",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "request": "BSH.Common.Status",
         "repeatEventManagement" : "never",
-        "category": "StatusInfo"
+        "category": "CommonInfo"
       },
-      "logicalId": "OperationState"
-    },
-    {
-      "name": "Statut de la porte",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never",
-        "category": "StatusInfo"
-      },
-      "logicalId": "DoorState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "PowerState"
-    },
-    {
-      "name": "Séchage",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "LaundryCare.Dryer.Setting",
-        "repeatEventManagement" : "never",
-        "category": "SettingInfo"
-      },
-      "logicalId": "DryingTarget"
+      "logicalId": "programSelected"
     },
     {
       "name": "Lancer",
@@ -131,12 +46,37 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
+        "category": "Command"
+      },
+      "logicalId": "start"
+    },
+    {
+      "name": "Pause",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "commands/BSH.Common.Command.PauseProgram",
         "key": "BSH.Common.Command.PauseProgram",
         "value" : true,
         "category": "Command"
       },
-      "logicalId": "start"
+      "logicalId": "PUT::BSH.Common.Command.PauseProgram"
+    },
+    {
+      "name": "Reprendre",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "commands/BSH.Common.Command.ResumeProgram",
+        "key": "BSH.Common.Command.ResumeProgram",
+        "value": true,
+        "category": "Command"
+      },
+      "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
     },
     {
       "name": "Arrêter",
@@ -145,7 +85,7 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "programs/active",
+        "path": "programs/active",
         "category": "Command"
       },
       "logicalId": "DELETE::StopActiveProgram"
