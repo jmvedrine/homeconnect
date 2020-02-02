@@ -979,10 +979,15 @@ class homeconnect extends eqLogic {
 			$cmd->setDisplay('generic_type', 'DONT');
 			$cmd->setConfiguration('path', $path);
 			$cmd->setConfiguration('key', $key);
+			$cmd->setConfiguration('withAction', false);
 			$cmd->setConfiguration('category', $category);
 			$cmd->setEqLogic_id($this->getId());
 			$cmd->setType('info');
 			if (isset($actionCmd)) {
+				// Il y aune commande action associée
+				// On ne l'affiche pas
+				$cmd->setIsVisible(0);
+				$cmd->setConfiguration('withAction', true);
 				// Détermination du subtype à partir de la commande action
 				if ($actionCmd->getSubType() == 'slider') {
 					// commande numeric.
@@ -1139,6 +1144,41 @@ class homeconnect extends eqLogic {
 			'message' => '',
 		));
 	}
+
+	public function updateInfoCmdValue($logicalId, $value) {
+		$cmd = $this->getCmd(null, $logicalId);
+		$reglage = '';
+		if (is_object($cmd)) {
+			if ($cmd->getConfiguration('withAction')) {
+				// C'est une commande associée à une commande action pas de traduction
+				if (isset($value['value'])) {
+					$reglage = $value['value'];
+				} else {
+					log::add('homeconnect', 'debug', "La commande info : ".$logicalId." n'a pas de valeur");
+				}
+			} else {
+				// Récupération de la valeur du setting.
+				if (isset($value['displayvalue'])) {
+					$reglage = $value['displayvalue'];
+				} else {
+					if (isset($value['value'])) {
+						if ($cmd->getSubType() == 'string') {
+							$reglage = self::traduction(self::lastSegment($value['value']));
+						} else {
+							$reglage = $value['value'];
+						}
+					} else {
+						log::add('homeconnect', 'debug', "la commande info : ".$logicalId." n'a pas de valeur");
+					}
+				}
+			}
+			$this->checkAndUpdateCmd($logicalId, $reglage);
+			log::add('homeconnect', 'debug', "Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
+		} else {
+			log::add('homeconnect', 'debug', "Dans updateInfoCmdValue la commande : ".$logicalId." n'existe pas");
+		}
+	}
+
 	public function updateProgram() {
 		if ($this->isConnected()) {
 			$eqLogicType = $this->getConfiguration('type');
@@ -1183,28 +1223,7 @@ class homeconnect extends eqLogic {
 							log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 							// Récupération du nom du programme / option.
 							$logicalId = 'GET::' . $value['key'];
-							$cmd = $this->getCmd(null, $logicalId);
-							$reglage = '';
-							if (is_object($cmd)) {
-								// Récupération de la valeur du programme / option.
-								if (isset($value['displayvalue'])) {
-										$reglage = $value['displayvalue'];
-								} else {
-									if (isset($value['value'])) {
-										if ($cmd->getSubType() == 'string') {
-											$reglage = self::traduction(self::lastSegment($value['value']));
-										} else {
-											$reglage = $value['value'];
-										}
-									} else {
-										log::add('homeconnect', 'debug', "La commande : " .$logicalId." n'a pas de valeur");
-									}
-								}
-								$this->checkAndUpdateCmd($logicalId, $reglage);
-								log::add('homeconnect', 'debug', "Option : ".$logicalId." - Valeur :".$reglage);
-							} else {
-								log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'existe pas");
-							}
+							$this->updateInfoCmdValue($logicalId, $value);
 						}
 					}
 				} else {
@@ -1266,28 +1285,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "status : " . print_r($value, true));
 					// Récupération du logicalId du status.
 					$logicalId = 'GET::' .$value['key'];
-					$cmd = $this->getCmd(null, $logicalId);
-					$reglage = '';
-					if (is_object($cmd)) {
-						// Récupération de la valeur du status.
-						if (isset($value['displayvalue'])) {
-								$reglage = $value['displayvalue'];
-						} else {
-							if (isset($value['value'])) {
-								if ($cmd->getSubType() == 'string') {
-									$reglage = self::traduction(self::lastSegment($value['value']));
-								} else {
-									$reglage = $value['value'];
-								}
-							} else {
-								log::add('homeconnect', 'debug', "le status : ".$logicalId." n'a pas de valeur");
-							}
-						}
-						$this->checkAndUpdateCmd($logicalId, $reglage);
-						log::add('homeconnect', 'debug', "mise à jour status : ".$logicalId." - Valeur :".$reglage);
-					} else {
-						log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'existe pas");
-					}
+					$this->updateInfoCmdValue($logicalId, $value);
 				}
 			}
 		} else {
@@ -1307,28 +1305,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "setting : " . print_r($value, true));
 					// Récupération du logicalId du setting.
 					$logicalId = 'GET::' . $value['key'];
-					$cmd = $this->getCmd(null, $logicalId);
-					$reglage = '';
-					if (is_object($cmd)) {
-						// Récupération de la valeur du setting.
-						if (isset($value['displayvalue'])) {
-								$reglage = $value['displayvalue'];
-						} else {
-							if (isset($value['value'])) {
-								if ($cmd->getSubType() == 'string') {
-									$reglage = self::traduction(self::lastSegment($value['value']));
-								} else {
-									$reglage = $value['value'];
-								}
-							} else {
-								log::add('homeconnect', 'debug', "le setting : ".$logicalId." n'a pas de valeur");
-							}
-						}
-						$this->checkAndUpdateCmd($logicalId, $reglage);
-						log::add('homeconnect', 'debug', "Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
-					} else {
-						log::add('homeconnect', 'debug', "La commande : ".$logicalId." n'existe pas");
-					}
+					$this->updateInfoCmdValue($logicalId, $value);
 				}
 			}
 		} else {
@@ -1591,10 +1568,12 @@ class homeconnectCmd extends cmd {
 			}
 			$payload= json_encode($parameters);
 		}
-		log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
-		log::add('homeconnect', 'debug',"Payload : " . $payload);
+
 		$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $path;
+		log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
+		log::add('homeconnect', 'debug',"Method : " . $method);
 		log::add('homeconnect', 'debug',"Url : " . $url);
+		log::add('homeconnect', 'debug',"Payload : " . $payload);
 		$response = homeconnect::request($url, $payload, $method, $headers);
 		log::add('homeconnect', 'debug',"Réponse du serveur : " . $response);
 	}
