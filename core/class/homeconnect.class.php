@@ -140,7 +140,7 @@ class homeconnect extends eqLogic {
 					// "Conflict", desc: "Command/Query cannot be executed for the home appliance, the error response contains the error details"
 					$result = json_decode($result, true);
 					$errorMsg = isset($result['error']['description']) ? $result['error']['description'] : '';
-					throw new \Exception(__("Cette requête ne peut pas être exécutée pour cet appareil. " . $errorMsg));
+					throw new \Exception(__("Cette requête ne peut pas être exécutée pour cet appareil. " . $errorMsg,__FILE__));
 					break;
 				case 415:
 					// "Unsupported Media Type", desc: "The request's Content-Type is not supported"
@@ -579,6 +579,7 @@ class homeconnect extends eqLogic {
 											$infoCmd = $eqLogic->getCmd('info', 'programSelected');
 											if (is_object($infoCmd)) {
 												// On a trouvé la commande info associée.
+												log::add('homeconnect', 'debug', "setValue sur la commande programme selected " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
 												$actionCmd->setValue($infoCmd->getId());
 												$actionCmd->save();
 											} else {
@@ -588,6 +589,7 @@ class homeconnect extends eqLogic {
 											$infoCmd = $eqLogic->getCmd('info', 'programActive');
 											if (is_object($infoCmd)) {
 												// On a trouvé la commande info associée.
+												log::add('homeconnect', 'debug', "setValue sur la commande programme active " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
 												$actionCmd->setValue($infoCmd->getId());
 												$actionCmd->save();
 												// A voir : ne pas la rendre visible ?
@@ -604,7 +606,7 @@ class homeconnect extends eqLogic {
 												$optionPath = $path . '/options/' . $optionData['key'];
 												$actionCmd = $eqLogic->createActionCmd($optionData, $optionPath, 'Option');
 												$infoCmd = $eqLogic->createInfoCmd($optionData, $optionPath, 'Option', $actionCmd);
-												$actionCmd->setValue($infoCmd->getId());
+												// le setValue est fait dans createInfoCmd
 											}
 										}
 									} else {
@@ -648,19 +650,22 @@ class homeconnect extends eqLogic {
 					$allSettings = json_decode($allSettings, true);
 					if (isset($allSettings['data']['settings'])) {
 						foreach($allSettings['data']['settings'] as $setting) {
-							log::add('homeconnect', 'debug', "setting key" . $setting['key']);
+							log::add('homeconnect', 'debug', "setting key " . $setting['key']);
 							$path = '/settings/' . $setting['key'];
 							$settingData = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . $path, null, 'GET', array());
 							if ($settingData !== false) {
 								log::add('homeconnect', 'debug', "Setting " . $settingData);
 								$settingData = json_decode($settingData, true);
+								// A voir si pas d'access on assume readWrite. est-ce correct ?
 								if (isset($settingData['data']['constraints']['access']) && $settingData['data']['constraints']['access'] == 'readWrite') {
-									log::add('homeconnect', 'debug', "On crée aussi la commande setting action");
+									log::add('homeconnect', 'debug', "Le settin est readWrite, on crée aussi la commande setting action");
 									$actionCmd = $eqLogic->createActionCmd($settingData['data'], $path, 'Setting');
+									log::add('homeconnect', 'debug', "On crée aussi la commande setting info");
 									$infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, 'Setting', $actionCmd);
-									$actionCmd->setValue($infoCmd->getId());
+									// le setValue est fait dans createInfoCmd
 								} else {
 									// Commande info sans commande action associée
+									log::add('homeconnect', 'debug', "Le setting est non readWrite, on ne crée que la commande setting info");
 									$infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, 'Setting');
 								}
 							}
@@ -826,11 +831,11 @@ class homeconnect extends eqLogic {
 				'LocalControlActive' => __("Appareil en fonctionnement", __FILE__),
 				'OperationState' => __("Statut de fonctionnement", __FILE__),
 				'PowerState' => __("Statut de puissance", __FILE__),
-				];
+		];
 
-				(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
+		(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
 
-				return $word;
+		return $word;
 	}
 
 	public static function deleteEqLogic() {
@@ -952,7 +957,7 @@ class homeconnect extends eqLogic {
 		return $cmd;
 	}
 
-	public function createInfoCmd($cmdData, $path, $category, $infoCmd = null) {
+	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
 		log::add('homeconnect', 'debug', "Création d'une commande info key=" . $key . " path=" . $path . " category= " . $category);
 		$logicalIdCmd = 'GET::' . $key;
@@ -977,28 +982,33 @@ class homeconnect extends eqLogic {
 			$cmd->setConfiguration('category', $category);
 			$cmd->setEqLogic_id($this->getId());
 			$cmd->setType('info');
-			if (isset($infoCmd)) {
+			if (isset($actionCmd)) {
 				// Détermination du subtype à partir de la commande action
-				if ($infoCmd->getSubType() == 'cursor') {
+				if ($actionCmd->getSubType() == 'slider') {
 					// commande numeric.
 					log::add('homeconnect', 'debug', "Création d'une commande info numeric à partir de la commande action");
 					$cmd->setSubType('numeric');
-					$cmd->setConfiguration('minValue', $infoCmd->getConfiguration('minValue', 0));
-					$cmd->setConfiguration('maxValue', $infoCmd->getConfiguration('maxValue', 100));
-					$cmd->setUnite($infoCmd->getUnite());
+					$cmd->setConfiguration('minValue', $actionCmd->getConfiguration('minValue', 0));
+					$cmd->setConfiguration('maxValue', $actionCmd->getConfiguration('maxValue', 100));
+					$cmd->setUnite($actionCmd->getUnite());
 					log::add('homeconnect', 'debug', "Min = " . $cmd->getConfiguration('minValue') . " Max = " .$cmd->getConfiguration('maxValue') . " Unité = " . $cmd->getUnite());
 					$cmd->save();
-				} else if ($infoCmd->getSubType() == 'select') {
+				} else if ($actionCmd->getSubType() == 'select') {
 					// Commande string
 					log::add('homeconnect', 'debug', "Création d'une commande info string à partir de la commande action");
 					$cmd->setSubType('string');
 					$cmd->save();
-				} else if ($infoCmd->getSubType() == 'other') {
+				} else if ($actionCmd->getSubType() == 'other') {
 					// Commande string
 					log::add('homeconnect', 'debug', "Création d'une commande info other à partir de la commande action");
 					$cmd->setSubType('string');
 					$cmd->save();
+				} else {
+					log::add('homeconnect', 'debug', "Problème avec le subtype de la commande action associée " . $actionCmd->getSubType());
 				}
+				log::add('homeconnect', 'debug', "setValue sur la commande " . $category  . " " . $actionCmd->getLogicalId() . " commande info " .$cmd->getLogicalId());
+				$actionCmd->setValue($cmd->getId());
+				$actionCmd->save();
 			} else if (isset($cmdData['type'])) {
 				// Determination du subType a l'aide de l'étiquette type
 				if ($cmdData['type'] == 'Int' || $cmdData['type'] == 'Double') {
@@ -1024,11 +1034,11 @@ class homeconnect extends eqLogic {
 					$cmd->save();
 				} else if (strpos($cmdData['type'], 'EnumType') !== false) {
 					// Commande string
-					log::add('homeconnect', 'debug', "Création d'une commande stringà partir de l'étiquette type");
+					log::add('homeconnect', 'debug', "Création d'une commande string à partir de l'étiquette type");
 					$cmd->setSubType('string');
 					$cmd->save();
 				} else if ($cmdData['type'] == 'Boolean') {
-					log::add('homeconnect', 'debug', "Création d'une commande binaryà partir de l'étiquette type");
+					log::add('homeconnect', 'debug', "Création d'une commande binary à partir de l'étiquette type");
 					$cmd->setSubType('binary');
 					$cmd->save();
 				}
