@@ -176,7 +176,7 @@ class homeconnect extends eqLogic {
 	 */
 		log::add('homeconnect', 'debug',"Fonction syncHomeConnect()");
 		if (empty(config::byKey('auth','homeconnect'))) {
-			log::add('homeconnect', 'debug', "[Erreur] : Code d'authorisation vide.");
+			log::add('homeconnect', 'debug', "[Erreur] : Code d'autorisation vide.");
 			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
 			return;
 		}
