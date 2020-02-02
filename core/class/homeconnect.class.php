@@ -101,9 +101,11 @@ class homeconnect extends eqLogic {
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 		if ($code == '200' || $code == '204') {
+			log::add('homeconnect','debug',"La requête $method	: $url a réussi code = " . $code . " résultat = ".$result);
 			return $result;
 		} else {
 			// Traitement des erreurs
+			log::add('homeconnect','debug',"La requête $method	: $url a retourné un code d'erreur " . $code . " résultat = ".$result);
 			switch ($code) {
 				case 400:
 					// "Bad Request", desc: "Error occurred (e.g. validation error - value is out of range)"
@@ -140,7 +142,7 @@ class homeconnect extends eqLogic {
 					// "Conflict", desc: "Command/Query cannot be executed for the home appliance, the error response contains the error details"
 					$result = json_decode($result, true);
 					$errorMsg = isset($result['error']['description']) ? $result['error']['description'] : '';
-					throw new \Exception(__("Cette requête ne peut pas être exécutée pour cet appareil. " . $errorMsg,__FILE__));
+					throw new \Exception(__("Cette action ne peut pas être exécutée pour cet appareil",__FILE__) . ' ' . $errorMsg);
 					break;
 				case 415:
 					// "Unsupported Media Type", desc: "The request's Content-Type is not supported"
@@ -162,7 +164,6 @@ class homeconnect extends eqLogic {
 				   // Erreur inconnue
 				   throw new \Exception(__("Erreur inconnue code $code.",__FILE__));
 			}
-			log::add('homeconnect','debug',"La requête $method	: $url a retourné un code = " . $code . ' résultat = '.$result);
 			return false;
 		}
 	}
@@ -176,8 +177,8 @@ class homeconnect extends eqLogic {
 	 */
 		log::add('homeconnect', 'debug',"Fonction syncHomeConnect()");
 		if (empty(config::byKey('auth','homeconnect'))) {
-			log::add('homeconnect', 'debug', "[Erreur] : Code d'authorisation vide.");
-			throw new Exception("Erreur : Veuillez connecter votre compte via le menu configuration du plugin.");
+			log::add('homeconnect', 'debug', "[Erreur] : Code d’authentifiaction vide.");
+			throw new Exception("Erreur : Veuillez vous connecter à votre compte Home Connect via le menu configuration du plugin.");
 			return;
 		}
 
@@ -512,7 +513,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"Fonction homeappliances()");
+		log::add('homeconnect', 'debug',"---------- Début de synchronisation ----------");
 
 		self::verifyToken();
 
@@ -567,7 +568,7 @@ class homeconnect extends eqLogic {
 										if ($applianceProgram['constraints']['execution'] !== 'selectandstart') {
 											$path = 'programs/active';
 										} else {
-												$path = 'programs/selected';
+											$path = 'programs/selected';
 										}
 									} else {
 										$path = 'programs/selected';
@@ -676,7 +677,7 @@ class homeconnect extends eqLogic {
 				}
 			}
 		}
-		log::add('homeconnect', 'debug',"Fin de la fonction homeappliances()");
+		log::add('homeconnect', 'debug',"---------- Fin de synchronisation ----------");
 	}
 
 	private static function majConnected() {
@@ -912,13 +913,14 @@ class homeconnect extends eqLogic {
 					$cmd->setConfiguration('maxValue', $cmdData['constraints']['max']);
 				}
 				log::add('homeconnect', 'debug', "Min = " . $cmd->getConfiguration('minValue') . " Max = " .$cmd->getConfiguration('maxValue') . " Unité = " . $cmd->getUnite());
-				/*if ($cmd->getConfiguration('maxValue') < 1000) {
+				if ($cmd->getConfiguration('maxValue') < 1000) {
 					$cmd->setTemplate('dashboard', 'button');
 					$cmd->setTemplate('mobile', 'button');
-				} else {
+				}
+				/*else {
 					$cmd->setTemplate('dashboard', 'bigbutton');
 					$cmd->setTemplate('mobile', 'bigbutton');
-				}
+				}*/
 				$arr = $cmd->getDisplay('parameters');
 				if (!is_array($arr)) {
 					$arr = array();
@@ -929,10 +931,10 @@ class homeconnect extends eqLogic {
 				} else {
 					$$arr['step'] = 1;
 				}
-				if ($cmd->getConfiguration('maxValue') >= 1000) {
+				/*if ($cmd->getConfiguration('maxValue') >= 1000) {
 						$arr['bigstep'] = 900;
-				}
-				$cmd->setDisplay('parameters', $arr);*/
+				}*/
+				$cmd->setDisplay('parameters', $arr);
 				$cmd->save();
 			} else if (strpos($cmdData['type'], 'EnumType') !== false) {
 				// Commande select
@@ -1213,19 +1215,6 @@ class homeconnect extends eqLogic {
 					} else {
 						log::add('homeconnect', 'debug', "La commande programActive n'existe pas :");
 					}
-
-					$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/active/options', null, 'GET', array());
-					if ($programOptions !== false) {
-						log::add('homeconnect', 'debug', "options : " . $programOptions);
-						$programOptions = json_decode($programOptions, true);
-						// MAJ des options et autres informations du programme en cours.
-						foreach ($programOptions['data']['options'] as $value) {
-							log::add('homeconnect', 'debug', "option : " . print_r($value, true));
-							// Récupération du nom du programme / option.
-							$logicalId = 'GET::' . $value['key'];
-							$this->updateInfoCmdValue($logicalId, $value);
-						}
-					}
 				} else {
 					// Pas de programme actif
 					// A voir : mettre à jour les autres commandes (états et réglages)
@@ -1269,6 +1258,23 @@ class homeconnect extends eqLogic {
 			} else {
 				log::add('homeconnect', 'debug', "réponse à la requête vaut faux");
 				$this->checkAndUpdateCmd('programSelected', __("Aucun", __FILE__));
+			}
+			$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/selected/options', null, 'GET', array());
+			if ($programOptions !== false) {
+				log::add('homeconnect', 'debug', "options : " . $programOptions);
+				$programOptions = json_decode($programOptions, true);
+				// MAJ des options et autres informations du programme en cours.
+				foreach ($programOptions['data']['options'] as $value) {
+					log::add('homeconnect', 'debug', "option : " . print_r($value, true));
+					// Récupération du nom du programme / option.
+					$logicalId = 'GET::' . $value['key'];
+					$optionCmd = $this->getCmd('info', $logicalId);
+					if (is_object($optionCmd)) {
+						$this->updateInfoCmdValue($logicalId, $value);
+					} else {
+						log::add('homeconnect', 'debug', "pas commande info $logicalId pour mise à jour valeur d'une option");
+					}
+				}
 			}
 		}
 	}
@@ -1440,17 +1446,17 @@ class homeconnectCmd extends cmd {
 		log::add('homeconnect', 'debug',"Options : " . print_r($_options, true));
 
 		if ($this->getLogicalId() == 'DELETE::StopActiveProgram') {
-				// Commande Arrêter
-				log::add('homeconnect', 'debug',"Commande arrêter");
-				// Si l'appareil n'a pas de programme on ne peut pas arrêter
-				if (!$eqLogic->getConfiguration('hasPrograms', true)) {
-					log::add('homeconnect', 'debug',"L'appareil n'a pas de programmes impossible d'arrêter");
-					return;
-				}
-				// S'il n'y a pas de programme actif on ne peut pas arrêter
-				$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $haid . '/programs/active', null, 'GET', array());
-				if ($response !== false && $response !== 'SDK.Error.NoProgramActive') {
-					log::add('homeconnect', 'debug',"Pas de programme actif impossible d'arrêter");
+			// Commande Arrêter
+			log::add('homeconnect', 'debug',"Commande arrêter");
+			// Si l'appareil n'a pas de programme on ne peut pas arrêter
+			if (!$eqLogic->getConfiguration('hasPrograms', true)) {
+				log::add('homeconnect', 'debug',"L'appareil n'a pas de programmes impossible d'arrêter");
+				return;
+			}
+			// S'il n'y a pas de programme actif on ne peut pas arrêter
+			$response = homeconnect::request(homeconnect::API_REQUEST_URL . '/' . $haid . '/programs/active', null, 'GET', array());
+			if ($response == false || $response == 'SDK.Error.NoProgramActive') {
+				log::add('homeconnect', 'debug',"Pas de programme actif impossible d'arrêter");
 				return;
 			}
 		}
@@ -1576,6 +1582,9 @@ class homeconnectCmd extends cmd {
 		log::add('homeconnect', 'debug',"Payload : " . $payload);
 		$response = homeconnect::request($url, $payload, $method, $headers);
 		log::add('homeconnect', 'debug',"Réponse du serveur : " . $response);
+		// si la requête est de type program selected il faut mettre à jour les options
+		$eqLogic->updateApplianceData();
+
 	}
 
 	/** *************************** Getters ********************************* */

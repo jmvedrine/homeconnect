@@ -36,7 +36,7 @@
                         $('#div_alert').showAlert({message: data.result, level: 'danger'});
                         return;
                     }
-                    $('#div_alert').showAlert({message: '{{Supprssion effectuée}}', level: 'success'});
+                    $('#div_alert').showAlert({message: '{{Suppression effectuée}}', level: 'success'});
                     location.reload();
                 }
 	        });
