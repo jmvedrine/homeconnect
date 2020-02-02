@@ -3,26 +3,15 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
-    },
-     {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlStartAllowed"
     },
     {
       "name": "Programme en cours",
@@ -32,9 +21,82 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "logicalId": "programActive"
+    },
+    {
+      "name": "Programme sélectionné",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
+      },
+      "logicalId": "programSelected"
+    },
+    {
+      "name": "Lancer",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "category": "Command"
+      },
+      "logicalId": "start"
+    },
+    {
+      "name": "Pause",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "commands/BSH.Common.Command.PauseProgram",
+        "key": "BSH.Common.Command.PauseProgram",
+        "value" : true,
+        "category": "Command"
+      },
+      "logicalId": "PUT::BSH.Common.Command.PauseProgram"
+    },
+    {
+      "name": "Reprendre",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "commands/BSH.Common.Command.ResumeProgram",
+        "key": "BSH.Common.Command.ResumeProgram",
+        "value": true,
+        "category": "Command"
+      },
+      "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
+    },
+    {
+      "name": "Arrêter",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "programs/active",
+        "category": "Command"
+      },
+      "logicalId": "DELETE::StopActiveProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }

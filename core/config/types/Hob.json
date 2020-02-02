@@ -3,78 +3,23 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
     },
     {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlActive"
-    },
-    {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "LocalControlActive"
-    },
-    {
-      "name": "Programme en cours",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "programActive"
-    },
-    {
-      "name": "Statut de fonctionnement",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "OperationState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "PowerState"
+      "logicalId": "refresh"
     }
   ]
 }

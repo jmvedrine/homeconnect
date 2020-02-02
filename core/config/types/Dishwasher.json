@@ -3,53 +3,15 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
-    },
-    {
-      "name": "Démarrage à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlStartAllowed"
-    },
-    {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlActive"
-    },
-    {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "LocalControlActive"
     },
     {
       "name": "Programme en cours",
@@ -59,200 +21,54 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "logicalId": "programActive"
     },
     {
-      "name": "Statut de fonctionnement",
+      "name": "Programme sélectionné",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "logicalId": "OperationState"
+      "logicalId": "programSelected"
     },
     {
-      "name": "Statut de la porte",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "DoorState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "PowerState"
-    },
-    {
-      "name": "Eclairage ambiance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightEnabled"
-    },
-    {
-      "name": "Luminosité ambiance",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightBrightness"
-    },
-    {
-      "name": "Couleur ambiance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightColor"
-    },
-    {
-      "name": "Couleur personnalisée",
-      "type": "info",
-      "subtype": "string",
+      "name": "Lancer",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "category": "Command"
       },
-      "logicalId": "AmbientLightCustomColor"
+      "logicalId": "start"
     },
     {
-      "name": "Extra sec",
-      "type": "info",
-      "subtype": "binary",
+      "name": "Arrêter",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "Dishcare.Dishwasher.Option",
-        "repeatEventManagement" : "never"
+        "path": "programs/active",
+        "category": "Command"
       },
-      "logicalId": "ExtraDry"
+      "logicalId": "DELETE::StopActiveProgram"
     },
     {
-      "name": "Heure de départ",
-      "type": "info",
-      "subtype": "numeric",
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "s",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "StartInRelative"
-    },
-    {
-      "name": "Hygiène Plus",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "Dishcare.Dishwasher.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "HygienePlus"
-    },
-    {
-      "name": "VarioSpeed Plus",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "Dishcare.Dishwasher.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "VarioSpeedPlus"
-    },
-    {
-      "name": "Durée restante",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "s",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemainingProgramTime"
-    },
-    {
-      "name": "Eau",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "WaterForecast"
-    },
-    {
-      "name": "Energie",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "EnergyForecast"
-    },
-    {
-      "name": "Avancement actuel du programme",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": " BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "ProgramProgress"
+      "logicalId": "refresh"
     }
   ]
 }

@@ -10,6 +10,8 @@ This is a plugin for the Jeedom (https://www.jeedom.com) open source (https://gi
 
 It will permit to control Home Connect enabled appliances.
 
+A demo mode using simulated appliances is also available.
+
 It was originaly created by Sartog.
 
 Sartog's Github repo is at  https://github.com/Sartog/homeconnect .

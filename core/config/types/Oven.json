@@ -3,53 +3,15 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
-    },
-    {
-      "name": "Démarrage à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlStartAllowed"
-    },
-    {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "RemoteControlActive"
-    },
-    {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "LocalControlActive"
     },
     {
       "name": "Programme en cours",
@@ -59,212 +21,34 @@
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
       "logicalId": "programActive"
     },
     {
-      "name": "Statut de fonctionnement",
+      "name": "Programme sélectionné",
       "type": "info",
       "subtype": "string",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "logicalId": "OperationState"
+      "logicalId": "programSelected"
     },
     {
-      "name": "Statut de la porte",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "DoorState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "PowerState"
-    },
-    {
-      "name": "Eclairage ambiance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightEnabled"
-    },
-    {
-      "name": "Luminosité ambiance",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightBrightness"
-    },
-    {
-      "name": "Couleur ambiance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightColor"
-    },
-    {
-      "name": "Couleur personnalisée",
-      "type": "info",
-      "subtype": "string",
+      "name": "Lancer",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
+        "category": "Command"
       },
-      "logicalId": "AmbientLightCustomColor"
-    },
-    {
-      "name": "Température",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "CurrentCavityTemperature"
-    },
-    {
-      "name": "Température demandée",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "SetpointTemperature"
-    },
-    {
-      "name": "Préchauffage rapide",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "FastPreHeat"
-    },
-    {
-      "name": "Assistance vapeur",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "configuration": {
-        "request": "Cooking.Oven.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "SteamAssistLevel"
-    },         
-    {
-      "name": "Heure de départ",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "s",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "StartInRelative"
-    },
-    {
-      "name": "Durée écoulée",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "s",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "ElapsedProgramTime"
-    },
-    {
-      "name": "Eau",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "WaterForecast"
-    },
-    {
-      "name": "Energie",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "EnergyForecast"
-    },
-    {
-      "name": "Avancement actuel du programme",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": " BSH.Common.Option",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "ProgramProgress"
+      "logicalId": "start"
     },
     {
       "name": "Pause",
@@ -273,9 +57,10 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "commands/BSH.Common.Command.PauseProgram",
+        "path": "commands/BSH.Common.Command.PauseProgram",
         "key": "BSH.Common.Command.PauseProgram",
-        "value" : true
+        "value" : true,
+        "category": "Command"
       },
       "logicalId": "PUT::BSH.Common.Command.PauseProgram"
     },
@@ -286,11 +71,32 @@
       "isVisible": 1,
       "isHistorized": 0,
       "configuration": {
-        "request": "commands/BSH.Common.Command.ResumeProgram",
+        "path": "commands/BSH.Common.Command.ResumeProgram",
         "key": "BSH.Common.Command.ResumeProgram",
-        "value": true
+        "value": true,
+        "category": "Command"
       },
       "logicalId": "PUT::BSH.Common.Command.ResumeProgram"
+    },
+    {
+      "name": "Arrêter",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "configuration": {
+        "path": "programs/active",
+        "category": "Command"
+      },
+      "logicalId": "DELETE::StopActiveProgram"
+    },
+    {
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "logicalId": "refresh"
     }
   ]
 }

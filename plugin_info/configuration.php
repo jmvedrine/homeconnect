@@ -25,6 +25,19 @@ if (!isConnect()) {
 
 <form class="form-horizontal">
 	<fieldset>
+        <div class="form-group">
+            <label class="col-lg-3 control-label" >{{Pièce par défaut pour les appareils}}</label>
+            <div class="col-lg-3">
+            <select id="sel_object" class="configKey form-control" data-l1key="defaultParentObject">
+              <option value="">{{Aucune}}</option>
+              <?php
+                foreach (jeeObject::all() as $object) {
+                  echo '<option value="' . $object->getId() . '">' . $object->getName() . '</option>';
+                }
+              ?>
+            </select>
+            </div>
+		</div>
 		<div class="form-group">
 			<label class="col-lg-3 control-label">
 				{{Creation de l'application Jeedom sur le siteHome Connect}}
@@ -75,7 +88,7 @@ if (!isConnect()) {
 		<div class="form-group">
 			<label class="col-sm-3 control-label">{{Mode démo (appareils simulés)}}</label>
 			<div class="col-sm-2">
-				<input type="checkbox" class="configKey tooltips" data-l1key="demo_mode">
+				<input id="input_demo_mode" type="checkbox" class="configKey tooltips" data-l1key="demo_mode">
 			</div>
 		</div>
 		<div class="form-group">
@@ -89,23 +102,21 @@ if (!isConnect()) {
 				<input type="text" class="configKey form-control" data-l1key="demo_client_id"/>
 			</div>
 		</div>
-		<?php
-		// if (empty(config::byKey('auth','homeconnect'))){
-			echo ('
-				<div class="form-group">
-					<label class="col-sm-3 control-label">{{Se connecter}}</label>
-					<div class="col-sm 3">
-						<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Se connecter}}</a>
-					</div>
-				</div>
-			');
-		// }
-		?>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">{{Se connecter}}</label>
+            <div class="col-sm 3">
+                <a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Appareils réels}}</a>                <a class="btn btn-warning" id="bt_loginDemoHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Démo (Simulateurs)}}</a>
+            </div>
+        </div>
+
 
   </fieldset>
 </form>
 
 <script>
+$('.configKey[data-l1key=demo_mode]').on('change', function() {
+	if ($(this).value()=='1') { $('#bt_loginDemoHomeConnect').show(); $('#bt_loginHomeConnect').hide();} else { $('#bt_loginDemoHomeConnect').hide(); $('#bt_loginHomeConnect').show();}
+});
 $('#bt_loginHomeConnect').on('click', function () {
 	$.ajax({ // fonction permettant de faire de l'ajax
 		type: "POST", // methode de transmission des données au fichier php
@@ -123,6 +134,25 @@ $('#bt_loginHomeConnect').on('click', function () {
 				return;
 			}
 			window.location.href = data.result.redirect;
+		}
+	});
+});
+$('#bt_loginDemoHomeConnect').on('click', function () {
+	$.ajax({ // fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+		data: {
+			action: "loginHomeConnect"
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) {
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
+			}
 		}
 	});
 });

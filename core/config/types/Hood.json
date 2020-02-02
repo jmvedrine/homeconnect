@@ -3,169 +3,46 @@
     {
       "name": "Connecté(e)",
       "type": "info",
+      "subtype": "binary",
       "isVisible": 1,
       "isHistorized": 0,
       "unite": "",
       "configuration": {
-        "repeatEventManagement" : "never"
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
       },
-      "subtype": "binary",
       "logicalId": "connected"
     },
     {
-      "name": "Démarrage à distance",
-      "type": "info",
-      "subtype": "binary",
+      "name": "Lancer",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "",
       "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "category": "Command"
       },
-      "logicalId": "RemoteControlStartAllowed"
+      "logicalId": "start"
     },
     {
-      "name": "Contrôle à distance",
-      "type": "info",
-      "subtype": "binary",
+      "name": "Arrêter",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "",
       "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
+        "path": "programs/active",
+        "category": "Command"
       },
-      "logicalId": "RemoteControlActive"
+      "logicalId": "DELETE::StopActiveProgram"
     },
     {
-      "name": "Appareil en fonctionnement",
-      "type": "info",
-      "subtype": "binary",
+      "name": "Rafraichir",
+      "type": "action",
+      "subtype": "other",
       "isVisible": 1,
       "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "LocalControlActive"
-    },
-    {
-      "name": "Programme en cours",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "programActive"
-    },
-    {
-      "name": "Statut de fonctionnement",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Status",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "OperationState"
-    },
-    {
-      "name": "Statut de puissance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "PowerState"
-    },
-    {
-      "name": "Eclairage ambiance",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightEnabled"
-    },
-    {
-      "name": "Luminosité ambiance",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightBrightness"
-    },
-    {
-      "name": "Couleur ambiance",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightColor"
-    },
-    {
-      "name": "Couleur personnalisée",
-      "type": "info",
-      "subtype": "string",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "BSH.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "AmbientLightCustomColor"
-    },
-    {
-      "name": "Eclairage",
-      "type": "info",
-      "subtype": "binary",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "",
-      "configuration": {
-        "request": "Cooking.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "Lighting"
-    },
-    {
-      "name": "Luminosité",
-      "type": "info",
-      "subtype": "numeric",
-      "isVisible": 1,
-      "isHistorized": 0,
-      "unite": "%",
-      "configuration": {
-        "request": "Cooking.Common.Setting",
-        "repeatEventManagement" : "never"
-      },
-      "logicalId": "LightingBrightness"
+      "logicalId": "refresh"
     }
   ]
 }

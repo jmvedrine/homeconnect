@@ -107,7 +107,12 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 
 							<br />
-
+							<div class="form-group">
+								<label class="col-lg-3 control-label">{{Type : }}</label>
+								<div class="col-sm-6">
+									<span class="eqLogicAttr label label-info" style="font-size:1em;cursor: default;" data-l1key="configuration" data-l2key="type"></span>
+								</div>
+							</div>
 							<div class="form-group">
 								<label class="col-lg-3 control-label">{{Marque : }}</label>
 								<div class="col-sm-6">
@@ -132,12 +137,19 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						</fieldset>
 					</form>
 				</div>
-
-				<div class="col-xs-6">
-					<center>
-						<img src="plugins/homeconnect/core/config/images/default.jpg" id="img_applianceModel" style="height : 300px;" />
-					</center>
+				<div class="col-sm-6">
+					<form class="form-horizontal">
+						<fieldset>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-8">
+                                    <img src="core/img/no_image.gif" data-original=".png" id="img_device" class="img-responsive" style="max-height : 250px;" onerror="this.src='plugins/homeconnect/plugin_info/homeconnect_icon.png'"/>
+                                </div>
+                            </div>
+					</fieldset>
+				    </form>
 				</div>
+
 			</div>
 
 			<div role="tabpanel" class="tab-pane" id="commandtab">
@@ -146,7 +158,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 				<table id="table_cmd" class="table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th>{{Nom}}</th><th>{{Type}}</th><th>{{Action}}</th>
+							<th>{{Nom}}</th><th>{{Options}}</th><th>{{Action}}</th>
 						</tr>
 					</thead>
 					<tbody>
