@@ -54,19 +54,19 @@ class homeconnect extends eqLogic {
 		return http_build_query($params, null, '&', PHP_QUERY_RFC3986);
 	}
 
-	protected static function lastSegment($key) {
-		if (strpos($key, '.') === false) {
+	public static function lastSegment($separator, $key) {
+		if (strpos($key, $separator) === false) {
 			return '';
 		}
-		$parts = explode('.', $key);
+		$parts = explode($separator, $key);
 		return $parts[count($parts) - 1];
 	}
 
-	protected static function firstSegment($key) {
-		if (strpos($key, '.') === false) {
+	public static function firstSegment($separator, $key) {
+		if (strpos($key, $separator) === false) {
 			return '';
 		}
-		$parts = explode('.', $key);
+		$parts = explode($separator, $key);
 		return $parts[0];
 	}
 
@@ -213,7 +213,7 @@ class homeconnect extends eqLogic {
 
 		log::add('homeconnect', 'debug',"Fonction updateAppliances()");
 
-		self::verifyToken();
+		self::verifyToken(60);
 
 		// MAJ du statut de connexion des appareils.
 		self::majConnected();
@@ -479,30 +479,32 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"Fin de la fonction tokenRefresh()");
 	}
 
-	public static function verifyToken() {
+	public static function verifyToken($delay) {
 		// Vérification si le token est expiré.
-		if ((config::byKey('expires_in','homeconnect') - time()) < 60) {
+		if ((config::byKey('expires_in','homeconnect') - time()) < $delay) {
 
 			log::add('homeconnect', 'debug', "[Warning] : Le token est expiré, renouvellement de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
+			// ne pas oublier d'arrêter le deamon avant
 			self::tokenRefresh();
 		}
 
 		// Vérification de la présence du token et tentative de récupération si absent.
 		if (empty(config::byKey('access_token','homeconnect'))) {
 
-			log::add('homeconnect', 'debug', "[Warning] : Le token est manquant, recupération de ce dernier.");
+			log::add('homeconnect', 'debug', "[Warning] : Le token est manquant, récupération de ce dernier.");
 
 			// Récupération du token d'accès aux serveurs.
 			self::tokenRequest();
 
 			if (empty(config::byKey('access_token','homeconnect'))) {
-
 				log::add('homeconnect', 'debug', "[Erreur ]: La récupération du token à échouée.");
 				return;
 			}
+			// Dans le cas contraire relancer le deamon
 		}
+		// Relancer le deamon
 	}
 
 	private static function homeappliances() {
@@ -515,7 +517,7 @@ class homeconnect extends eqLogic {
 
 		log::add('homeconnect', 'debug',"---------- Début de synchronisation ----------");
 
-		self::verifyToken();
+		self::verifyToken(60);
 
 		$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
 		$response = json_decode($response, true);
@@ -604,7 +606,12 @@ class homeconnect extends eqLogic {
 										// creation des commandes option action et info
 										foreach($programdata['data']['options'] as $optionData) {
 											if (isset($optionData['key'])) {
-												$optionPath = $path . '/options/' . $optionData['key'];
+												if ($optionData['key'] !== 'BSH.Common.Option.StartInRelative') {
+													$optionPath = $path . '/options/' . $optionData['key'];
+												} else {
+													// Cette option ne peut pas être utilisée avec selected uniquement avec active
+													$optionPath = 'programs/active/options/' . $optionData['key'];
+												}
 												$actionCmd = $eqLogic->createActionCmd($optionData, $optionPath, 'Option');
 												$infoCmd = $eqLogic->createInfoCmd($optionData, $optionPath, 'Option', $actionCmd);
 												// le setValue est fait dans createInfoCmd
@@ -845,12 +852,16 @@ class homeconnect extends eqLogic {
 		}
 	}
 	/*
-	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
-	  public static function cron15() {
+	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom */
+	  /* public static function cron15() {
 		self::updateAppliances();
+	  } */
+
+	/*
+	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom */
+	  public static function cron() {
+		self::verifyToken(180);
 	  }
-
-
 	/*
 	 * Fonction exécutée automatiquement toutes les heures par Jeedom
 	  public static function cronHourly() {
@@ -876,7 +887,7 @@ class homeconnect extends eqLogic {
 		if (!is_object($cmd)) {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
-			$name = self::traduction(self::lastSegment($key));
+			$name = self::traduction(self::lastSegment('.', $key));
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Action ' . $name);
 			} else {
@@ -943,7 +954,7 @@ class homeconnect extends eqLogic {
 				$cmd->setConfiguration('value', '#select#');
 				$optionValues = array();
 				foreach ($cmdData['constraints']['allowedvalues'] as $optionValue) {
-					$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment($optionValue));
+					$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
 				}
 				$listValue = implode(';', $optionValues);
 				$cmd->setConfiguration('listValue', $listValue);
@@ -967,7 +978,7 @@ class homeconnect extends eqLogic {
 		if (!is_object($cmd)) {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
-			$name = self::traduction(self::lastSegment($key));
+			$name = self::traduction(self::lastSegment('.', $key));
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Info ' . $name);
 			} else {
@@ -1147,6 +1158,112 @@ class homeconnect extends eqLogic {
 		));
 	}
 
+	public function adjustProgramOptions($typeProgram, $programKey) {
+		// Cette fonction est appelée quand il y a eu un changement de programme (actif ou sélectionné) et ajuste les options en fonction de ce programme
+		log::add('homeconnect', 'debug', "Appel de la fonction adjustProgramOptions pour le type de programme $typeProgram clé $programKey");
+		$programdata = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/available/' . $programKey, null, 'GET', array());
+		log::add('homeconnect', 'debug', "Résultat de la requête " . $programdata);
+		$programdata = json_decode($programdata, true);
+		if (isset($programdata['data']['options'])) {
+			foreach($programdata['data']['options'] as $optionData) {
+				if (isset($optionData['key'])) {
+					$key = $optionData['key'];
+					// Commande option action
+					$logicalIdCmd = 'PUT::' . $key;
+					log::add('homeconnect', 'debug', "Ajustement de la commande action " . $logicalIdCmd);
+					$cmd = $this->getCmd(null, $logicalIdCmd);
+					if (is_object($cmd)) {
+						if ($cmd->getSubType() == 'slider') {
+							// commande slider.
+							log::add('homeconnect', 'debug', "Ajustement commande action slider logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
+							if (isset($optionData['unit'])) {
+								$cmd->setConfiguration('unit', $optionData['unit']);
+								if ($optionData['unit'] == 'seconds') {
+									$cmd->setUnite('s');
+								} else {
+									$cmd->setUnite($optionData['unit']);
+								}
+
+							} else {
+								$cmd->setUnite('');
+							}
+							if (isset($optionData['constraints']['min']) && isset($optionData['constraints']['max'])) {
+								$cmd->setConfiguration('minValue', $optionData['constraints']['min']);
+								$cmd->setConfiguration('maxValue', $optionData['constraints']['max']);
+							}
+							log::add('homeconnect', 'debug', "Min = " . $cmd->getConfiguration('minValue') . " Max = " .$cmd->getConfiguration('maxValue') . " Unité = " . $cmd->getUnite());
+							$arr = $cmd->getDisplay('parameters');
+							if (!is_array($arr)) {
+								$arr = array();
+							}
+							if (isset($optionData['constraints']['stepsize'])) {
+								$cmd->setConfiguration('step', $optionData['constraints']['stepsize']);
+								$arr['step'] = $optionData['constraints']['stepsize'];
+							} else {
+								$$arr['step'] = 1;
+							}
+							/*if ($cmd->getConfiguration('maxValue') >= 1000) {
+									$arr['bigstep'] = 900;
+							}*/
+							$cmd->setDisplay('parameters', $arr);
+							$cmd->save();
+						} else if ($cmd->getSubType() == 'select') {
+							// Commande select
+							log::add('homeconnect', 'debug', "Ajustement commande action select logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
+							$optionValues = array();
+							foreach ($optionData['constraints']['allowedvalues'] as $optionValue) {
+								$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
+							}
+							$listValue = implode(';', $optionValues);
+							log::add('homeconnect', 'debug', "listValue " . $listValue);
+							$cmd->setConfiguration('listValue', $listValue);
+							$cmd->save();
+						} else {
+							log::add('homeconnect', 'debug', "Commande action other rien à ajuster " . $logicalIdCmd . " nom ". $cmd->getName() . ' subtype ' . $cmd->getSubType());
+						}
+					} else {
+						log::add('homeconnect', 'debug', "La commande " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
+					}
+					// commande option info
+					$logicalIdCmd = 'GET::' . $key;
+					log::add('homeconnect', 'debug', "Ajustement de la commande info " . $logicalIdCmd);
+					$cmd = $this->getCmd(null, $logicalIdCmd);
+					if (is_object($cmd)) {
+						if ($cmd->getSubType() == 'numeric') {
+							// commande numeric.
+							log::add('homeconnect', 'debug', "Ajustement commande info numeric logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
+							if (isset($optionData['unit'])) {
+								$cmd->setConfiguration('unit', $optionData['unit']);
+								if ($optionData['unit'] == 'seconds') {
+									$cmd->setUnite('s');
+								} else {
+									$cmd->setUnite($optionData['unit']);
+								}
+							} else {
+								$cmd->setUnite('');
+							}
+							if (isset($optionData['constraints']['min']) && isset($optionData['constraints']['max'])) {
+								$cmd->setConfiguration('minValue', $optionData['constraints']['min']);
+								$cmd->setConfiguration('maxValue', $optionData['constraints']['max']);
+							}
+							log::add('homeconnect', 'debug', "Min = " . $cmd->getConfiguration('minValue') . " Max = " .$cmd->getConfiguration('maxValue') . " Unité = " . $cmd->getUnite());
+							$cmd->save();
+						} else {
+							// Dans les autres cas il n'y a rien à faire.
+							log::add('homeconnect', 'debug', "Rien à ajuster pour une commande info de subType " . $cmd->getSubType());
+						}
+					} else {
+						log::add('homeconnect', 'debug', "La commande " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
+					}
+				} else {
+					log::add('homeconnect', 'debug', "Pas de key dans optionData" );
+				}
+			}
+		} else {
+			log::add('homeconnect', 'debug', "Pas d'options à ajuster" );
+		}
+	}
+
 	public function updateInfoCmdValue($logicalId, $value) {
 		$cmd = $this->getCmd(null, $logicalId);
 		$reglage = '';
@@ -1165,7 +1282,7 @@ class homeconnect extends eqLogic {
 				} else {
 					if (isset($value['value'])) {
 						if ($cmd->getSubType() == 'string') {
-							$reglage = self::traduction(self::lastSegment($value['value']));
+							$reglage = self::traduction(self::lastSegment('.', $value['value']));
 						} else {
 							$reglage = $value['value'];
 						}
@@ -1181,6 +1298,69 @@ class homeconnect extends eqLogic {
 		}
 	}
 
+    public function lookProgram($programType) {
+		if ($programType == 'selected') {
+			$nameCmd = 'ProgramSelected';
+		} else {
+			$nameCmd = 'ProgramActive';
+		}
+		$currentProgram = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType, null, 'GET', array());
+		if ($currentProgram !== false) {
+			log::add('homeconnect', 'debug', "Réponse pour program $programType dans lookProgram " . $currentProgram);
+			$currentProgram = json_decode($currentProgram, true);
+			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.No' . $nameCmd) {
+				$key = $currentProgram['data']['key'];
+				log::add('homeconnect', 'debug', "Program $programType key = " . $key);
+				// recherche du programme action associé
+				$actionCmd = $this->getCmd('action', 'PUT::' . $key);
+				if (!is_object($actionCmd)) {
+					log::add('homeconnect', 'debug', "dans lookProgram pas de commande action " . 'PUT::' . $key);
+					$programName = self::traduction(self::lastSegment('.', $key));
+				} else {
+					$programName =$actionCmd->getName();
+					log::add('homeconnect', 'debug', "Nom de la commande action " . $programName);
+				}
+				// MAJ de la commande info ProgramSelected ou ProgramActive.
+				$cmd = $this->getCmd(null, $nameCmd);
+				if (is_object($cmd)) {
+					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $programType = ".$programName);
+					$this->checkAndUpdateCmd($nameCmd, $programName);
+					return true;
+				} else {
+					log::add('homeconnect', 'debug', "La commande $programType n'existe pas :");
+				}
+			} else {
+				// Pas de programme actif
+				// A voir : mettre à jour les autres commandes (états et réglages)
+				log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.No" . $nameCmd);
+				$this->checkAndUpdateCmd($nameCmd, __("Aucun", __FILE__));
+			}
+		} else {
+			log::add('homeconnect', 'debug', "Dans lookProgram request a retourné faux");
+		}
+		return false;
+	}
+	
+	public function lookProgramOptions($programType) {
+		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType .'/options', null, 'GET', array());
+		if ($programOptions !== false) {
+			log::add('homeconnect', 'debug', "options : " . $programOptions);
+			$programOptions = json_decode($programOptions, true);
+			// MAJ des options et autres informations du programme en cours.
+			foreach ($programOptions['data']['options'] as $value) {
+				log::add('homeconnect', 'debug', "option : " . print_r($value, true));
+				// Récupération du nom du programme / option.
+				$logicalId = 'GET::' . $value['key'];
+				$optionCmd = $this->getCmd('info', $logicalId);
+				if (is_object($optionCmd)) {
+					$this->updateInfoCmdValue($logicalId, $value);
+				} else {
+					log::add('homeconnect', 'debug', "pas commande info $logicalId pour mise à jour valeur d'une option");
+				}
+			}
+		}
+	}
+
 	public function updateProgram() {
 		if ($this->isConnected()) {
 			$eqLogicType = $this->getConfiguration('type');
@@ -1188,92 +1368,16 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "Pas de programme pour ce type d'appareil");
 				return;
 			}
-			log::add('homeconnect', 'debug', "MAJ du programme actif :");
-
-			$programActive = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/active', null, 'GET', array());
-			if ($programActive !== false) {
-				log::add('homeconnect', 'debug', "Réponse pour program active dans updateProgram " . $programActive);
-				$programActive = json_decode($programActive, true);
-				if (isset($programActive['data']['key']) && $programActive['data']['key'] !== 'SDK.Error.NoProgramActive') {
-					$key = $programActive['data']['key'];
-					log::add('homeconnect', 'debug', "key = " . $key);
-					// recherche du programme action associé
-					$actionCmd = $this->getCmd('action', 'PUT::' . $key);
-					if (!is_object($actionCmd)) {
-						log::add('homeconnect', 'debug', "dans updateProgram pas de commande action " . 'PUT::' . $key);
-						$programName = self::traduction(self::lastSegment($key));
-					} else {
-						$programName =$actionCmd->getName();
-						log::add('homeconnect', 'debug', "Nom de la commande action " . $programName);
-					}
-					// MAJ du programme en cours.
-					$cmd = $this->getCmd(null, 'programActive');
-					if (is_object($cmd)) {
-						log::add('homeconnect', 'debug', "Programme en cours : ".$programName);
-						$this->checkAndUpdateCmd('programActive',$programName);
-
-					} else {
-						log::add('homeconnect', 'debug', "La commande programActive n'existe pas :");
-					}
-				} else {
-					// Pas de programme actif
-					// A voir : mettre à jour les autres commandes (états et réglages)
-					log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.NoProgramActive");
-					$this->checkAndUpdateCmd('programActive', __("Aucun", __FILE__));
-				}
+			log::add('homeconnect', 'debug', "MAJ du programme actif");
+            if ($this->lookProgram('active')) {
+				// Il y a un programme actif on regarde ses options
+				log::add('homeconnect', 'debug', "Il y a un programme actif");
+				$this->lookProgramOptions('active');
 			} else {
-				log::add('homeconnect', 'debug', "réponse à la requête vaut faux");
-				$this->checkAndUpdateCmd('programActive', __("Aucun", __FILE__));
-			}
-			$programSelected = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/selected', null, 'GET', array());
-			if ($programSelected !== false) {
-				log::add('homeconnect', 'debug', "Réponse pour program slected dans updateProgram " . $programSelected);
-				$programSelected = json_decode($programSelected, true);
-				if (isset($programSelected['data']['key']) && $programSelected['data']['key'] !== 'SDK.Error.NoProgramActive') {
-					$key = $programSelected['data']['key'];
-					log::add('homeconnect', 'debug', "key = " . $key);
-					// recherche du programme action associé
-					$actionCmd = $this->getCmd('action', 'PUT::' . $key);
-					if (!is_object($actionCmd)) {
-						log::add('homeconnect', 'debug', "dans updateProgram pas de commande action " . 'PUT::' . $key);
-						$programName = self::traduction(self::lastSegment($key));
-					} else {
-						$programName =$actionCmd->getName();
-						log::add('homeconnect', 'debug', "Nom de la commande action " . $programName);
-					}
-					// MAJ du programme sélectionné.
-					$cmd = $this->getCmd(null, 'programSelected');
-					if (is_object($cmd)) {
-						log::add('homeconnect', 'debug', "Programme sélectionné : ".$programName);
-						$this->checkAndUpdateCmd('programSelected',$programName);
-					} else {
-						log::add('homeconnect', 'debug', "La commande programSelected n'existe pas :");
-					}
-				} else {
-					// Pas de programme actif
-					// A voir : mettre à jour les autres commandes (états et réglages)
-					log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.NoProgramSelected");
-					$this->checkAndUpdateCmd('programSelected', __("Aucun", __FILE__));
-				}
-			} else {
-				log::add('homeconnect', 'debug', "réponse à la requête vaut faux");
-				$this->checkAndUpdateCmd('programSelected', __("Aucun", __FILE__));
-			}
-			$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/selected/options', null, 'GET', array());
-			if ($programOptions !== false) {
-				log::add('homeconnect', 'debug', "options : " . $programOptions);
-				$programOptions = json_decode($programOptions, true);
-				// MAJ des options et autres informations du programme en cours.
-				foreach ($programOptions['data']['options'] as $value) {
-					log::add('homeconnect', 'debug', "option : " . print_r($value, true));
-					// Récupération du nom du programme / option.
-					$logicalId = 'GET::' . $value['key'];
-					$optionCmd = $this->getCmd('info', $logicalId);
-					if (is_object($optionCmd)) {
-						$this->updateInfoCmdValue($logicalId, $value);
-					} else {
-						log::add('homeconnect', 'debug', "pas commande info $logicalId pour mise à jour valeur d'une option");
-					}
+				// Pas de programme actif on essaie le programme sélectionné
+				if ($this->lookProgram('selected')) {
+					log::add('homeconnect', 'debug', "i y a un programme sélectionné");
+					$this->lookProgramOptions('selected');
 				}
 			}
 		}
@@ -1434,7 +1538,7 @@ class homeconnectCmd extends cmd {
 		// Bien penser dans les fichiers json à mettre dans la configuration
 		// key, value, type, constraints et à modifier findProduct
 		log::add('homeconnect', 'debug',"Fonction execute()");
-		homeconnect::verifyToken();
+		homeconnect::verifyToken(60);
 
 		if ($this->getType() == 'info') {
 			log::add('homeconnect', 'debug',"Pas d'execute pour une commande info");
@@ -1582,7 +1686,12 @@ class homeconnectCmd extends cmd {
 		log::add('homeconnect', 'debug',"Payload : " . $payload);
 		$response = homeconnect::request($url, $payload, $method, $headers);
 		log::add('homeconnect', 'debug',"Réponse du serveur : " . $response);
-		// si la requête est de type program selected il faut mettre à jour les options
+		// si la requête est de category program il faut mettre à jour les options
+		if ($this->getConfiguration('category') == 'Program') {
+			$typeProgram = homeconnect::lastSegment('/', $url);
+			$eqLogic->adjustProgramOptions($typeProgram, $this->getConfiguration('key'));
+			// A voir dans ce cas ce qu'il faut mettre à jour.
+		}
 		$eqLogic->updateApplianceData();
 
 	}
