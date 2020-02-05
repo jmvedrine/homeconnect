@@ -112,11 +112,11 @@ class homeconnect extends eqLogic {
 					break;
 				case 401:
 					// "Unauthorized", desc: "No or invalid access token"
-					throw new \Exception(__("Le jeton d'authentification au serveur est absent ou invalide. Reconnectez-vous.",__FILE__));
+					throw new \Exception(__("Le jeton d'authentification au serveur est absent ou invalide. Reconnectez-vous",__FILE__));
 					break;
 				case 403:
 					// Forbidden", desc: "Scope has not been granted or home appliance is not assigned to HC account"
-					throw new \Exception(__("Accès à cette ressource non autorisé ou appareil non lié à cet utilisateur.",__FILE__));
+					throw new \Exception(__("Accès à cette ressource non autorisé ou appareil non lié à cet utilisateur",__FILE__));
 					break;
 				case 404:
 					$result = json_decode($result, true);
@@ -124,19 +124,19 @@ class homeconnect extends eqLogic {
 						return $result['error']['key'];
 					}
 					// Not Found", desc: "This resource is not available (e.g. no images on washing machine)"
-					throw new \Exception(__("Cette ressource n'est pas disponible.",__FILE__));
+					throw new \Exception(__("Cette ressource n'est pas disponible",__FILE__));
 					break;
 				case 405:
 					// "Method not allowed", desc: "The HTTP Method is not allowed for this resource" },
-					throw new \Exception(__("La méthode $method n'est pas permise pour cette ressource.",__FILE__));
+					throw new \Exception(__("La méthode $method n'est pas permise pour cette ressource",__FILE__));
 					break;
 				case 406:
 					// "Not Acceptable", desc: "The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request."
-					throw new \Exception(__("Impossible de fournir une réponse Les entêtes 'Accept' de la requête ne sont pas acceptés.",__FILE__));
+					throw new \Exception(__("Impossible de fournir une réponse Les entêtes 'Accept' de la requête ne sont pas acceptés",__FILE__));
 					break;
 				case 408:
 					// "Request Timeout", desc: "API Server failed to produce an answer or has no connection to backend service"
-					throw new \Exception(__("Le serveur n'a pas fourni de réponse dans le temps imparti.",__FILE__));
+					throw new \Exception(__("Le serveur n'a pas fourni de réponse dans le temps imparti",__FILE__));
 					break;
 				case 409:
 					// "Conflict", desc: "Command/Query cannot be executed for the home appliance, the error response contains the error details"
@@ -146,23 +146,23 @@ class homeconnect extends eqLogic {
 					break;
 				case 415:
 					// "Unsupported Media Type", desc: "The request's Content-Type is not supported"
-					throw new \Exception(__("Le type de contenu de la requête n'est pas pris en charge.",__FILE__));
+					throw new \Exception(__("Le type de contenu de la requête n'est pas pris en charge",__FILE__));
 					break;
 				case 429:
 					//	"Too Many Requests", desc: "E.g. the number of requests for a specific endpoint exceeded the quota of the client"
-					throw new \Exception(__("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h.",__FILE__));
+					throw new \Exception(__("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h",__FILE__));
 					break;
 				case 500:
 					// "Internal Server Error", desc: "E.g. in case of a server configuration error or any errors in resource files"
-					throw new \Exception(__("Erreur interne du serveur.",__FILE__));
+					throw new \Exception(__("Erreur interne du serveur",__FILE__));
 					break;
 				case 503:
 					// "Service Unavailable", desc: "E.g. if a required backend service is not available"
-					throw new \Exception(__("Service indisponible.",__FILE__));
+					throw new \Exception(__("Service indisponible",__FILE__));
 					break;
 				default:
 				   // Erreur inconnue
-				   throw new \Exception(__("Erreur inconnue code $code.",__FILE__));
+				   throw new \Exception(__("Erreur inconnue code " . $code,__FILE__));
 			}
 			return false;
 		}
@@ -219,7 +219,7 @@ class homeconnect extends eqLogic {
 		self::majConnected();
 
 		foreach (eqLogic::byType('homeconnect') as $eqLogic) {
-			// MAJ des programes en cours.
+			// MAJ des programmes en cours.
 			$eqLogic->updateProgram();
 			// MAJ des états
 			$eqLogic->updateStates();
@@ -499,7 +499,7 @@ class homeconnect extends eqLogic {
 			self::tokenRequest();
 
 			if (empty(config::byKey('access_token','homeconnect'))) {
-				log::add('homeconnect', 'debug', "[Erreur ]: La récupération du token à échouée.");
+				log::add('homeconnect', 'debug', "[Erreur]: La récupération du token a échoué.");
 				return;
 			}
 			// Dans le cas contraire relancer le deamon
@@ -781,8 +781,9 @@ class homeconnect extends eqLogic {
 				'Quick65' => __("Rapide 65°C", __FILE__),
 				'HotAir' => __("Air chaud", __FILE__),
 				'IronDry' => __("Prêt à repasser", __FILE__),
+				'VeryMild' => __("Très doux", __FILE__),
 				'Mild' => __("Doux", __FILE__),
-				'Mix' => __("Mix", __FILE__),
+				'Mix' => __("Mélangé", __FILE__),
 				'Normal' => __("Normal", __FILE__),
 				'PizzaSetting' => __("Position Pizza", __FILE__),
 				'Preheating' => __("Préchauffage", __FILE__),
@@ -839,6 +840,13 @@ class homeconnect extends eqLogic {
 				'LocalControlActive' => __("Appareil en fonctionnement", __FILE__),
 				'OperationState' => __("Statut de fonctionnement", __FILE__),
 				'PowerState' => __("Statut de puissance", __FILE__),
+				'CurrentCavityTemperature' => __("Température actuelle", __FILE__),
+				'88C' => __("88°C", __FILE__),
+				'90C' => __("90°C", __FILE__),
+				'92C' => __("92°C", __FILE__),
+				'94C' => __("94°C", __FILE__),
+				'95C' => __("95°C", __FILE__),
+				'96C' => __("96°C", __FILE__),
 		];
 
 		(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
@@ -1276,10 +1284,6 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "La commande info : ".$logicalId." n'a pas de valeur");
 				}
 			} else {
-				// Récupération de la valeur du setting.
-				if (isset($value['displayvalue'])) {
-					$reglage = $value['displayvalue'];
-				} else {
 					if (isset($value['value'])) {
 						if ($cmd->getSubType() == 'string') {
 							$reglage = self::traduction(self::lastSegment('.', $value['value']));
@@ -1290,7 +1294,6 @@ class homeconnect extends eqLogic {
 						log::add('homeconnect', 'debug', "la commande info : ".$logicalId." n'a pas de valeur");
 					}
 				}
-			}
 			$this->checkAndUpdateCmd($logicalId, $reglage);
 			log::add('homeconnect', 'debug', "Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
 		} else {
@@ -1583,7 +1586,7 @@ class homeconnectCmd extends cmd {
 				log::add('homeconnect', 'debug',"Pas de programme sélectionné impossible de lancer");
 				event::add('jeedom::alert', array(
 					'level' => 'warning',
-					'message' => __('Sélectionnez un programme avant de lancer', __FILE__),
+					'message' => __("Sélectionnez un programme avant de lancer", __FILE__),
 				));
 				return;
 			}
@@ -1656,8 +1659,6 @@ class homeconnectCmd extends cmd {
 		if ($method == 'DELETE') {
 			$payload = null;
 		} else {
-			// A compléter avec les bons paramètres qui dépendent de la commande
-			// Voir pour un système calqué sur Deconz les stocker dans le logicalId séparé par des ::
 			$parameters = array('data' => array());
 			if ($this->getConfiguration('key') !== '') {
 				$parameters['data']['key'] = $this->getConfiguration('key', '');
