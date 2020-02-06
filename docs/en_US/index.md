@@ -1,7 +1,6 @@
 Presentation
 ===
-Ce plugin permet de récupérer des informations des appareils utilisant le protocole Home Connect .
-Il a été développé à l'origine par Sartog.
+This plugin allow to retrieve information from devices using the Home Connect protocol. It was originally developed by Sartog.
 
 Un mode démo utilisant des appareils simulés est disponible vous permettant de tester le plugin même si vous ne possédez pas d'appareil ménager Home Connect. 
 Six appareils sont disponible en mode démo: une machine à café, un réfrigérateur congélateur, un lave linge, un four, un lave vaiselle, un sèche linge.
