@@ -131,8 +131,8 @@
         "Taille tasse": "Taille tasse",
         "Avancement": "Avancement",
         "Durée restante": "Durée restante",
-        "Sélectionnez un programme avant de lancer": "Sélectionnez un programme avant de lancer"
-        
+        "Sélectionnez un programme avant de lancer": "Sélectionnez un programme avant de lancer",
+		"L'appareil n'est pas connecté. Merci de le connecter et de refaire une synchronisation": "L'appareil n'est pas connecté. Merci de le connecter et de refaire une synchronisation"
     },
     "plugins\/homeconnect\/plugin_info\/configuration.php": {
         "Client ID": "Client ID",
