@@ -537,7 +537,7 @@ class homeconnect extends eqLogic {
 				event::add('jeedom::alert', array(
 					'level' => 'warning',
 					'page' => 'homeconnect',
-					'message' => __('Nouvel appareil detecté', __FILE__). ' ' .$appliance['name'],
+					'message' => __("Nouvel appareil detecté", __FILE__). ' ' .$appliance['name'],
 				));
 				// Création de l'appareil.
 				$eqLogic = new homeconnect();
@@ -554,6 +554,8 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('type', $appliance['type']);
 				$eqLogic->save();
 				$found_eqLogics = self::findProduct($appliance);
+				// certains apareils ne répodent pas pour les programmes et options s'ils ne sont pas connectés
+				if ($appliance['connected']) {
 				// Programs
 				if ($appliance['type'] !== 'Refrigerator' && $appliance['type'] !== 'FridgeFreezer' && $appliance['type'] !== 'WineCooler') {
 					$programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
@@ -636,6 +638,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug',"Ce type d'appareil n'a pas de programme");
 					$eqLogic->setConfiguration('hasPrograms', false);
 				}
+					
 				// Status
 
 				$allStatus = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
@@ -681,6 +684,15 @@ class homeconnect extends eqLogic {
 					} else {
 						log::add('homeconnect','debug', "Aucun setting");
 					}
+				}
+				} else {
+					// L'appareil n'est pas connecté
+					event::add('jeedom::alert', array(
+						'level' => 'danger',
+						'page' => 'homeconnect',
+						'message' => __("L'appareil n'est pas connecté. Merci de le connecter et de refaire une synchronisation", __FILE__),
+					));
+					sleep(3);
 				}
 			}
 		}
@@ -861,7 +873,7 @@ class homeconnect extends eqLogic {
 	}
 	/*
 	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom */
-	  /* public static function cron15() {
+	/*public static function cron15() {
 		self::updateAppliances();
 	  } */
 
