@@ -32,6 +32,17 @@
         "Options": "Options",
         "Action": "Action"
     },
+	"plugins\/homeconnect\/desktop\/js\/homeconnect.js": {
+		"Cette action supprimera tous les appareils. Faites une synchronisation pour les re-créer": "Cette action supprimera tous les appareils. Faites une synchronisation pour les re-créer",
+		"Suppression effectuée": "Suppression effectuée",
+		"Pour se synchroniser correctement vos appareils doivent être allumés, WiFi activé et sans programme en cours.": "Pour se synchroniser correctement vos appareils doivent être allumés, WiFi activé et sans programme en cours.",
+		"Synchronisation réussie": "Synchronisation réussie",
+		"Santé Home Connect": "Santé Home Connect",
+		"Nom": "Nom",
+		"Afficher": "Afficher",
+		"Historiser": "Historiser",
+		"Tester": "Tester"
+	},
     "plugins\/homeconnect\/desktop\/modal\/health.php": {
         "Appareil": "Appareil",
         "Type": "Type",
