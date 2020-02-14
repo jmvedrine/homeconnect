@@ -66,6 +66,8 @@ Découverte de vos appareils Home Connect
 
 ![Appareils](../images/equipements.png)
 
+**IMPORTANT** : Avant une synchronisation, vérifiez que vos appareils sont bien allumés, connectés au WiFi et qu'aucun programme n'est en cours.
+
 Rendez vous sur la page équipement du plugin (Menu Plugins -> Objets connectés -> Home Connect) et cliquez sur le bouton Synchronisation.
 
 Vos appareils apparaissent dans la section **Mes appareils** avec une image les représentant suivant leur type.
