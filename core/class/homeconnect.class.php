@@ -859,6 +859,19 @@ class homeconnect extends eqLogic {
 				'94C' => __("94°C", __FILE__),
 				'95C' => __("95°C", __FILE__),
 				'96C' => __("96°C", __FILE__),
+				'IDos1DosingLevel' => __("Dosage i-Dos de détergent", __FILE__),
+				'Light' => __("Faible", __FILE__),
+				'IDos2DosingLevel' => __("i-DOS: dosage de lessive liquide ou d'adoucissant", __FILE__),
+				'FinishInRelative' => __("Fin différée", __FILE__),
+				'Prewash'  => __("Prélavage", __FILE__),
+				'RinsePlus1' => __("Rinçage plus", __FILE__),
+				'VarioPerfect' => __("VarioPerfect", __FILE__),
+				'NightWash' => __("Silence 50°C", __FILE__),
+				'Kurz60' => __("Court 60°C", __FILE__),
+				'MachineCare' => __("Soin de la machine", __FILE__),
+				'VarioSpeedPlus' => __("VarioSpeed Plus", __FILE__),
+				'HygienePlus' => __("Hygiène Plus", __FILE__),
+				'ExtraDry' => __("Extra sec", __FILE__),
 		];
 
 		(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
@@ -1621,9 +1634,10 @@ class homeconnectCmd extends cmd {
 			}
 			$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/programs/active';
 			$payload = '{"data": {"key": "' . $key . '"}}';
+			// A voir le cas du départ différé
 			log::add('homeconnect', 'debug',"url pour le lancement " . $url);
-			log::add('homeconnect', 'debug',"payload pour le lancement " . $response);
-			$result = homeconnect::request($url, $response, 'PUT', array());
+			log::add('homeconnect', 'debug',"payload pour le lancement " . $payload);
+			$result = homeconnect::request($url, $payload, 'PUT', array());
 			log::add('homeconnect', 'debug',"Réponse du serveur au lancement " . $result);
 			$eqLogic->updateApplianceData();
 			return;
