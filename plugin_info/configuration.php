@@ -25,18 +25,32 @@ if (!isConnect()) {
 
 <form class="form-horizontal">
 	<fieldset>
-        <div class="form-group">
-            <label class="col-lg-3 control-label" >{{Pièce par défaut pour les appareils}}</label>
-            <div class="col-lg-3">
-            <select id="sel_object" class="configKey form-control" data-l1key="defaultParentObject">
-              <option value="">{{Aucune}}</option>
-              <?php
-                foreach (jeeObject::all() as $object) {
-                  echo '<option value="' . $object->getId() . '">' . $object->getName() . '</option>';
-                }
-              ?>
-            </select>
-            </div>
+		<div class="form-group">
+			<label class="col-lg-3 control-label" >{{Pièce par défaut pour les appareils}}</label>
+			<div class="col-lg-3">
+			<select id="sel_object" class="configKey form-control" data-l1key="defaultParentObject">
+			  <option value="">{{Aucune}}</option>
+			  <?php
+				foreach (jeeObject::all() as $object) {
+				  echo '<option value="' . $object->getId() . '">' . $object->getName() . '</option>';
+				}
+			  ?>
+			</select>
+			</div>
+		</div>
+		 <div class="form-group">
+		<label class="col-lg-3 control-label">{{Auto-actualisation (cron)}}</label>
+		<div class="col-lg-4">
+			<select class="configKey form-control" data-l1key="autorefresh" >
+				<option value="* * * * *">{{Toutes les minutes}}</option>
+				<option value="*/5 * * * *">{{Toutes les 5 minutes}}</option>
+				<option value="*/10 * * * *">{{Toutes les 10 minutes}}</option>
+				<option value="*/15 * * * *">{{Toutes les 15 minutes}}</option>
+				<option value="*/30 * * * *">{{Toutes les 30 minutes}}</option>
+				<option value="*/45 * * * *">{{Toutes les 45 minutes}}</option>
+				<option value="">{{Jamais}}</option>
+			</select>
+		</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-3 control-label">
@@ -102,12 +116,12 @@ if (!isConnect()) {
 				<input type="text" class="configKey form-control" data-l1key="demo_client_id"/>
 			</div>
 		</div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">{{Se connecter}}</label>
-            <div class="col-sm 3">
-                <a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Appareils réels}}</a>                <a class="btn btn-warning" id="bt_loginDemoHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Démo (Simulateurs)}}</a>
-            </div>
-        </div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">{{Se connecter}}</label>
+			<div class="col-sm 3">
+				<a class="btn btn-warning" id="bt_loginHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Appareils réels}}</a>				  <a class="btn btn-warning" id="bt_loginDemoHomeConnect"><i class="fas fa-sign-in-alt"></i> {{Démo (Simulateurs)}}</a>
+			</div>
+		</div>
 
 
   </fieldset>
