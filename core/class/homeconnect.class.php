@@ -662,8 +662,8 @@ class homeconnect extends eqLogic {
 					if (isset($allSettings['data']['settings'])) {
 						foreach($allSettings['data']['settings'] as $setting) {
 							log::add('homeconnect', 'debug', "setting key " . $setting['key']);
-							$path = '/settings/' . $setting['key'];
-							$settingData = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . $path, null, 'GET', array());
+							$path = 'settings/' . $setting['key'];
+							$settingData = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/' . $path, null, 'GET', array());
 							if ($settingData !== false) {
 								log::add('homeconnect', 'debug', "Setting " . $settingData);
 								$settingData = json_decode($settingData, true);
@@ -887,13 +887,26 @@ class homeconnect extends eqLogic {
 	/*
 	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom */
 	/*public static function cron15() {
-		self::updateAppliances();
-	  } */
+	  }
+	*/
 
 	/*
-	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom */
+	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
 	  public static function cron() {
-		self::verifyToken(180);
+		$autorefresh = config::byKey('autorefresh', 'homeconnect');
+		if ($autorefresh != '') {
+			try {
+				$c = new Cron\CronExpression(checkAndFixCron($autorefresh), new Cron\FieldFactory);
+				if ($c->isDue()) {
+					log::add('homeconnect', 'debug', 'cron is due');
+					self::updateAppliances();
+				} else {
+					self::verifyToken(180);
+				}
+			} catch (Exception $exc) {
+                log::add('homeconnect', 'error', __("Erreur lors de l'exécution du cron ", __FILE__) . $exc->getMessage());
+            }
+		}
 	  }
 	/*
 	 * Fonction exécutée automatiquement toutes les heures par Jeedom

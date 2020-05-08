@@ -19,6 +19,7 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function homeconnect_install() {
+	config::save('autorefresh', '*/15 * * * *', 'homeconnect');
 	if ( version_compare(jeedom::version(), "4", "<")) {
 		// Copie des templates dans le répertoire du plugin widget pour pouvoir éditer les commandes sans perte de la template associée.
 		$srcDir	 = __DIR__ . '/../core/template/dashboard';
