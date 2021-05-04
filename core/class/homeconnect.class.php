@@ -251,10 +251,7 @@ class homeconnect extends eqLogic {
 			$parameters['user'] = 'me'; // Can be anything non-zero length
 			$parameters['client_id'] = config::byKey('demo_client_id','homeconnect','',true);
 		} else {
-			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings',
-				'CoffeeMaker-Control', 'Dishwasher-Control',
-				'Dryer-Control', 'Freezer-Control', 'Hood-Control',
-				'Refrigerator-Control', 'Washer-Control']);
+			$parameters['scope'] = implode(' ', ['IdentifyAppliance', 'Monitor', 'Settings', 'Control']);
 			$parameters['redirect_uri'] = network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
 			$parameters['client_id'] = config::byKey('client_id','homeconnect','',true);
 		}
