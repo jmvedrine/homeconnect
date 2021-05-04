@@ -103,12 +103,12 @@ function addCmdToTable(_cmd) {
   tr += '<input class="cmdAttr form-control input-sm" data-l1key="type" style="display : none;">';
   tr += '<input class="cmdAttr form-control input-sm" data-l1key="subType" style="display : none;">';
   tr += '<div class="row">';
-  tr += '<div class="col-sm-6">';
+  tr += '<div class="col-sm-4">';
   tr += '<a class="cmdAction btn btn-default btn-sm" data-l1key="chooseIcon"><i class="fa fa-flag"></i> Icône</a>';
   tr += '<span class="cmdAttr" data-l1key="display" data-l2key="icon" style="margin-left : 10px;"></span>';
   tr += '</div>';
-  tr += '<div class="col-sm-6">';
-  tr += '<input class="cmdAttr form-control input-sm" data-l1key="name" style="width : 140px;" placeholder="{{Nom}}">';
+  tr += '<div class="col-sm-8">';
+  tr += '<input class="cmdAttr form-control input-sm" data-l1key="name" placeholder="{{Nom}}">';
   tr += '</div>';
   tr += '</div>';
   tr += '</td>';
