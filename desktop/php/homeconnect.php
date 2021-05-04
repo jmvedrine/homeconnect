@@ -67,7 +67,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">{{Nom de l'appareil}}</label>
-								<div class="col-sm-3">
+								<div class="col-sm-5">
 									<input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
 									<input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'appareil}}"/>
 								</div>
@@ -75,7 +75,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label" >{{Objet parent}}</label>
-								<div class="col-sm-3">
+								<div class="col-sm-5">
 									<select id="sel_object" class="eqLogicAttr form-control" data-l1key="object_id">
 										<option value="">{{Aucun}}</option>
 											<?php
