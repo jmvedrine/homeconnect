@@ -551,7 +551,7 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('type', $appliance['type']);
 				$eqLogic->save();
 				$found_eqLogics = self::findProduct($appliance);
-				// certains apareils ne répodent pas pour les programmes et options s'ils ne sont pas connectés
+				// certains apareils ne répondent pas pour les programmes et options s'ils ne sont pas connectés
 				if ($appliance['connected']) {
 				// Programs
 				if ($appliance['type'] !== 'Refrigerator' && $appliance['type'] !== 'FridgeFreezer' && $appliance['type'] !== 'WineCooler') {
@@ -774,14 +774,16 @@ class homeconnect extends eqLogic {
 				'Auto1' => __("Auto 35-45°C", __FILE__),
 				'Auto2' => __("Auto 45-65°C", __FILE__),
 				'Auto3' => __("Auto 65-75°C", __FILE__),
+				'BeanAmount' => __("Quantité de café", __FILE__),
 				'Cotton' => __("Coton", __FILE__),
 				'CupboardDry' => __("Prêt à ranger", __FILE__),
 				'CupboardDryPlus' => __("Prêt à ranger plus", __FILE__),
-				'DelicatesSilk' => __("Délicat / Soie", __FILE__),
-				'BeanAmount' => __("Quantité de café", __FILE__),
+				'DarkWash' => __("Couleurs sombres", __FILE__),
+				'DelicatesSilk' => __("Délicat Soie", __FILE__),
+				'Dessous' => __("Lingerie", __FILE__),
 				'DoubleShot' => __("Double shot", __FILE__),
 				'DoubleShotPlus' => __("Double shot plus", __FILE__),
-				'EasyCare' => __("Synthétique", __FILE__),
+				'EasyCare' => __("Synthétiques", __FILE__),
 				'Eco50' => __("Eco 50°C", __FILE__),
 				'Intensiv70' => __("Intensif 70°C", __FILE__),
 				'Normal65' => __("Normal 65°C", __FILE__),
@@ -826,12 +828,19 @@ class homeconnect extends eqLogic {
 				'Cold' => __("Froid", __FILE__),
 				'CoffeeTemperature' => __("Température du café", __FILE__),
 				'SpinSpeed' => __("Essorage", __FILE__),
+				'UlOff' => __("Sans essorage", __FILE__),
+				'UlLow' => __("Vitesse d’essorage basse", __FILE__),
+				'UlMedium' => __("Vitesse d’essorage moyenne", __FILE__),
+				'UlHigh' => __("Vitesse d’essorage élevée", __FILE__),
 				'RPM400' => __("400 tr/min", __FILE__),
 				'RPM600' => __("600 tr/min", __FILE__),
+				'RPM700' => __("700 tr/min", __FILE__),
 				'RPM800' => __("800 tr/min", __FILE__),
+				'RPM900' => __("900 tr/min", __FILE__),
 				'RPM1000' => __("1000 tr/min", __FILE__),
 				'RPM1200' => __("1200 tr/min", __FILE__),
 				'RPM1400' => __("1400 tr/min", __FILE__),
+				'RPM1500' => __("1500 tr/min", __FILE__),
 				'RPM1600' => __("1600 tr/min", __FILE__),
 				'StartInRelative' => __("Départ différé", __FILE__),
 				'GC20' => __("20°C", __FILE__),
@@ -863,6 +872,8 @@ class homeconnect extends eqLogic {
 				'Prewash'  => __("Prélavage", __FILE__),
 				'RinsePlus1' => __("Rinçage plus", __FILE__),
 				'VarioPerfect' => __("VarioPerfect", __FILE__),
+				'ShirtsBlouses' => __("Chemises", __FILE__),
+				'WaterProof' => __("Outdoor Imperméabiliser", __FILE__),
 				'NightWash' => __("Silence 50°C", __FILE__),
 				'Kurz60' => __("Court 60°C", __FILE__),
 				'MachineCare' => __("Soin de la machine", __FILE__),
@@ -1275,7 +1286,7 @@ class homeconnect extends eqLogic {
 							log::add('homeconnect', 'debug', "Commande action other rien à ajuster " . $logicalIdCmd . " nom ". $cmd->getName() . ' subtype ' . $cmd->getSubType());
 						}
 					} else {
-						log::add('homeconnect', 'debug', "La commande " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
+						log::add('homeconnect', 'debug', "La commande action " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
 					}
 					// commande option info
 					$logicalIdCmd = 'GET::' . $key;
@@ -1306,7 +1317,7 @@ class homeconnect extends eqLogic {
 							log::add('homeconnect', 'debug', "Rien à ajuster pour une commande info de subType " . $cmd->getSubType());
 						}
 					} else {
-						log::add('homeconnect', 'debug', "La commande " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
+						log::add('homeconnect', 'debug', "La commande info " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
 					}
 				} else {
 					log::add('homeconnect', 'debug', "Pas de key dans optionData" );
