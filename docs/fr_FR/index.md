@@ -34,7 +34,7 @@ Vérifiez aussi que que dans Configuration -> API il y a bien une **Clé API Hom
 
 Lors des tests, il semble que le serveur d'authentification Home Connect demande que l'adresse externe de Jeedom soit en https et pas http, le moyen le plus simple est d'utiliser les DNS de Jeedom.
 
-Obtension d'un Home Connect application Client ID
+Obtention d'un Home Connect application Client ID
 ---
 
 Adhérez au programme des développeurs Home Connect en créant un compte sur le site https://developer.home-connect.com/user/register, il est important que l'adresse mail soit la même que celle utilisée lors de l'étape précédente dans l'app Home Connect pour smartphone.
@@ -80,7 +80,7 @@ Les commandes disponibles dépendent du type d'appareil et du modèle. De plus o
 
 Utilisation des programmes
 ===
-Pour les types d'appareils qui comportent ds programmes : lave-linge, lave vaisselle, four, machine à café, il faut d'abord sélectionner le programme puis les otions et cliquer sur le bouton lancer pour que le programme démarre.
+Pour les types d'appareils qui comportent des programmes : lave-linge, lave vaisselle, four, machine à café, il faut d'abord sélectionner le programme puis les options et cliquer sur le bouton lancer pour que le programme démarre.
 
 FAQ
 ===
@@ -92,6 +92,13 @@ C'est tout à fait possible via le forum communautaire Jeedom https://community.
 LIMITATIONS ET BUGS
 ===
 
-- l'actualisation des états des appareils se fait par un cron toutes les 15 minutes. Ce n'est vraiment pas idéal. Dans le futur un démon recevant les événements envoyés par le serveur permettra de résoudre ce problème.
+- Historiquement il était impossible de contrôler certains types d'appareils comme les fours et plaques de cuisson. Cette limitation a été levée par Home Connect en Mai 2021 et le plugin a été modifié pour en profiter. Mais pour obtenir ces nouveaux droits, il faudra vous reconnecter.
+
+- l'actualisation des états des appareils se fait par un cron dont l'intervalle est réglable dans la page de configuration du plugin. 
+Ce n'est vraiment pas idéal. Dans le futur un démon recevant les événements envoyés par le serveur permettra de résoudre ce problème.
+
+- Il y a une limite de 1000 requêtes par jour et par client sur le serveur Home Connect. Lorsque ce nombre est atteint, on est blacklisté pour 24h. Si vous avez plusieurs appareils cette limite est vite atteinte. Désactivez l'actualisation par le cron et actualisez manuellement.
+
 - Il faudrait des widgets personnalisés pour certaines commandes. Si vous utilisez Jeedom V4 vous pouvez améliorer cela en utilisant l'outil Widget.
+
 - Certains types d'appareils n'ont pas été vraiment testés faute de testeurs : Réfrigérateur, Congélateur, Cave à vin, réfrigérateur congélateur, Machine à café. Je pense d'ailleurs que pour certains types d'appareils aucun modèle n'est actuellement commercialisé en France.
