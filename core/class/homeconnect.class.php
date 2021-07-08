@@ -916,14 +916,12 @@ class homeconnect extends eqLogic {
 	/*
 	 * Fonction exécutée automatiquement toutes les heures par Jeedom
 	  public static function cronHourly() {
-
 	  }
 	 */
 
 	/*
 	 * Fonction exécutée automatiquement tous les jours par Jeedom
 	  public static function cronDayly() {
-
 	  }
 	 */
 
@@ -1543,7 +1541,6 @@ class homeconnect extends eqLogic {
 	/*
 	 * Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
 	  public function toHtml($_version = 'dashboard') {
-
 	  }
 	 */
 
