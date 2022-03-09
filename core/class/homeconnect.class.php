@@ -877,6 +877,10 @@ class homeconnect extends eqLogic {
 				'SlowCook' => __("Cuisson lente", __FILE__),
 				'SabbathMode' => __("Mode Sabbat", __FILE__),
 				'Defrost' => __("Décongélation", __FILE__),
+				'FrozenHeatupSpecial' => __("Fonction CoolStart", __FILE__),
+				'IntensiveHeat' => __(,"Chaleur intense", __FILE__),
+				'PreheatOvenware' => __("Préchauffer des plats allant au four", __FILE__),
+				'TopBottomHeatingEco' => __("Convection naturelle éco", __FILE__),
 		];
 
 		(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;

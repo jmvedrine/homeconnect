@@ -67,7 +67,6 @@ function homeconnect_update() {
             }
         }
     }
-    $cmd->setConfiguration('value', '#select#');
     message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
 }
 
