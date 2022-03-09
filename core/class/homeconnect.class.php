@@ -246,7 +246,7 @@ class homeconnect extends eqLogic {
 		$state = bin2hex(random_bytes(16));
 		$_SESSION['oauth2state'] = $state;
 		$parameters['state'] = $state;
-
+        cache::set('homeconnect::state',$state,600);
 		// Construction de l'url.
 		$url = $authorizationUrl ."?" . self::buildQueryString($parameters);
 		log::add('homeconnect', 'debug',"url = " . $url);
@@ -1775,3 +1775,4 @@ class homeconnectCmd extends cmd {
 
 }
 ?>
+
