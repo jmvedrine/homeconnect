@@ -30,4 +30,3 @@ log::add('homeconnect', 'debug', "│ Code d'authorisation sauvegardé (".init('
 homeconnect::tokenRequest();
 log::add('homeconnect', 'debug',"└────────── Fin de Callback");
 redirect(network::getNetworkAccess('external') . '/index.php?v=d&p=plugin&id=homeconnect');
-
