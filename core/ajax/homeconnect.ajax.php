@@ -27,7 +27,7 @@ try {
 	ajax::init();
 
 	if (init('action') == 'loginHomeConnect') {
-		if (network::getUserLocation() != 'internal') {
+		if (network::getUserLocation() == 'internal') {
 			throw new Exception(__("Connexion impossible : connectez vous à votre Jeedom par l'accès externe pas par l'accès interne", __FILE__));
 		}
 		if (config::byKey('demo_mode','homeconnect')) {
