@@ -766,14 +766,14 @@ class homeconnect extends eqLogic {
                 if (is_object($eqLogic) && $eqLogic->getIsEnable()){
                     $cmdLogicalId = 'GET::' . $array['items'][0]['key'];
                     if ($array['items'][0]['value'] === false) $array['items'][0]['value'] = "0";
-					$eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
-                } else {
-					log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
-				}
+                        $eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
+                    } else {
+                        log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
+                    }
+                }
             }
+            return $length; //important de renvoyer la taille
         }
-        return $length; //important de renvoyer la taille
-    }
 
 	private static function traduction($word){
 	/**
@@ -903,6 +903,10 @@ class homeconnect extends eqLogic {
 				'SlowCook' => __("Cuisson lente", __FILE__),
 				'SabbathMode' => __("Mode Sabbat", __FILE__),
 				'Defrost' => __("Décongélation", __FILE__),
+				'FrozenHeatupSpecial' => __("Fonction CoolStart", __FILE__),
+				'IntensiveHeat' => __("Chaleur intense", __FILE__),
+				'PreheatOvenware' => __("Préchauffer des plats allant au four", __FILE__),
+				'TopBottomHeatingEco' => __("Convection naturelle éco", __FILE__),
 		];
 
 		(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
