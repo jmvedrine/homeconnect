@@ -749,31 +749,31 @@ class homeconnect extends eqLogic {
 		return $return;
 	}
   
-    public static function getEvents($ch, $string){
-	/**
-	 * Récupère tous les évenements et instruit les commandes
-	 *
-	 * @param	$ch			objet		Session
-	 * @param	$string		string		Chaîne d'événement reçue
-	 * @return	$length		string		Longueur de la chaine.
-	 */
-        $length = strlen($string);
-        preg_match('/data:({.*})/',$string, $match);
-        if (is_array($match) && $match[1] != '') {
-            $array = json_decode($match[1],true);
-            if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
-                $eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
-                if (is_object($eqLogic) && $eqLogic->getIsEnable()){
-                    $cmdLogicalId = 'GET::' . $array['items'][0]['key'];
-                    if ($array['items'][0]['value'] === false) $array['items'][0]['value'] = "0";
-                        $eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
-                    } else {
-                        log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
-                    }
-                }
-            }
-            return $length; //important de renvoyer la taille
-        }
+	public static function getEvents($ch, $string){
+		/**
+		* Récupère tous les évenements et instruit les commandes
+		*
+		* @param	$ch			objet		Session
+		* @param	$string		string		Chaîne d'événement reçue
+		* @return	$length		string		Longueur de la chaine.
+		*/
+		$length = strlen($string);
+		preg_match('/data:({.*})/',$string, $match);
+		if (is_array($match) && $match[1] != '') {
+			$array = json_decode($match[1],true);
+			if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
+				$eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
+				if (is_object($eqLogic) && $eqLogic->getIsEnable()){
+					$cmdLogicalId = 'GET::' . $array['items'][0]['key'];
+					if ($array['items'][0]['value'] === false)  $array['items'][0]['value'] = "0";
+					$eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
+				} else {
+					log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
+				}
+			}
+		}
+		return $length; //important de renvoyer la taille
+	}
 
 	private static function traduction($word){
 	/**
