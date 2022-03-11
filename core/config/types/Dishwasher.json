@@ -1,6 +1,89 @@
 {
   "commands": [
     {
+      "name": "Energie",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",  
+      "configuration": {
+        "path": "programs/active/options/BSH.Common.Option.EnergyForecast",
+        "key": "BSH.Common.Option.EnergyForecast",
+        "withAction":"false",
+        "category":"Option",
+        "minValue":"0",
+        "maxValue":"100"        
+     },
+      "logicalId": "GET::BSH.Common.Option.EnergyForecast"
+    },      
+    {
+      "name": "Eau",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",  
+      "configuration": {
+        "path": "programs/active/options/BSH.Common.Option.WaterForecast",
+        "key": "BSH.Common.Option.WaterForecast",
+        "withAction":"false",
+        "category":"Option",
+        "minValue":"0",
+        "maxValue":"100"        
+     },
+      "logicalId": "GET::BSH.Common.Option.WaterForecast"
+    }, 
+    {
+      "name": "Avancement programme",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "%",  
+      "configuration": {
+        "path": "programs/active/options/BSH.Common.Option.ProgramProgress",
+        "key": "BSH.Common.Option.ProgramProgress",
+        "withAction":"false",
+        "category":"Option",
+        "minValue":"0",
+        "maxValue":"100"        
+     },
+      "logicalId": "GET::BSH.Common.Option.ProgramProgress"
+    },  
+    {
+      "name": "Temps restant estimé",
+      "type": "info",
+      "subtype": "binary",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",  
+      "configuration": {
+        "path": "programs/active/options/BSH.Common.Option.RemainingProgramTimeIsEstimated",
+        "key": "BSH.Common.Option.RemainingProgramTimeIsEstimated",
+        "withAction":"false",
+        "category":"Option"      
+     },
+      "logicalId": "GET::BSH.Common.Option.RemainingProgramTimeIsEstimated"
+    }, 
+    {
+      "name": "Temps restant",
+      "type": "info",
+      "subtype": "numeric",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "s",  
+      "configuration": {
+        "path": "programs/active/options/BSH.Common.Option.RemainingProgramTime",
+        "key": "BSH.Common.Option.RemainingProgramTime",
+        "withAction":"false",
+        "category":"Option",
+        "minValue":"0",
+        "maxValue":"18000"        
+     },
+      "logicalId": "GET::BSH.Common.Option.RemainingProgramTime"
+    },
+    {
       "name": "Connecté(e)",
       "type": "info",
       "subtype": "binary",
