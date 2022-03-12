@@ -908,7 +908,7 @@ class homeconnect extends eqLogic {
 				'TopBottomHeatingEco' => __("Convection naturelle éco", __FILE__),
 		];
 
-		(array_key_exists($word, $translate) == True) ? $word = $translate[$word] : null;
+		if (array_key_exists($word, $translate))  $word = $translate[$word];
 
 		return $word;
 	}
