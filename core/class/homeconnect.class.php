@@ -622,7 +622,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug',"Ce type d'appareil n'a pas de programme");
 					$eqLogic->setConfiguration('hasPrograms', false);
 				}
-					
+
 				// Status
 
 				$allStatus = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
@@ -748,7 +748,7 @@ class homeconnect extends eqLogic {
 		}
 		return $return;
 	}
-  
+
 	public static function getEvents($ch, $string){
 		/**
 		* Récupère tous les évenements et instruit les commandes
@@ -1360,6 +1360,9 @@ class homeconnect extends eqLogic {
 		$cmd = $this->getCmd(null, $logicalId);
 		$reglage = '';
 		if (is_object($cmd)) {
+			if (is_bool($value['value'])) {
+				$value['value'] = $value['value']  ? 'true' : 'false';
+			}
 			if ($cmd->getConfiguration('withAction')) {
 				// C'est une commande associée à une commande action pas de traduction
 				if (isset($value['value'])) {
@@ -1427,7 +1430,7 @@ class homeconnect extends eqLogic {
 		}
 		return false;
 	}
-	
+
 	public function lookProgramOptions($programType) {
 		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType .'/options', null, 'GET', array());
 		if ($programOptions !== false) {
@@ -1552,7 +1555,7 @@ class homeconnect extends eqLogic {
             return true;
         }
     }
-  
+
 	public function updateStates() {
 		if ($this->isConnected()) {
 			log::add('homeconnect', 'debug', "MAJ des états ".$this->getLogicalId());
@@ -1775,7 +1778,7 @@ class homeconnectCmd extends cmd {
 			}
 			$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/programs/active';
 			$payload = '{"data": {"key": "' . $key . '"';
-			
+
 			// Il faut récupérer la valeur du départ différé et la mettre dans le payload.
 			$cache = cache::byKey('homeconnect::startinrelative::'.$eqLogic->getId());
             $startinrelative = $cache->getValue();
@@ -1854,7 +1857,7 @@ class homeconnectCmd extends cmd {
 					$parameters['data']['type'] = $this->getConfiguration('type', '');
 				}
 				$payload= json_encode($parameters);
-				
+
 				$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $path;
 				log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
 				log::add('homeconnect', 'debug',"Method : " . $method);
