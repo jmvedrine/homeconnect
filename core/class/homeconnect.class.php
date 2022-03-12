@@ -765,7 +765,6 @@ class homeconnect extends eqLogic {
 				$eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
 				if (is_object($eqLogic) && $eqLogic->getIsEnable()){
 					$cmdLogicalId = 'GET::' . $array['items'][0]['key'];
-					if ($array['items'][0]['value'] === false)  $array['items'][0]['value'] = "0";
 					$eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
 				} else {
 					log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
