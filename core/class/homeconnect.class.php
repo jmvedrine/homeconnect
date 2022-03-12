@@ -757,6 +757,8 @@ class homeconnect extends eqLogic {
 		* @param	$string		string		Chaîne d'événement reçue
 		* @return	$length		string		Longueur de la chaine.
 		*/
+		log::add('homeconnectd', 'info', 'Événement : ' . $string);
+
 		$length = strlen($string);
 		preg_match('/data:({.*})/',$string, $match);
 		if (is_array($match) && $match[1] != '') {
