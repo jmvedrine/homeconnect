@@ -565,17 +565,17 @@ class homeconnect extends eqLogic {
 										// Création de la commande action programme
 										$actionCmd = $eqLogic->createActionCmd($programdata['data'], $path , 'Program');
 										if ($path == 'programs/selected') {
-											$infoCmd = $eqLogic->getCmd('info', 'programSelected');
+											$infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.SelectedProgram');
 											if (is_object($infoCmd)) {
 												// On a trouvé la commande info associée.
 												log::add('homeconnect', 'debug', "setValue sur la commande programme selected " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
 												$actionCmd->setValue($infoCmd->getId());
 												$actionCmd->save();
 											} else {
-												log::add('homeconnect', 'debug', "Pas de commande info programSelected");
+												log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.SelectedProgram");
 											}
 										} else if ($path == 'programs/active') {
-											$infoCmd = $eqLogic->getCmd('info', 'programActive');
+											$infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
 											if (is_object($infoCmd)) {
 												// On a trouvé la commande info associée.
 												log::add('homeconnect', 'debug', "setValue sur la commande programme active " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
@@ -583,7 +583,7 @@ class homeconnect extends eqLogic {
 												$actionCmd->save();
 												// A voir : ne pas la rendre visible ?
 											} else {
-												log::add('homeconnect', 'debug', "Pas de commande info programActive");
+												log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.ActiveProgram");
 											}
 										}
 									}
@@ -760,13 +760,19 @@ class homeconnect extends eqLogic {
 		log::add('homeconnectd', 'info', 'Événement : ' . $string);
 
 		$length = strlen($string);
-		preg_match('/data:({.*})/',$string, $match);
-		if (is_array($match) && $match[1] != '') {
-			$array = json_decode($match[1],true);
+		preg_match('/event:(?P<event>\w+)\s*data:(?P<data>({.*}))/',$string, $match);
+
+		if (is_array($match) && array_key_exists('data', $match)) {
+			log::add('homeconnectd', 'info', 'Type d\'événement : ' . $match['event']);
+			$array = json_decode($match['data'],true);
 			if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
 				$eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
 				if (is_object($eqLogic) && $eqLogic->getIsEnable()){
 					$cmdLogicalId = 'GET::' . $array['items'][0]['key'];
+					$cmd = $eqLogic->getCmd('info', $cmdLogicalId);
+					if (!is_object($cmd)) {
+						$eqLogic->createInfoCmd($array['items'][0], $array['items'][0]['key'], 'Option');
+					}
 					$eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
 				} else {
 					log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
@@ -784,296 +790,369 @@ class homeconnect extends eqLogic {
 	 * @return	$word		string		Mot en Français (ou anglais, si traduction inexistante).
 	 */
 
-	 $translate = [
-			 //DISHWASHER
-			 //Dishcare.Dishwasher.Program
-			 'Program' => __("Programme", __FILE__),
-			 'Auto1' => __("Auto 35-45°C", __FILE__),
-			 'Auto2' => __("Auto 45-65°C", __FILE__),
-			 'Auto3' => __("Auto 65-75°C", __FILE__),
-			 'PreRinse' => __("Pré-rinçage", __FILE__),
-			 'Eco50' => __("Eco 50°C", __FILE__),
-			 'Quick45' => __("Rapide 45°C", __FILE__),
-			 'Intensiv70' => __("Intensif 70°C", __FILE__),
-			 'Normal65' => __("Normal 65°C", __FILE__),
-			 'Glas40' => __("Verres 40°C", __FILE__),
-			 'GlassCare' => __("Soin des verres", __FILE__),
-			 'NightWash' => __("Silence 50°C", __FILE__),
-			 'Quick65' => __("Rapide 65°C", __FILE__),
-			 'Normal45' => __("Normal 45°C", __FILE__),
-			 'Intensiv45' => __("Intensif 45°C", __FILE__),
-			 'AutoHalfLoad' => __("Auto demi-charge", __FILE__),
-			 'IntensivPower' => __("Puissance intensive", __FILE__),
-			 'MagicDaily' => __("Magie quotidienne", __FILE__),
-			 'Super60' => __("Super 60°C", __FILE__),
-			 'Kurz60' => __("Court 60°C", __FILE__),
-			 'ExpressSparkle65' => __("Rapide étincellant 65°C", __FILE__),
-			 'MachineCare' => __("Soin de la machine", __FILE__),
-			 'SteamFresh' => __("Rinçage et séchage hygiénique", __FILE__),
-			 'MaximumCleaning' => __("Nettoyage complet", __FILE__),
-			 //Dishcare.Dishwasher.Option
-			 'IntensivZone' => __("Zone intensive", __FILE__),
-			 'BrillianceDry' => __("Brillance à sec", __FILE__),
-			 'VarioSpeedPlus' => __("VarioSpeed +", __FILE__),
-			 'SilenceOnDemand' => __("Silence sur demande", __FILE__),
-			 'HalfLoad' => __("Demi-charge", __FILE__),
-			 'ExtraDry' => __("Extra sec", __FILE__),
-			 'HygienePlus' => __("Hygiène +", __FILE__),
+		$translate = [
+				//DISHWASHER
+				//Dishcare.Dishwasher.Program
+				'Program' => __("Programme", __FILE__),
+				'Auto1' => __("Auto 35-45°C", __FILE__),
+				'Auto2' => __("Auto 45-65°C", __FILE__),
+				'Auto3' => __("Auto 65-75°C", __FILE__),
+				'PreRinse' => __("Pré-rinçage", __FILE__),
+				'Eco50' => __("Eco 50°C", __FILE__),
+				'Quick45' => __("Rapide 45°C", __FILE__),
+				'Intensiv70' => __("Intensif 70°C", __FILE__),
+				'Normal65' => __("Normal 65°C", __FILE__),
+				'Glas40' => __("Verres 40°C", __FILE__),
+				'GlassCare' => __("Soin des verres", __FILE__),
+				'NightWash' => __("Silence 50°C", __FILE__),
+				'Quick65' => __("Rapide 65°C", __FILE__),
+				'Normal45' => __("Normal 45°C", __FILE__),
+				'Intensiv45' => __("Intensif 45°C", __FILE__),
+				'AutoHalfLoad' => __("Auto demi-charge", __FILE__),
+				'IntensivPower' => __("Puissance intensive", __FILE__),
+				'MagicDaily' => __("Magie quotidienne", __FILE__),
+				'Super60' => __("Super 60°C", __FILE__),
+				'Kurz60' => __("Court 60°C", __FILE__),
+				'ExpressSparkle65' => __("Rapide étincellant 65°C", __FILE__),
+				'MachineCare' => __("Soin de la machine", __FILE__),
+				'SteamFresh' => __("Rinçage et séchage hygiénique", __FILE__),
+				'MaximumCleaning' => __("Nettoyage complet", __FILE__),
+				//Dishcare.Dishwasher.Option
+				'IntensivZone' => __("Zone intensive", __FILE__),
+				'BrillianceDry' => __("Brillance à sec", __FILE__),
+				'VarioSpeedPlus' => __("VarioSpeed +", __FILE__),
+				'SilenceOnDemand' => __("Silence sur demande", __FILE__),
+				'HalfLoad' => __("Demi-charge", __FILE__),
+				'ExtraDry' => __("Extra sec", __FILE__),
+				'HygienePlus' => __("Hygiène +", __FILE__),
 
-			 //CLEANING ROBOT
-			 //ConsumerProducts.CleaningRobot.EnumType.ReferenceMapId
-			 'TempMap' => __("Carte temporaire", __FILE__),
-			 'Map1' => __("Carte 1", __FILE__),
-			 'Map2' => __("Carte 2", __FILE__),
-			 'Map3' => __("Carte 3", __FILE__),
-			 //ConsumerProducts.CleaningRobot.EnumType.CleaningMode
-			 'Silent' => __("Silencieux", __FILE__),
-			 'Power' => __("Puissant", __FILE__),
-			 'Standard' => __("Normal", __FILE__),
+				//CLEANING ROBOT
+				//ConsumerProducts.CleaningRobot.EnumType.ReferenceMapId
+				'ReferenceMapId' => __("Identifiant de carte de référence", __FILE__),
+				'TempMap' => __("Carte temporaire", __FILE__),
+				'Map1' => __("Carte 1", __FILE__),
+				'Map2' => __("Carte 2", __FILE__),
+				'Map3' => __("Carte 3", __FILE__),
+				'CurrentMap' => __("Carte actuelle", __FILE__),
+				'NameOfMap1' => __("Nom de carte 1", __FILE__),
+				'NameOfMap2' => __("Nom de carte 2", __FILE__),
+				'NameOfMap3' => __("Nom de carte 3", __FILE__),
+				'NameOfMap4' => __("Nom de carte 4", __FILE__),
+				'NameOfMap5' => __("Nom de carte 5", __FILE__),
+				//ConsumerProducts.CleaningRobot.EnumType.CleaningMode
+				'CleaningMode' => __("Mode de nettoyage", __FILE__),
+				'Silent' => __("Silencieux", __FILE__),
+				'Power' => __("Puissant", __FILE__),
+				'Standard' => __("Normal", __FILE__),
+				//ConsumerProducts.CleaningRobot.Option.ProcessPhase
+				'ProcessPhase' => __("Phase de traitement", __FILE__),
+				//ConsumerProducts.CleaningRobot.Status
+				'LastSelectedMap' => __("Dernière carte sélectionnée", __FILE__),
+				'DustBoxInserted' => __("Boîte à poussière insérée", __FILE__),
+				'Lost' => __("Perdu", __FILE__),
+				'Lifted' => __("Levé", __FILE__),
+				//ConsumerProducts.CleaningRobot.Event
+				'EmptyDustBoxAndCleanFilter' => __("Vider la boîte à poussière et nettoyer le filtre", __FILE__),
+				'RobotIsStuck' => __("Robot coincé", __FILE__),
+				'DockingStationNotFound' => __("Station de recharge introuvable", __FILE__),
+				//COFFEE MACHINE
+				'CupWarmer' => __("Chauffe-tasse", __FILE__),
+				//ConsumerProducts.CoffeeMaker.Status
+				'BeverageCounterCoffee' => __("Nombre de cafés consommés", __FILE__),
+				'BeverageCounterPowderCoffee' => __("Quantité de café en poudre consommée", __FILE__),
+				'BeverageCounterHotWaterCups' => __("Nombre de tasses d'eau chaude consommés", __FILE__),
+				'BeverageCounterHotMilk' => __("Quantité de lait chaud consommée", __FILE__),
+				'BeverageCounterFrothyMilk' => __("Quantité de mousse de lait consommée", __FILE__),
+				'BeverageCounterMilk' => __("Quantité de lait consommée", __FILE__),
+				'BeverageCounterCoffeeAndMilk' => __("Quantité de café au lait consommée", __FILE__),
+				'BeverageCounterHotWater' => __("Quantité d'eau chaude consommée", __FILE__),
+				'BeverageCounterRistrettoEspresso' => __("Quantité de ristretto consommée", __FILE__),
+				//ConsumerProducts.CoffeeMaker.EnumType.BeanAmount
+				'BeanAmount' => __("Quantité de café", __FILE__),
+				'VeryMild' => __("Très doux", __FILE__),
+				'Mild' => __("Doux", __FILE__),
+				'MildPlus' => __("Doux +", __FILE__),
+				'Strong' => __("Fort", __FILE__),
+				'StrongPlus' => __("Fort +", __FILE__),
+				'VeryStrong' => __("Très fort", __FILE__),
+				'VeryStrongPlus' => __("Très fort +", __FILE__),
+				'ExtraStrong' => __("Extrèmement fort", __FILE__),
+				'Normal' => __("Normal", __FILE__),
+				'NormalPlus' => __("Normal +", __FILE__),
+				'DoubleShot' => __("Double shot", __FILE__),
+				'DoubleShotPlus' => __("Double shot +", __FILE__),
+				'DoubleShotPlusPlus' => __("Double shot ++", __FILE__),
+				'CoffeeGround' => __("Café moulu", __FILE__),
+				//ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature
+				'CoffeeTemperature' => __("Température du café", __FILE__),
+				'88C' => __("88°C", __FILE__),
+				'90C' => __("90°C", __FILE__),
+				'92C' => __("92°C", __FILE__),
+				'94C' => __("94°C", __FILE__),
+				'95C' => __("95°C", __FILE__),
+				'96C' => __("96°C", __FILE__),
+				//ConsumerProducts.CoffeeMaker.EnumType.BeanContainerSelection
+				'BeanContainerSelection' => __("Sélecteur de récipient à grains", __FILE__),
+				'Right' => __("Droite", __FILE__),
+				'Left' => __("Gauche", __FILE__),
+				//ConsumerProducts.CoffeeMaker.EnumType.FlowRate
+				'FlowRate' => __("Débit", __FILE__),
+				'Intense' => __("Intense", __FILE__),
+				'IntensePlus' => __("Intense +", __FILE__),
+				//'Normal' => __("Normal", __FILE__),
+				'FillQuantity' => __("Contenance", __FILE__),
+				//ConsumerProducts.CoffeeMaker.Program.Beverage
+				'Ristretto' => __("Ristretto", __FILE__),
+				'Espresso' => __("Espresso", __FILE__),
+				'EspressoDoppio' => __("Double Espresso", __FILE__),
+				'Coffee' => __("Café", __FILE__),
+				'XLCoffee' => __("Café XL", __FILE__),
+				'EspressoMacchiato' => __("Espresso macchiato", __FILE__),
+				'Cappuccino' => __("Cappuccino", __FILE__),
+				'LatteMacchiato' => __("Macchiato au lait", __FILE__),
+				'CaffeLatte' => __("Café au lait", __FILE__),
+				'MilkFroth' => __("Mousse de lait", __FILE__),
+				'WarmMilk' => __("Lait chaud", __FILE__),
+				//ConsumerProducts.CoffeeMaker.Program.CoffeeWorld
+				'KleinerBrauner' => __("Petit café", __FILE__),
+				'GrosserBrauner' => __("Grand café", __FILE__),
+				'Verlaengerter' => __("Rallongé", __FILE__),
+				'VerlaengerterBraun' => __("Café brun", __FILE__),
+				'WienerMelange' => __("Mélange viennois", __FILE__),
+				'FlatWhite' => __("Blanc pur", __FILE__),
+				'Cortado' => __("Coupé", __FILE__),
+				'CafeCortado' => __("Café coupé", __FILE__),
+				'CafeConLeche' => __("Cafe con leche", __FILE__),
+				'CafeAuLait' => __("Cafe Au Lait", __FILE__),
+				'Doppio' => __("Double", __FILE__),
+				'Kaapi' => __("Kaapi", __FILE__),
+				'KoffieVerkeerd' => __("Mauvais café", __FILE__),
+				'Galao' => __("Galao", __FILE__),
+				'Garoto' => __("Garoto", __FILE__),
+				'Americano' => __("American", __FILE__),
+				'RedEye' => __("RedEye", __FILE__),
+				'BlackEye' => __("BlackEye", __FILE__),
+				'DeadEye' => __("DeadEye", __FILE__),
+				//ConsumerProducts.CoffeeMaker.Event
+				'BeanContainerEmpty' => __("Conteneur à grains vide", __FILE__),
+				'WaterTankEmpty' => __("Réservoir d'eau vide", __FILE__),
+				'DripTrayFull' => __("Bac de récupération plein", __FILE__),
 
-			 //COFFEE MACHINE
-			 //ConsumerProducts.CoffeeMaker.EnumType.BeanAmount
-			 'BeanAmount' => __("Quantité de café", __FILE__),
-			 'VeryMild' => __("Très doux", __FILE__),
-			 'Mild' => __("Doux", __FILE__),
-			 'MildPlus' => __("Doux +", __FILE__),
-			 'Strong' => __("Fort", __FILE__),
-			 'StrongPlus' => __("Fort +", __FILE__),
-			 'VeryStrong' => __("Très fort", __FILE__),
-			 'VeryStrongPlus' => __("Très fort +", __FILE__),
-			 'ExtraStrong' => __("Extrèmement fort", __FILE__),
-			 'Normal' => __("Normal", __FILE__),
-			 'NormalPlus' => __("Normal +", __FILE__),
-			 'DoubleShot' => __("Double shot", __FILE__),
-			 'DoubleShotPlus' => __("Double shot +", __FILE__),
-			 'DoubleShotPlusPlus' => __("Double shot ++", __FILE__),
-			 'CoffeeGround' => __("Café moulu", __FILE__),
-			 //ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature
-			 'CoffeeTemperature' => __("Température du café", __FILE__),
-			 '88C' => __("88°C", __FILE__),
-			 '90C' => __("90°C", __FILE__),
-			 '92C' => __("92°C", __FILE__),
-			 '94C' => __("94°C", __FILE__),
-			 '95C' => __("95°C", __FILE__),
-			 '96C' => __("96°C", __FILE__),
-			 //ConsumerProducts.CoffeeMaker.EnumType.BeanContainerSelection
-			 'Right' => __("Droite", __FILE__),
-			 'Left' => __("Gauche", __FILE__),
-			 //ConsumerProducts.CoffeeMaker.EnumType.FlowRate
-			 'Intense' => __("Intense", __FILE__),
-			 'IntensePlus' => __("Intense +", __FILE__),
-			 //'Normal' => __("Normal", __FILE__),
-			 'FillQuantity' => __("Contenance", __FILE__),
-			 //ConsumerProducts.CoffeeMaker.Program.Beverage
-			 'Ristretto' => __("Ristretto", __FILE__),
-			 'Espresso' => __("Espresso", __FILE__),
-			 'EspressoDoppio' => __("Double Espresso", __FILE__),
-			 'Coffee' => __("Café", __FILE__),
-			 'XLCoffee' => __("Café XL", __FILE__),
-			 'EspressoMacchiato' => __("Espresso macchiato", __FILE__),
-			 'Cappuccino' => __("Cappuccino", __FILE__),
-			 'LatteMacchiato' => __("Macchiato au lait", __FILE__),
-			 'CaffeLatte' => __("Café au lait", __FILE__),
-			 'MilkFroth' => __("Mousse de lait", __FILE__),
-			 'WarmMilk' => __("Lait chaud", __FILE__),
-			 //ConsumerProducts.CoffeeMaker.Program.CoffeeWorld
-			 'KleinerBrauner' => __("Petit café", __FILE__),
-			 'GrosserBrauner' => __("Grand café", __FILE__),
-			 'Verlaengerter' => __("Rallongé", __FILE__),
-			 'VerlaengerterBraun' => __("Café brun", __FILE__),
-			 'WienerMelange' => __("Mélange viennois", __FILE__),
-			 'FlatWhite' => __("Blanc pur", __FILE__),
-			 'Cortado' => __("Coupé", __FILE__),
-			 'CafeCortado' => __("Café coupé", __FILE__),
-			 'CafeConLeche' => __("Cafe con leche", __FILE__),
-			 'CafeAuLait' => __("Cafe Au Lait", __FILE__),
-			 'Doppio' => __("Double", __FILE__),
-			 'Kaapi' => __("Kaapi", __FILE__),
-			 'KoffieVerkeerd' => __("Mauvais café", __FILE__),
-			 'Galao' => __("Galao", __FILE__),
-			 'Garoto' => __("Garoto", __FILE__),
-			 'Americano' => __("American", __FILE__),
-			 'RedEye' => __("RedEye", __FILE__),
-			 'BlackEye' => __("BlackEye", __FILE__),
-			 'DeadEye' => __("DeadEye", __FILE__),
+				//DRYER
+				//LaundryCare.Dryer.EnumType.DryingTarget
+				'DryingTarget' => __("Cible de séchage", __FILE__),
+				'IronDry' => __("Prêt à repasser", __FILE__),
+				'CupboardDry' => __("Prêt à ranger", __FILE__),
+				'CupboardDryPlus' => __("Prêt à ranger +", __FILE__),
+				//LaundryCare.Dryer.Program
+				'Cotton' => __("Coton", __FILE__),
+				'Synthetic' => __("Synthétique", __FILE__),
+				'Mix' => __("Mélangé", __FILE__),
+				'Blankets' => __("Couvertures", __FILE__),
+				'BusinessShirts' => __("Chemises de travail", __FILE__),
+				'DownFeathers' => __("Plumes de duvet", __FILE__),
+				'Hygiene' => __("Hygiénique", __FILE__),
+				'Jeans' => __("Jeans", __FILE__),
+				'Outdoor' => __("Extérieur", __FILE__),
+				'SyntheticRefresh' => __("Rafraîchissement synthétique", __FILE__),
+				'Towels' => __("Serviettes", __FILE__),
+				'Delicates' => __("Délicat", __FILE__),
+				'Super40' => __("Super 40°C", __FILE__),
+				'Shirts15' => __("Chemises 15°C", __FILE__),
+				'Pillow' => __("Oreiller", __FILE__),
+				'AntiShrink' => __("Anti-rétrécissement", __FILE__),
 
-			 //DRYER
-			 //LaundryCare.Dryer.EnumType.DryingTarget
-			 'DryingTarget' => __("Cible de séchage", __FILE__),
-			 'IronDry' => __("Prêt à repasser", __FILE__),
-			 'CupboardDry' => __("Prêt à ranger", __FILE__),
-			 'CupboardDryPlus' => __("Prêt à ranger +", __FILE__),
-			 //LaundryCare.Dryer.Program
-			 'Cotton' => __("Coton", __FILE__),
-			 'Synthetic' => __("Synthétique", __FILE__),
-			 'Mix' => __("Mélangé", __FILE__),
-			 'Blankets' => __("Couvertures", __FILE__),
-			 'BusinessShirts' => __("Chemises de travail", __FILE__),
-			 'DownFeathers' => __("Plumes de duvet", __FILE__),
-			 'Hygiene' => __("Hygiénique", __FILE__),
-			 'Jeans' => __("Jeans", __FILE__),
-			 'Outdoor' => __("Extérieur", __FILE__),
-			 'SyntheticRefresh' => __("Rafraîchissement synthétique", __FILE__),
-			 'Towels' => __("Serviettes", __FILE__),
-			 'Delicates' => __("Délicat", __FILE__),
-			 'Super40' => __("Super 40°C", __FILE__),
-			 'Shirts15' => __("Chemises 15°C", __FILE__),
-			 'Pillow' => __("Oreiller", __FILE__),
-			 'AntiShrink' => __("Anti-rétrécissement", __FILE__),
+				//WASHER
+				//LaundryCare.Washer.EnumType.Temperature
+				'Temperature' => __("Température", __FILE__),
+				'Cold' => __("Froid", __FILE__),
+				'GC20' => __("20°C", __FILE__),
+				'GC30' => __("30°C", __FILE__),
+				'GC40' => __("40°C", __FILE__),
+				'GC50' => __("50°C", __FILE__),
+				'GC60' => __("60°C", __FILE__),
+				'GC70' => __("70°C", __FILE__),
+				'GC80' => __("80°C", __FILE__),
+				'GC90' => __("90°C", __FILE__),
+				//LaundryCare.Washer.EnumType.SpinSpeed
+				'SpinSpeed' => __("Essorage", __FILE__),
+				'RPM400' => __("400 tr/min", __FILE__),
+				'RPM600' => __("600 tr/min", __FILE__),
+				'RPM800' => __("800 tr/min", __FILE__),
+				'RPM1000' => __("1000 tr/min", __FILE__),
+				'RPM1200' => __("1200 tr/min", __FILE__),
+				'RPM1400' => __("1400 tr/min", __FILE__),
+				'RPM700' => __("700 tr/min", __FILE__),
+				'RPM900' => __("900 tr/min", __FILE__),
+				'RPM1500' => __("1500 tr/min", __FILE__),
+				'RPM1600' => __("1600 tr/min", __FILE__),
+				'UlOff' => __("Sans essorage", __FILE__),
+				'UlLow' => __("Vitesse d’essorage basse", __FILE__),
+				'UlMedium' => __("Vitesse d’essorage moyenne", __FILE__),
+				'UlHigh' => __("Vitesse d’essorage élevée", __FILE__),
+				//LaundryCare.Washer.Program
+				//'Cotton' => __("Coton", __FILE__),
+				'EasyCare' => __("Synthétiques", __FILE__),
+				//'Mix' => __("Mélangé", __FILE__),
+				'DelicatesSilk' => __("Délicat Soie", __FILE__),
+				'Wool' => __("Laine", __FILE__),
+				'Sensitive' => __("Sensible", __FILE__),
+				'Auto30' => __("Auto 30°C", __FILE__),
+				'Auto40' => __("Auto 40°C", __FILE__),
+				'Auto60' => __("Auto 60°C", __FILE__),
+				'Chiffon' => __("Mousseline de soie", __FILE__),
+				'Curtains' => __("Rideaux", __FILE__),
+				'DarkWash' => __("Couleurs sombres", __FILE__),
+				'Dessous' => __("Lingerie", __FILE__),
+				'Monsoon' => __("Mousson", __FILE__),
+				//'Outdoor' => __("Extérieur", __FILE__),
+				'PlushToy' => __("Peluche", __FILE__),
+				'ShirtsBlouses' => __("Chemises", __FILE__),
+				'SportFitness' => __("Sport", __FILE__),
+				//'Towels' => __("Serviettes", __FILE__),
+				'WaterProof' => __("Imperméable", __FILE__),
+				//LaundryCare.Washer.Option
+				//'Temperature' => __("Température", __FILE__),
+				//'SpinSpeed' => __("Essorage", __FILE__),
+				'IDos1DosingLevel' => __("Dosage i-Dos de détergent", __FILE__),
+				'IDos2DosingLevel' => __("i-DOS: dosage de lessive liquide ou d'adoucissant", __FILE__),
+				'Prewash'  => __("Prélavage", __FILE__),
+				'RinsePlus' => __("Rinçage +", __FILE__),
+				'RinsePlus1' => __("Rinçage + 1", __FILE__),
+				'RinseHold' => __("Arrêt cuve pleine", __FILE__),
+				'Soak' => __("Tremper", __FILE__),
+				'LoadRecommendation' => __("Recommandation de charges", __FILE__),
+				'EnergyForecast' => __("Prévision d'énergie", __FILE__),
+				'WaterForecast' => __("Prévision d'eau", __FILE__),
+				//'DryingTarget' => __("Cible de séchage", __FILE__),
+				'VentingLevel' => __("Niveau de ventilation", __FILE__),
+				'LessIroning' => __("Moins de repassage", __FILE__),
+				//LaundryCare.Common.Option
+				'VarioPerfect' => __("VarioPerfect", __FILE__),
+				//HOOD
+				//Cooking.Common.EnumType.Hood.VentingLevel
+				'FanOff' => __("Ventilateur éteint", __FILE__),
+				'FanStage01' => __("Phase 1 de ventilation", __FILE__),
+				'FanStage02' => __("Phase 2 de ventilation", __FILE__),
+				'FanStage03' => __("Phase 3 de ventilation", __FILE__),
+				//Cooking.Common.EnumType.Hood.IntensiveLevel
+				'IntensiveLevel' => __("Niveau intensivité", __FILE__),
+				'IntensiveStageOff' => __("Phase intensive arrêtée", __FILE__),
+				'IntensiveStage1' => __("Phase intensive 1", __FILE__),
+				'IntensiveStage2' => __("Phase intensive 2", __FILE__),
+				//Cooking.Common.Setting
+				'Lighting' => __("Éclairage", __FILE__),
+				'LightingBrightnes' => __("Intensité de l'éclairage", __FILE__),
 
-			 //WASHER
-			 //LaundryCare.Washer.EnumType.Temperature
-			 'Temperature' => __("Température", __FILE__),
-			 'Cold' => __("Froid", __FILE__),
-			 'GC20' => __("20°C", __FILE__),
-			 'GC30' => __("30°C", __FILE__),
-			 'GC40' => __("40°C", __FILE__),
-			 'GC50' => __("50°C", __FILE__),
-			 'GC60' => __("60°C", __FILE__),
-			 'GC70' => __("70°C", __FILE__),
-			 'GC80' => __("80°C", __FILE__),
-			 'GC90' => __("90°C", __FILE__),
-			 //LaundryCare.Washer.EnumType.SpinSpeed
-			 'SpinSpeed' => __("Essorage", __FILE__),
-			 'RPM400' => __("400 tr/min", __FILE__),
-			 'RPM600' => __("600 tr/min", __FILE__),
-			 'RPM800' => __("800 tr/min", __FILE__),
-			 'RPM1000' => __("1000 tr/min", __FILE__),
-			 'RPM1200' => __("1200 tr/min", __FILE__),
-			 'RPM1400' => __("1400 tr/min", __FILE__),
-			 'RPM700' => __("700 tr/min", __FILE__),
-			 'RPM900' => __("900 tr/min", __FILE__),
-			 'RPM1500' => __("1500 tr/min", __FILE__),
-			 'RPM1600' => __("1600 tr/min", __FILE__),
-			 'UlOff' => __("Sans essorage", __FILE__),
-			 'UlLow' => __("Vitesse d’essorage basse", __FILE__),
-			 'UlMedium' => __("Vitesse d’essorage moyenne", __FILE__),
-			 'UlHigh' => __("Vitesse d’essorage élevée", __FILE__),
-			 //LaundryCare.Washer.Program
-			 //'Cotton' => __("Coton", __FILE__),
-			 'EasyCare' => __("Synthétiques", __FILE__),
-			 //'Mix' => __("Mélangé", __FILE__),
-			 'DelicatesSilk' => __("Délicat Soie", __FILE__),
-			 'Wool' => __("Laine", __FILE__),
-			 'Sensitive' => __("Sensible", __FILE__),
-			 'Auto30' => __("Auto 30°C", __FILE__),
-			 'Auto40' => __("Auto 40°C", __FILE__),
-			 'Auto60' => __("Auto 60°C", __FILE__),
-			 'Chiffon' => __("Mousseline de soie", __FILE__),
-			 'Curtains' => __("Rideaux", __FILE__),
-			 'DarkWash' => __("Couleurs sombres", __FILE__),
-			 'Dessous' => __("Lingerie", __FILE__),
-			 'Monsoon' => __("Mousson", __FILE__),
-			 //'Outdoor' => __("Extérieur", __FILE__),
-			 'PlushToy' => __("Peluche", __FILE__),
-			 'ShirtsBlouses' => __("Chemises", __FILE__),
-			 'SportFitness' => __("Sport", __FILE__),
-			 //'Towels' => __("Serviettes", __FILE__),
-			 'WaterProof' => __("Imperméable", __FILE__),
-			 //LaundryCare.Washer.Option
-			 //'Temperature' => __("Température", __FILE__),
-			 //'SpinSpeed' => __("Essorage", __FILE__),
-			 'IDos1DosingLevel' => __("Dosage i-Dos de détergent", __FILE__),
-			 'IDos2DosingLevel' => __("i-DOS: dosage de lessive liquide ou d'adoucissant", __FILE__),
-			 'Prewash'  => __("Prélavage", __FILE__),
-			 'RinsePlus' => __("Rinçage +", __FILE__),
-			 'RinsePlus1' => __("Rinçage + 1", __FILE__),
-			 'RinseHold' => __("Arrêt cuve pleine", __FILE__),
-			 'Soak' => __("Tremper", __FILE__),
-			 'LoadRecommendation' => __("Recommandation de charges", __FILE__),
-			 'EnergyForecast' => __("Prévision d'énergie", __FILE__),
-			 'WaterForecast' => __("Prévision d'eau", __FILE__),
-			 //'DryingTarget' => __("Cible de séchage", __FILE__),
-			 'VentingLevel' => __("Niveau de ventilation", __FILE__),
-			 'LessIroning' => __("Moins de repassage", __FILE__),
-			 //LaundryCare.Common.Option
-			 'VarioPerfect' => __("VarioPerfect", __FILE__),
-			 //HOOD
-			 //Cooking.Common.EnumType.Hood.VentingLevel
-			 'FanOff' => __("Ventilateur éteint", __FILE__),
-			 'FanStage01' => __("Phase 1 de ventilation", __FILE__),
-			 'FanStage02' => __("Phase 2 de ventilation", __FILE__),
-			 'FanStage03' => __("Phase 3 de ventilation", __FILE__),
-			 //Cooking.Common.EnumType.Hood.IntensiveLevel
-			 'IntensiveStageOff' => __("Phase intensive arrêtée", __FILE__),
-			 'IntensiveStage1' => __("Phase intensive 1", __FILE__),
-			 'IntensiveStage2' => __("Phase intensive 2", __FILE__),
+				//FRIDGEFREEZER
+				//Refrigeration.FridgeFreezer.Setting
+				'SetpointTemperatureFreezer' => __("Consigne température congélateur", __FILE__),
+				'SetpointTemperatureRefrigerator' => __("Consigne température réfrigérateur", __FILE__),
+				'SuperModeFreezer' => __("Super mode congélation", __FILE__),
+				'SuperModeRefrigerator' => __("Super mode réfrigération", __FILE__),
+				//Refrigeration.Common.Setting
+				'EcoMode' => __("Mode éco", __FILE__),
+				//'SabbathMode' => __("Mode Sabbat", __FILE__),
+				'VacationMode' => __("Mode vacances", __FILE__),
+				'FreshMode' => __("Mode frais", __FILE__),
+				//Refrigeration.FridgeFreezer.Event
+				'DoorAlarmFreezer' => __("Alarme de porte de congélateur", __FILE__),
+				'DoorAlarmRefrigerator' => __("Alarme de porte de réfrigérateur", __FILE__),
+				'TemperatureAlarmFreezer' => __("Alarme de température de congélateur", __FILE__),
+				//WARMING DRAWER / OVEN
+				//Cooking.Oven.EnumType.WarmingLevel
+				'Low' => __("Bas", __FILE__),
+				'Medium' => __("Moyen", __FILE__),
+				'High' => __("Élevé", __FILE__),
+				//Cooking.Oven.Program.HeatingMode
+				'PreHeating' => __("Préchauffage", __FILE__),
+				'HotAir' => __("Convection 3D", __FILE__),
+				'HotAirEco' => __("Chaleur tournante éco", __FILE__),
+				'HotAirGrilling' => __("Gril à convection", __FILE__),
+				'TopBottomHeating' => __("Convection naturelle", __FILE__),
+				'TopBottomHeatingEco' => __("Convection naturelle éco", __FILE__),
+				'BottomHeating' => __("Résistance de sole", __FILE__),
+				'PizzaSetting' => __("Pizza", __FILE__),
+				'SlowCook' => __("Cuisson lente", __FILE__),
+				'IntensiveHeat' => __("Chaleur intensive", __FILE__),
+				'KeepWarm' => __("Maintien au chaud", __FILE__),
+				'PreheatOvenware' => __("Préchauffer le four", __FILE__),
+				'FrozenHeatupSpecial' => __("Réchauffage produit congelé", __FILE__),
+				'Desiccation' => __("Déshydratation", __FILE__),
+				'Defrost' => __("Décongélation", __FILE__),
+				'Proof' => __("Levain", __FILE__),
+				//Cooking.Oven.Option
+				//'Duration' => __("Durée", __FILE__),
+				'SetpointTemperature' => __("Consigne température", __FILE__),
+				'FastPreHeat' => __("Préchauffage rapide", __FILE__),
+				'WarmingLevel' => __("Niveau de chauffe", __FILE__),
+				'SabbathMode' => __("Mode Sabbat", __FILE__),
+				//Cooking.Oven.Status
+				'CurrentCavityTemperature' => __("Température actuelle", __FILE__),
+				//Cooking.Oven.Event
+				'PreheatFinished' => __("Préchauffage terminé", __FILE__),
+				//COMMON
+				//BSH.Common.EnumType.PowerState
+				'PowerState' => __("Statut de puissance", __FILE__),
+				'TemperatureUnit' => __("Unité de température", __FILE__),
+				'LiquidVolumeUnit' => __("Unité de volume de liquide", __FILE__),
+				'AlarmClock' => __("Alarme", __FILE__),
+				'ChildLock' => __("Sécurité enfants", __FILE__),
+				'On' => __("Marche", __FILE__),
+				'Off' => __("Arrêt", __FILE__),
+				'Standby' => __("En attente", __FILE__),
 
-			 //WARMING DRAWER / OVEN
-			 //Cooking.Oven.EnumType.WarmingLevel
-			 'Low' => __("Bas", __FILE__),
-			 'Medium' => __("Moyen", __FILE__),
-			 'High' => __("Élevé", __FILE__),
-			 //Cooking.Oven.Program.HeatingMode
-			 'PreHeating' => __("Préchauffage", __FILE__),
-			 'HotAir' => __("Convection 3D", __FILE__),
-			 'HotAirEco' => __("Chaleur tournante éco", __FILE__),
-			 'HotAirGrilling' => __("Gril à convection", __FILE__),
-			 'TopBottomHeating' => __("Convection naturelle", __FILE__),
-			 'TopBottomHeatingEco' => __("Convection naturelle éco", __FILE__),
-			 'BottomHeating' => __("Résistance de sole", __FILE__),
-			 'PizzaSetting' => __("Pizza", __FILE__),
-			 'SlowCook' => __("Cuisson lente", __FILE__),
-			 'IntensiveHeat' => __("Chaleur intensive", __FILE__),
-			 'KeepWarm' => __("Maintien au chaud", __FILE__),
-			 'PreheatOvenware' => __("Préchauffer le four", __FILE__),
-			 'FrozenHeatupSpecial' => __("Réchauffage produit congelé", __FILE__),
-			 'Desiccation' => __("Déshydratation", __FILE__),
-			 'Defrost' => __("Décongélation", __FILE__),
-			 'Proof' => __("Levain", __FILE__),
-			 //Cooking.Oven.Option
-			 //'Duration' => __("Durée", __FILE__),
-			 'SetpointTemperature' => __("Consigne température", __FILE__),
-			 'FastPreHeat' => __("Préchauffage rapide", __FILE__),
-			 //Cooking.Oven.Status
-			 'CurrentCavityTemperature' => __("Température actuelle", __FILE__),
+				//BSH.Common.EnumType.OperationState
+				'Ready' => __("Prêt", __FILE__),
+				'Inactive' => __("Inactif", __FILE__),
+				'Delayed Start' => __("Départ différé", __FILE__),
+				'Pause' => __("Pause", __FILE__),
+				'Run' => __("Marche", __FILE__),
+				'Finished' => __("Terminé", __FILE__),
+				'Error' => __("Erreur", __FILE__),
+				'Action Required' => __("Action requise", __FILE__),
+				'Aborting' => __("Abandon", __FILE__),
+				'RemoteControlStartAllowed' => __("Démarrage à distance", __FILE__),
+				'RemoteControlActive' => __("Contrôle à distance", __FILE__),
+				'LocalControlActive' => __("Appareil en fonctionnement", __FILE__),
+				'OperationState' => __("Statut de fonctionnement", __FILE__),
 
-			 //COMMON
-			 //BSH.Common.EnumType.PowerState
-			 'PowerState' => __("Statut de puissance", __FILE__),
-			 'On' => __("Marche", __FILE__),
-			 'Off' => __("Arrêt", __FILE__),
-			 'Standby' => __("En attente", __FILE__),
+				//BSH.Common.EnumType.EventPresentState
+				'EventPresentState' => __("État de l'évènement", __FILE__),
+				'Present' => __("Présent", __FILE__),
+				//'Off' => __("Désactivé", __FILE__),
+				'Confirmed' => __("Confirmé", __FILE__),
 
-			 //BSH.Common.EnumType.OperationState
-			 'Ready' => __("Prêt", __FILE__),
-			 'Inactive' => __("Inactif", __FILE__),
-			 'Delayed Start' => __("Départ différé", __FILE__),
-			 'Pause' => __("Pause", __FILE__),
-			 'Run' => __("Marche", __FILE__),
-			 'Finished' => __("Terminé", __FILE__),
-			 'Error' => __("Erreur", __FILE__),
-			 'Action Required' => __("Action requise", __FILE__),
-			 'Aborting' => __("Abandon", __FILE__),
-			 'RemoteControlStartAllowed' => __("Démarrage à distance", __FILE__),
-			 'RemoteControlActive' => __("Contrôle à distance", __FILE__),
-			 'LocalControlActive' => __("Appareil en fonctionnement", __FILE__),
-			 'OperationState' => __("Statut de fonctionnement", __FILE__),
-
-			 //BSH.Common.EnumType.EventPresentState
-			 'EventPresentState' => __("État de l'évènement", __FILE__),
-			 'Present' => __("Présent", __FILE__),
-			 //'Off' => __("Désactivé", __FILE__),
-			 'Confirmed' => __("Confirmé", __FILE__),
-
-			 //BSH.Common.EnumType.DoorState
-			 'DoorState' => __("Porte", __FILE__),
-			 'Open' => __("Ouverte", __FILE__),
-			 'Closed' => __("Fermée", __FILE__),
-			 'Locked' => __("Verrouillée", __FILE__),
-			 //BSH.Common.Option
-			 'Duration' => __("Durée", __FILE__),
-			 'StartInRelative' => __("Départ différé", __FILE__),
-			 'FinishInRelative' => __("Fin différée", __FILE__),
-			 'ElapsedProgramTime' => __("Temps de programme écoulé", __FILE__),
-			 'ProgramProgress' => __("Progression", __FILE__),
-			 'ProgramFinished' => __("Fin du programme", __FILE__),
-
-			 //NOT DETERMINED YET
-			 'AlarmClock' => __("Alarme", __FILE__),
-			 'ChildLock' => __("Sécurité enfants", __FILE__),
-			 'SabbathMode' => __("Mode Sabbat", __FILE__),
-	 ];
+				//BSH.Common.EnumType.DoorState
+				'DoorState' => __("Porte", __FILE__),
+				'Open' => __("Ouverte", __FILE__),
+				'Closed' => __("Fermée", __FILE__),
+				'Locked' => __("Verrouillée", __FILE__),
+				//BSH.Common.Option
+				'Duration' => __("Durée", __FILE__),
+				'StartInRelative' => __("Départ différé", __FILE__),
+				'FinishInRelative' => __("Fin différée", __FILE__),
+				'ElapsedProgramTime' => __("Temps de programme écoulé", __FILE__),
+				'RemainingProgramTime' => __("Temps de programme restant", __FILE__),
+				'ProgramProgress' => __("Progression du programme", __FILE__),
+				'ProgramFinished' => __("Fin du programme", __FILE__),
+				'AmbientLightEnabled' => __("Lumière ambiante activée", __FILE__),
+				'AmbientLightBrightness' => __("Intensité de la lumière ambiante", __FILE__),
+				'AmbientLightColor' => __("Couleur de la lumière ambiante", __FILE__),
+				'AmbientLightCustomColor' => __("Couleur personnalisée de la lumière ambiante", __FILE__),
+				'BatteryLevel' => __("Niveau de batterie", __FILE__),
+				'BatteryChargingState' => __("État de charge de la batterie", __FILE__),
+				'ChargingConnection' => __("Connexion au chargeur", __FILE__),
+				'CameraState' => __("État de la caméra", __FILE__),
+				//BSH.Common.Event
+				'ProgramAborted' => __("Programme annulé", __FILE__),
+				'ProgramFinished' => __("Programme terminé", __FILE__),
+				'AlarmClockElapsed' => __("Temps écoulé", __FILE__),
+				//BSH.Common.Root
+				'SelectedProgram' => __("Programme sélectionné", __FILE__),
+				'ActiveProgram' => __("Programme en cours", __FILE__),
+				//NOT DETERMINED YET
+		];
 
 		if (array_key_exists($word, $translate))  $word = $translate[$word];
 
