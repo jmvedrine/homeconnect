@@ -565,17 +565,17 @@ class homeconnect extends eqLogic {
 										// Création de la commande action programme
 										$actionCmd = $eqLogic->createActionCmd($programdata['data'], $path , 'Program');
 										if ($path == 'programs/selected') {
-											$infoCmd = $eqLogic->getCmd('info', 'programSelected');
+											$infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.SelectedProgram');
 											if (is_object($infoCmd)) {
 												// On a trouvé la commande info associée.
 												log::add('homeconnect', 'debug', "setValue sur la commande programme selected " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
 												$actionCmd->setValue($infoCmd->getId());
 												$actionCmd->save();
 											} else {
-												log::add('homeconnect', 'debug', "Pas de commande info programSelected");
+												log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.SelectedProgram");
 											}
 										} else if ($path == 'programs/active') {
-											$infoCmd = $eqLogic->getCmd('info', 'programActive');
+											$infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
 											if (is_object($infoCmd)) {
 												// On a trouvé la commande info associée.
 												log::add('homeconnect', 'debug', "setValue sur la commande programme active " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
@@ -583,7 +583,7 @@ class homeconnect extends eqLogic {
 												$actionCmd->save();
 												// A voir : ne pas la rendre visible ?
 											} else {
-												log::add('homeconnect', 'debug', "Pas de commande info programActive");
+												log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.ActiveProgram");
 											}
 										}
 									}
