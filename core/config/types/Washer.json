@@ -24,7 +24,7 @@
         "repeatEventManagement" : "never",
         "category": "CommonInfo"
       },
-      "logicalId": "programActive"
+      "logicalId": "GET::BSH.Common.Root.ActiveProgram"
     },
     {
       "name": "Programme sélectionné",
@@ -37,7 +37,7 @@
         "repeatEventManagement" : "never",
         "category": "CommonInfo"
       },
-      "logicalId": "programSelected"
+      "logicalId": "GET::BSH.Common.Root.SelectedProgram"
     },
     {
       "name": "Lancer",
