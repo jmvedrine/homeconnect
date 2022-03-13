@@ -760,9 +760,11 @@ class homeconnect extends eqLogic {
 		log::add('homeconnectd', 'info', 'Événement : ' . $string);
 
 		$length = strlen($string);
-		preg_match('/data:({.*})/',$string, $match);
-		if (is_array($match) && $match[1] != '') {
-			$array = json_decode($match[1],true);
+		preg_match('/event:(?P<event>\w+)\s*data:(?P<data>({.*}))/',$string, $match);
+
+		if (is_array($match) && array_key_exists('data', $match)) {
+			log::add('homeconnectd', 'info', 'Type d\'événement : ' . $match['event']);
+			$array = json_decode($match['data'],true);
 			if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
 				$eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
 				if (is_object($eqLogic) && $eqLogic->getIsEnable()){
