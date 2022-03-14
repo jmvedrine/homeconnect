@@ -1393,13 +1393,25 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "Création d'une commande binary à partir de la value");
 					$cmd->setSubType('binary');
 					$cmd->save();
-				} else if (strpos($cmdData['value'], 'EnumType') !== false) {
+				} else if (strpos($cmdData['value'] === null || $cmdData['value'], 'EnumType') !== false) {
 					log::add('homeconnect', 'debug', "Création d'une commande string à partir de la value");
 					$cmd->setSubType('string');
 					$cmd->save();
 				} else if (is_numeric($cmdData['value'])) {
 					log::add('homeconnect', 'debug', "Création d'une commande numeric à partir de la value");
 					$cmd->setSubType('numeric');
+					if (isset($cmdData['unit'])) {
+						$cmd->setConfiguration('unit', $cmdData['unit']);
+						if ($cmdData['unit'] == 'seconds') {
+							$cmd->setUnite('s');
+							$cmd->setConfiguration('minValue', 0);
+							$cmd->setConfiguration('maxValue', 86340);
+						} else {
+							$cmd->setUnite($cmdData['unit']);
+						}
+					} else {
+						$cmd->setUnite('');
+					}
 					$cmd->save();
 				} else {
 					log::add('homeconnect', 'debug', "Impossible de trouver le subType à partir de value " . print_r($cmdData, true));
