@@ -1393,7 +1393,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "Création d'une commande binary à partir de la value");
 					$cmd->setSubType('binary');
 					$cmd->save();
-				} else if (strpos($cmdData['value'] === null || $cmdData['value'], 'EnumType') !== false) {
+				} else if ($cmdData['value'] === null || strpos($cmdData['value'], 'EnumType') !== false) {
 					log::add('homeconnect', 'debug', "Création d'une commande string à partir de la value");
 					$cmd->setSubType('string');
 					$cmd->save();
@@ -1655,7 +1655,7 @@ class homeconnect extends eqLogic {
 		if ($currentProgram !== false) {
 			log::add('homeconnect', 'debug', "Réponse pour program $programType dans lookProgram " . $currentProgram);
 			$currentProgram = json_decode($currentProgram, true);
-			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.NoProgram' . $nameCmd) {
+			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.NoProgram' . $programType) {
 				$key = $currentProgram['data']['key'];
 				log::add('homeconnect', 'debug', "Program $programType key = " . $key);
 				// recherche du programme action associé
