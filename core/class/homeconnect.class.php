@@ -1646,16 +1646,16 @@ class homeconnect extends eqLogic {
 	}
 
     public function lookProgram($programType) {
-		if ($programType == 'selected') {
-			$nameCmd = 'ProgramSelected';
+		if ($programType == 'Selected') {
+			$nameCmd = 'GET::BSH.Common.Root.SelectedProgram';
 		} else {
-			$nameCmd = 'ProgramActive';
+			$nameCmd = 'GET::BSH.Common.Root.ActiveProgram';
 		}
-		$currentProgram = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType, null, 'GET', array());
+		$currentProgram = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType), null, 'GET', array());
 		if ($currentProgram !== false) {
 			log::add('homeconnect', 'debug', "Réponse pour program $programType dans lookProgram " . $currentProgram);
 			$currentProgram = json_decode($currentProgram, true);
-			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.No' . $nameCmd) {
+			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.NoProgram' . $nameCmd) {
 				$key = $currentProgram['data']['key'];
 				log::add('homeconnect', 'debug', "Program $programType key = " . $key);
 				// recherche du programme action associé
@@ -1670,16 +1670,16 @@ class homeconnect extends eqLogic {
 				// MAJ de la commande info ProgramSelected ou ProgramActive.
 				$cmd = $this->getCmd(null, $nameCmd);
 				if (is_object($cmd)) {
-					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $programType = ".$programName);
+					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $nameCmd = ".$programName);
 					$this->checkAndUpdateCmd($nameCmd, $programName);
 					return true;
 				} else {
-					log::add('homeconnect', 'debug', "La commande $programType n'existe pas :");
+					log::add('homeconnect', 'debug', "La commande $nameCmd n'existe pas :");
 				}
 			} else {
 				// Pas de programme actif
 				// A voir : mettre à jour les autres commandes (états et réglages)
-				log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.No" . $nameCmd);
+				log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.NoProgram" . $programType);
 				$this->checkAndUpdateCmd($nameCmd, __("Aucun", __FILE__));
 			}
 		} else {
@@ -1689,7 +1689,7 @@ class homeconnect extends eqLogic {
 	}
 
 	public function lookProgramOptions($programType) {
-		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType .'/options', null, 'GET', array());
+		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType) .'/options', null, 'GET', array());
 		if ($programOptions !== false) {
 			log::add('homeconnect', 'debug', "options : " . $programOptions);
 			$programOptions = json_decode($programOptions, true);
@@ -1716,15 +1716,15 @@ class homeconnect extends eqLogic {
 				return;
 			}
 			log::add('homeconnect', 'debug', "MAJ du programme actif");
-            if ($this->lookProgram('active')) {
+            if ($this->lookProgram('Active')) {
 				// Il y a un programme actif on regarde ses options
 				log::add('homeconnect', 'debug', "Il y a un programme actif");
-				$this->lookProgramOptions('active');
+				$this->lookProgramOptions('Active');
 			} else {
 				// Pas de programme actif on essaie le programme sélectionné
-				if ($this->lookProgram('selected')) {
+				if ($this->lookProgram('Selected')) {
 					log::add('homeconnect', 'debug', "i y a un programme sélectionné");
-					$this->lookProgramOptions('selected');
+					$this->lookProgramOptions('Selected');
 				}
 			}
 		}
