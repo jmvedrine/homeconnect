@@ -31,6 +31,352 @@ class homeconnect extends eqLogic {
 	const API_REQUEST_URL = "/api/homeappliances";
 	const API_EVENTS_URL = "/api/homeappliances/events";
 
+    public static function pluginTranslations()
+    {
+        $KEYS = array(
+            'ConsumerProducts.CoffeeMaker.Event.BeanContainerEmpty' => array(__("Compartiment vide", __FILE__), 'Event'),
+            'ConsumerProducts.CoffeeMaker.Event.WaterTankEmpty' => array(__("Réservoir d'eau vide", __FILE__), 'Event'),
+            'ConsumerProducts.CoffeeMaker.Event.DripTrayFull' => array(__("Bac de récupération plein", __FILE__), 'Event'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.Ristretto' => array(__("Ristretto", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.Espresso' => array(__("Espresso", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.EspressoDoppio' => array(__("Double Espresso", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.Coffee' => array(__("Café", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.XLCoffee' => array(__("Café XL", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.EspressoMacchiato' => array(__("Espresso macchiato", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.Cappuccino' => array(__("Cappuccino", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.LatteMacchiato' => array(__("Macchiato au lait", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.CaffeLatte' => array(__("Café au lait", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.MilkFroth' => array(__("Mousse de lait", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.Beverage.WarmMilk' => array(__("Lait chaud", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.KleinerBrauner' => array(__("Petit café", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.GrosserBrauner' => array(__("Grand café", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Verlaengerter' => array(__("Rallongé", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.VerlaengerterBraun' => array(__("Café brun rallongé", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.WienerMelange' => array(__("Mélange viennois", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.FlatWhite' => array(__("Blanc pur", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Cortado' => array(__("Coupé", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.CafeCortado' => array(__("Café coupé", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.CafeConLeche' => array(__("Cafe con leche", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.CafeAuLait' => array(__("Cafe Au Lait", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Doppio' => array(__("Double", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Kaapi' => array(__("Kaapi", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.KoffieVerkeerd' => array(__("Mauvais café", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Galao' => array(__("Galao", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Garoto' => array(__("Garoto", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.Americano' => array(__("American", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.RedEye' => array(__("RedEye", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.BlackEye' => array(__("BlackEye", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.Program.CoffeeWorld.DeadEye' => array(__("DeadEye", __FILE__), 'Program'),
+            'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.88C' => array(__("88 °C", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.90C' => array(__("90 °C", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.92C' => array(__("92 °C", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.94C' => array(__("94 °C", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.95C' => array(__("95 °C", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.96C' => array(__("96 °C", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.VeryMild' => array(__("Très doux", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.Mild' => array(__("Doux", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.MildPlus' => array(__("Doux +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.Normal' => array(__("Normal", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.NormalPlus' => array(__("Normal +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.Strong' => array(__("Fort", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.StrongPlus' => array(__("Fort +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.VeryStrong' => array(__("Très fort", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.VeryStrongPlus' => array(__("Très fort +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.ExtraStrong' => array(__("Extrèmement fort", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.DoubleShot' => array(__("Double shot", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.DoubleShotPlus' => array(__("Double shot +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.DoubleShotPlusPlus' => array(__("Double shot ++", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.TripleShot' => array(__("Triple shot", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.TripleShotPlus' => array(__("Triple shot +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanAmount.CoffeeGround' => array(__("Café moulu", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanContainerSelection.Left' => array(__("Compartiment gauche", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.BeanContainerSelection.Right' => array(__("Compartiment droit", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.FlowRate.Normal' => array(__("Débit normal", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.FlowRate.Intense' => array(__("Débit élevé", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.EnumType.FlowRate.IntensePlus' => array(__("Débit élevé +", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Option.BeanAmount' => array(__("Quantité de grains", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Option.FillQuantity' => array(__("Contenance", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Option.CoffeeTemperature' => array(__("Température du café", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Option.BeanContainerSelection' => array(__("Compartiment à grains", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Option.FlowRate' => array(__("Débit", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Option.MultipleBeverages' => array(__("Boissons multiples", __FILE__), 'Option'),
+            'ConsumerProducts.CoffeeMaker.Setting.CupWarmer' => array(__("Chauffe-tasse", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.EnumType.AvailableMaps.TempMap' => array(__("Carte temporaire", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.EnumType.AvailableMaps.Map1' => array(__("Carte 1", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.EnumType.AvailableMaps.Map2' => array(__("Carte 2", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.EnumType.AvailableMaps.Map3' => array(__("Carte 3", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.EnumType.CleaningModes.Silent' => array(__("Silencieux", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.EnumType.CleaningModes.Power' => array(__("Puissant", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.EnumType.CleaningModes.Standard' => array(__("Normal", __FILE__), 'Status'),
+            'ConsumerProducts.CleaningRobot.Option.ReferenceMapId' => array(__("Identifiant de carte de référence", __FILE__), 'Option'),
+            'ConsumerProducts.CleaningRobot.Option.CleaningMode' => array(__("Mode de nettoyage", __FILE__), 'Option'),
+            'ConsumerProducts.CleaningRobot.Option.ProcessPhase' => array(__("Phase de traitement", __FILE__), 'Option'),
+            'ConsumerProducts.CleaningRobot.Setting.CurrentMap' => array(__("Carte actuelle", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.Setting.NameOfMap1' => array(__("Nom de carte 1", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.Setting.NameOfMap2' => array(__("Nom de carte 2", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.Setting.NameOfMap3' => array(__("Nom de carte 3", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.Setting.NameOfMap4' => array(__("Nom de carte 4", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.Setting.NameOfMap5' => array(__("Nom de carte 5", __FILE__), 'Settings'),
+            'ConsumerProducts.CleaningRobot.Program.Cleaning.CleanAll' => array(__("Nettoyer tout", __FILE__), 'Program'),
+            'ConsumerProducts.CleaningRobot.Program.Cleaning.CleanMap' => array(__("Nettoyer la carte", __FILE__), 'Program'),
+            'ConsumerProducts.CleaningRobot.Program.Basic.GoHome' => array(__("Retour à la station d'accueil", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.PreRinse' => array(__("Pré-rinçage", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Auto1' => array(__("Auto 35-45 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Auto2' => array(__("Auto 45-65 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Auto3' => array(__("Auto 65-75 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Eco50' => array(__("Eco 50 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Quick45' => array(__("Rapide 45 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Intensiv70' => array(__("Intensif 70 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Normal65' => array(__("Normal 65 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Glas40' => array(__("Verres 40 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.GlassCare' => array(__("Soin des verres", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.NightWash' => array(__("Silence 50 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Quick65' => array(__("Rapide 65 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Normal45' => array(__("Normal 45 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Intensiv45' => array(__("Intensif 45 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.AutoHalfLoad' => array(__("Auto demi-charge", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.IntensivPower' => array(__("Puissance intensive", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.MagicDaily' => array(__("Magie quotidienne", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Super60' => array(__("Super 60 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.Kurz60' => array(__("Court 60 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.ExpressSparkle65' => array(__("Rapide étincellant 65 °C", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.MachineCare' => array(__("Soin de la machine", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.SteamFresh' => array(__("Rinçage et séchage hygiénique", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Program.MaximumCleaning' => array(__("Nettoyage complet", __FILE__), 'Program'),
+            'Dishcare.Dishwasher.Option.IntensivZone' => array(__("Zone intensive", __FILE__), 'Option'),
+            'Dishcare.Dishwasher.Option.BrillianceDry' => array(__("Brillance à sec", __FILE__), 'Option'),
+            'Dishcare.Dishwasher.Option.VarioSpeedPlus' => array(__("VarioSpeed +", __FILE__), 'Option'),
+            'Dishcare.Dishwasher.Option.SilenceOnDemand' => array(__("Silence à la demande", __FILE__), 'Option'),
+            'Dishcare.Dishwasher.Option.HalfLoad' => array(__("Demi-charge", __FILE__), 'Option'),
+            'Dishcare.Dishwasher.Option.ExtraDry' => array(__("Extra sec", __FILE__), 'Option'),
+            'Dishcare.Dishwasher.Option.HygienePlus' => array(__("Hygiène +", __FILE__), 'Option'),
+            'Cooking.Oven.Program.HeatingMode.PreHeating' => array(__("Préchauffage", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.HotAir' => array(__("Convection 3D", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.HotAirEco' => array(__("Chaleur tournante éco", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.HotAirGrilling' => array(__("Gril à convection", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.TopBottomHeating' => array(__("Convection naturelle", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.TopBottomHeatingEco' => array(__("Convection naturelle éco", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.BottomHeating' => array(__("Résistance de sole", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.PizzaSetting' => array(__("Pizza", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.SlowCook' => array(__("Cuisson lente", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.IntensiveHeat' => array(__("Chaleur intensive", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.KeepWarm' => array(__("Maintien au chaud", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.PreheatOvenware' => array(__("Préchauffer le four", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.FrozenHeatupSpecial' => array(__("Réchauffage produit congelé", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.Desiccation' => array(__("Déshydratation", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.Defrost' => array(__("Décongélation", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.Proof' => array(__("Levain", __FILE__), 'Program'),
+            'Cooking.Oven.Program.HeatingMode.WarmingDrawer' => array(__("Tiroir chauffant", __FILE__), 'Program'),
+            'Cooking.Oven.Option.SetpointTemperature' => array(__("Consigne de température", __FILE__), 'Option'),
+            'Cooking.Oven.Option.FastPreHeat' => array(__("Préchauffage rapide", __FILE__), 'Option'),
+            'Cooking.Oven.Option.WarmingLevel' => array(__("Niveau de chauffe", __FILE__), 'Option'),
+            'Cooking.Oven.Setting.SabbathMode' => array(__("Mode Sabbat", __FILE__), 'Settings'),
+            'Cooking.Oven.Status.CurrentCavityTemperature' => array(__("Température actuelle", __FILE__), 'Settings'),
+            'Cooking.Oven.Option.SetpointTemperature' => array(__("Consigne de température", __FILE__), 'Option'),
+            'Cooking.Common.Option.Hood.VentingLevel' => array(__("Niveau de ventilation", __FILE__), 'Option'),
+            'Cooking.Common.Option.Hood.IntensiveLevel' => array(__("Niveau d'intensité", __FILE__), 'Option'),
+            'Cooking.Common.Program.Hood.Automatic' => array(__("Automatique", __FILE__), 'Status'),
+            'Cooking.Common.Program.Hood.Venting' => array(__("Ventilation", __FILE__), 'Status'),
+            'Cooking.Common.Program.Hood.DelayedShutOff' => array(__("Arrêt différé", __FILE__), 'Status'),
+            'Cooking.Common.Setting.Lighting' => array(__("Éclairage", __FILE__), 'Settings'),
+            'Cooking.Common.Setting.LightingBrightness' => array(__("Intensité de l'éclairage", __FILE__), 'Settings'),
+            'Cooking.Hood.EnumType.IntensiveStage.IntensiveStageOff' => array(__("Phase intensive arrêtée", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.IntensiveStage.IntensiveStage1' => array(__("Phase intensive 1", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.IntensiveStage.IntensiveStage2' => array(__("Phase intensive 2", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.Stage.FanOff' => array(__("Ventilateur éteint", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.Stage.FanStage01' => array(__("Phase 1 de ventilation", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.Stage.FanStage02' => array(__("Phase 2 de ventilation", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.Stage.FanStage03' => array(__("Phase 3 de ventilation", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.Stage.FanStage04' => array(__("Phase 4 de ventilation", __FILE__), 'Status'),
+            'Cooking.Hood.EnumType.Stage.FanStage05' => array(__("Phase 5 de ventilation", __FILE__), 'Status'),
+            'LaundryCare.Dryer.Program.Cotton' => array(__("Coton", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Cotton.Eco4060' => array(__("Coton éco 40-60 °C", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.EasyCare.EasyCare' => array(__("Entretien facile", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Synthetic' => array(__("Synthétiques", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Mix' => array(__("Mélangé", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Wool.Wool' => array(__("Laine", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.WaterProof.WaterProof' => array(__("Imperméabiliser", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Refresh.RefreshwoHS' => array(__("RefreshwoHS", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Blankets' => array(__("Blankets", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.BusinessShirts' => array(__("Chemises de travail", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.DownFeathers' => array(__("Plumes de duvet", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Hygiene' => array(__("Hygiénique", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.TimeWarm' => array(__("Temps chaud", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Jeans' => array(__("Jeans", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Outdoor' => array(__("Extérieur", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.SyntheticRefresh' => array(__("Rafraîchissement synthétiques", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Towels' => array(__("Serviettes", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Delicates' => array(__("Délicat", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Super40' => array(__("Super 40 °C", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Shirts15' => array(__("Chemises 15°C", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.Pillow' => array(__("Oreillers", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.AntiShrink' => array(__("Anti-rétrécissement", __FILE__), 'Program'),
+            'LaundryCare.Dryer.Program.MyTime.MyDryingTime' => array(__("Mon temps de séchage", __FILE__), 'Program'),
+            'LaundryCare.Dryer.EnumType.DryingTarget.IronDry' => array(__("Prêt à repasser", __FILE__), 'Option'),
+            'LaundryCare.Dryer.EnumType.DryingTarget.GentleDry' => array(__("Séchage doux", __FILE__), 'Option'),
+            'LaundryCare.Dryer.EnumType.DryingTarget.CupboardDry' => array(__("Prêt à ranger", __FILE__), 'Option'),
+            'LaundryCare.Dryer.EnumType.DryingTarget.CupboardDryPlus' => array(__("Prêt à ranger +", __FILE__), 'Option'),
+            'LaundryCare.Dryer.Option.DryingTarget' => array(__("Degré de séchage", __FILE__), 'Option'),
+            'LaundryCare.Washer.Program.Cotton' => array(__("Coton", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Cotton.CottonEco' => array(__("Coton éco", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Cotton.Eco4060' => array(__("Coton éco 40-60 °C", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.EasyCare' => array(__("Entretien facile", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Mix' => array(__("Mélangé", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.DelicatesSilk' => array(__("Délicat/Soie", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Wool' => array(__("Laine", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.DrumClean' => array(__("Nettoyage tambour", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Spin.SpinDrain' => array(__("Essorage/Vidange", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Rinse' => array(__("Rinçage", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Rinse.Rinse' => array(__("Rinçage", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Rinse.RinseSpin' => array(__("Rinçage/Essorage", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.WashAndDry.60' => array(__("Lavage&Séchage 60 min.", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.WashAndDry.90' => array(__("Lavage&Séchage 90 min.", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Sensitive' => array(__("Sensible", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Auto30' => array(__("Auto 30°C", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Auto40' => array(__("Auto 40°C", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Auto60' => array(__("Auto 60°C", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Chiffon' => array(__("Mousseline de soie", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Curtains' => array(__("Rideaux", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.DarkWash' => array(__("Spécial couleurs sombres", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Dessous' => array(__("Lingerie", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Monsoon' => array(__("Mousson", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Outdoor' => array(__("Extérieur", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.PlushToy' => array(__("Peluche", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.ShirtsBlouses' => array(__("Chemises", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.SportFitness' => array(__("Textiles sport", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Towels' => array(__("Serviettes", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.WaterProof' => array(__("Imperméabiliser", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.Super153045.Super1530' => array(__("Express 15/30 min.", __FILE__), 'Program'),
+            'LaundryCare.Washer.Program.MyTime' => array(__("Mon temps", __FILE__), 'Program'),
+            'LaundryCare.Washer.Option.Temperature' => array(__("Température", __FILE__), 'Option'),
+            'LaundryCare.Washer.Option.SpinSpeed' => array(__("Vitesse d'essorage", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.ProcessPhase.Undefined' => array(__("Non défini", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.ProcessPhase.Washing' => array(__("Lavage", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.ProcessPhase.Rinsing' => array(__("Rinçage", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.Cold' => array(__("À froid", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC20' => array(__("20 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC30' => array(__("30 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC40' => array(__("40 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC50' => array(__("50 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC60' => array(__("60 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC70' => array(__("70 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC80' => array(__("80 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.GC90' => array(__("90 °C", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.UlCold' => array(__("Froid (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.UlWarm' => array(__("Tiède (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.UlHot' => array(__("Chaud (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.UlExtraHot' => array(__("Très chaud (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.Auto' => array(__("Auto", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.Temperature.Max' => array(__("Max", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.Off' => array(__("Arrêt", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM400' => array(__("400 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM600' => array(__("600 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM700' => array(__("700 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.UlMedium' => array(__("Moyenne (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM800' => array(__("800 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM900' => array(__("900 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM1000' => array(__("1000 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.UlHigh' => array(__("Élevée (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.UlLow' => array(__("Basse (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.UlOff' => array(__("Arrêt (US/CA)", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM1200' => array(__("1200 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM1400' => array(__("1400 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM1500' => array(__("1500 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.RPM1600' => array(__("1600 tr/min", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.Auto' => array(__("Auto", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.SpinSpeed.Max' => array(__("Max", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.IDosingLevel.Light' => array(__("Dose légère", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.IDosingLevel.Normal' => array(__("Dose normale", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.IDosingLevel.High' => array(__("Dose élevée", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.WaterAndRinsePlus.Plus1' => array(__("+1", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.WaterAndRinsePlus.Plus2' => array(__("+2", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.WaterAndRinsePlus.Plus3' => array(__("+3", __FILE__), 'Option'),
+            'LaundryCare.Washer.EnumType.ProcessPhase.FinalSpinning' => array(__("Essorag final", __FILE__), 'Option'),
+            'LaundryCare.Washer.Option.IDos1DosingLevel' => array(__("Dosage i-Dos de détergent", __FILE__), 'Option'),
+            'LaundryCare.Washer.Option.IDos1DosingLevel' => array(__("i-DOS: dosage de lessive liquide ou d'adoucissant", __FILE__), 'Option'),
+            'LaundryCare.WasherDryer.Program.Cotton' => array(__("Coton", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.Cotton.Eco4060' => array(__("Coton éco 40-60 min.", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.EasyCare' => array(__("Synthétiques", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.Mix' => array(__("Mélangé", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.Wool.Wool' => array(__("Laine", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.Rinse.Rinse' => array(__("Rinçage", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.Rinse.RinseSpin' => array(__("Rinçage/Essorage", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.WaterProof.WaterProof' => array(__("Imperméabiliser", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.WashAndDry.60' => array(__("Lavage&Séchage 60 min.", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.WashAndDry.90' => array(__("Lavage&Séchage 90 min.", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.Towels.Towels' => array(__("Serviettes", __FILE__), 'Program'),
+            'LaundryCare.WasherDryer.Program.ShirtsBlouses.ShirtsBlouses' => array(__("Chemises", __FILE__), 'Program'),
+            'BSH.Common.Root.SelectedProgram' => array(__("Programme sélectionné", __FILE__), 'Option'),
+            'BSH.Common.Root.ActiveProgram' => array(__("Programme en cours", __FILE__), 'Option'),
+            'BSH.Common.Option.Duration' => array(__("Durée", __FILE__), 'Option'),
+            'BSH.Common.Option.StartInRelative' => array(__("Départ différé", __FILE__), 'Option'),
+            'BSH.Common.Option.FinishInRelative' => array(__("Fin différée", __FILE__), 'Option'),
+            'BSH.Common.Option.ElapsedProgramTime' => array(__("Temps de programme écoulé", __FILE__), 'Option'),
+            'BSH.Common.Option.RemainingProgramTime' => array(__("Temps de programme restant", __FILE__), 'Option'),
+            'BSH.Common.Option.ProgramProgress' => array(__("Progression du programme", __FILE__), 'Option'),
+            'BSH.Common.Option.ProgramFinished' => array(__("Fin du programme", __FILE__), 'Option'),
+            'BSH.Common.Status.BatteryLevel' => array(__("Niveau de batterie", __FILE__), 'Status'),
+            'BSH.Common.Status.BatteryChargingState' => array(__("État de charge de la batterie", __FILE__), 'Status'),
+            'BSH.Common.Status.ChargingConnection' => array(__("Connexion au chargeur", __FILE__), 'Status'),
+            'BSH.Common.Status.CameraState' => array(__("État de la caméra", __FILE__), 'Status'),
+            'BSH.Common.Status.DoorState' => array(__("Statut de la porte", __FILE__), 'Status'),
+            'BSH.Common.Status.OperationState' => array(__("Statut de fonctionnement", __FILE__), 'Status'),
+            'BSH.Common.Status.RemoteControlStartAllowed' => array(__("Démarrage à distance", __FILE__), 'Status'),
+            'BSH.Common.Status.RemoteControlActive' => array(__("Contrôle à distance", __FILE__), 'Status'),
+            'BSH.Common.Status.LocalControlActive' => array(__("Contrôle local", __FILE__), 'Status'),
+            'BSH.Common.EnumType.PowerState.Off' => array(__("Arrêt", __FILE__), 'Status'),
+            'BSH.Common.EnumType.PowerState.On' => array(__("Marche", __FILE__), 'Status'),
+            'BSH.Common.EnumType.PowerState.Standby' => array(__("En attente", __FILE__), 'Status'),
+            'BSH.Common.EnumType.PowerState.MainsOff' => array(__("Secteur hors tension", __FILE__), 'Status'),
+            'BSH.Common.EnumType.DoorState.Open' => array(__("Ouverte", __FILE__), 'Status'),
+            'BSH.Common.EnumType.DoorState.Locked' => array(__("Verrouillée", __FILE__), 'Status'),
+            'BSH.Common.EnumType.DoorState.Closed' => array(__("Fermée", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Inactive' => array(__("Inactif", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Ready' => array(__("Prêt", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.DelayedStart' => array(__("Départ différé", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Run' => array(__("Marche", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Pause' => array(__("Pause", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.ActionRequired' => array(__("Action requise", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Finished' => array(__("Terminé", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Error' => array(__("Erreur", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.Aborting' => array(__("Abandon", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.RemoteControlStartAllowed' => array(__("Démarrage à distance", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.RemoteControlActive' => array(__("Contrôle à distance", __FILE__), 'Status'),
+            'BSH.Common.EnumType.OperationState.LocalControlActive' => array(__("Contrôle local", __FILE__), 'Status'),
+            'BSH.Common.EnumType.EventPresentState.Present' => array(__("Présent", __FILE__), 'Status'),
+            'BSH.Common.EnumType.EventPresentState.Off' => array(__("Désactivé", __FILE__), 'Status'),
+            'BSH.Common.EnumType.EventPresentState.Confirmed' => array(__("Confirmé", __FILE__), 'Status'),
+            'BSH.Common.EnumType.TemperatureUnit.Celsius' => array(__("Celsius", __FILE__), 'Settings'),
+            'BSH.Common.EnumType.TemperatureUnit.Fahrenheit' => array(__("Fahrenheit", __FILE__), 'Settings'),
+            'BSH.Common.EnumType.AmbientLightColor.CustomColor' => array(__("Couleur personnalisée", __FILE__), 'Status'),
+            'BSH.Common.Setting.PowerState' => array(__("Statut de puissance", __FILE__), 'Settings'),
+            'BSH.Common.Setting.TemperatureUnit' => array(__("Unité de température", __FILE__), 'Settings'),
+            'BSH.Common.Setting.LiquidVolumeUnit' => array(__("Unité de volume de liquide", __FILE__), 'Settings'),
+            'BSH.Common.Setting.ChildLock' => array(__("Sécurité enfants", __FILE__), 'Settings'),
+            'BSH.Common.Setting.AlarmClock' => array(__("Alarme", __FILE__), 'Settings'),
+            'BSH.Common.Setting.AmbientLightEnabled' => array(__("Lumière ambiante activée", __FILE__), 'Settings'),
+            'BSH.Common.Setting.AmbientLightBrightness' => array(__("Intensité de la lumière ambiante", __FILE__), 'Settings'),
+            'BSH.Common.Setting.AmbientLightColor' => array(__("Couleur de la lumière ambiante", __FILE__), 'Settings'),
+            'BSH.Common.Setting.AmbientLightCustomColor' => array(__("Couleur personnalisée de la lumière ambiante", __FILE__), 'Settings'),
+            'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureFreezer' => array(__("Consigne de température congélateur", __FILE__), 'Settings'),
+            'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureRefrigerator' => array(__("Consigne de température réfrigérateur", __FILE__), 'Settings'),
+            'Refrigeration.FridgeFreezer.Setting.SuperModeFreezer' => array(__("Mode super congélation", __FILE__), 'Settings'),
+            'Refrigeration.FridgeFreezer.Setting.SuperModeRefrigerator' => array(__("Mode super réfrigération", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.BottleCooler.SetpointTemperature' => array(__("Consigne de température glacière", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.ChillerLeft.SetpointTemperature' => array(__("Consigne de température frigo gauche", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.ChillerCommon.SetpointTemperature' => array(__("Consigne de température frigo", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.ChillerRight.SetpointTemperature' => array(__("Consigne de température frigo droit", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.WineCompartment.SetpointTemperature' => array(__("Consigne de température bac à vins 1", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.WineCompartment2.SetpointTemperature' => array(__("Consigne de température bac à vins 2", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.WineCompartment3.SetpointTemperature' => array(__("Consigne de température bac à vins 3", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.EcoMode' => array(__("Mode éco", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.SabbathMode' => array(__("Mode Sabbat", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.VacationMode' => array(__("Mode vacances", __FILE__), 'Settings'),
+            'Refrigeration.Common.Setting.FreshMode' => array(__("Mode frais", __FILE__), 'Settings')
+        );
+        return $KEYS;
+    }
+
 	/** *************************** Attributs ********************************* */
 
 	public static $_widgetPossibility = array('custom' => true);
@@ -44,6 +390,16 @@ class homeconnect extends eqLogic {
 
 
 	/** *************************** Méthodes statiques ************************ */
+
+  	public static function getTranslation($_key) {
+		$tableData = self::pluginTranslations();
+		if(array_key_exists($_key, $tableData)){
+			return $tableData[$_key];
+		} else {
+			return [$_key];
+		}
+    }
+
 	public static function baseUrl() {
 		if (config::byKey('demo_mode','homeconnect')) {
 			return "https://simulator.home-connect.com";
@@ -749,38 +1105,41 @@ class homeconnect extends eqLogic {
 		return $return;
 	}
 
-	public static function getEvents($ch, $string){
-		/**
-		* Récupère tous les évenements et instruit les commandes
-		*
-		* @param	$ch			objet		Session
-		* @param	$string		string		Chaîne d'événement reçue
-		* @return	$length		string		Longueur de la chaine.
-		*/
-		log::add('homeconnectd', 'info', 'Événement : ' . $string);
+    public static function getEvents($ch, $string){
+	/**
+	 * Récupère tous les évenements et instruit les commandes
+	 *
+	 * @param	$ch			objet		Session
+	 * @param	$string		string		Chaîne d'événement reçue
+	 * @return	$length		string		Longueur de la chaine.
+	 */
+      //gestion de plusieurs evenement ? foreach ?
+     //'{"items":[{"timestamp":1618480503,"handling":"none","uri":"/api/homeappliances/SIEMENS-TI9575X1DE-68A40E251CAD/programs/selected","key":"BSH.Common.Root.SelectedProgram","value":"ConsumerProducts.CoffeeMaker.Program.Beverage.Espresso","level":"hint"},{"timestamp":1618480503,"handling":"none","uri":"/api/homeappliances/SIEMENS-TI9575X1DE-68A40E251CAD/programs/selected/options/ConsumerProducts.CoffeeMaker.Option.CoffeeTemperature","key":"ConsumerProducts.CoffeeMaker.Option.CoffeeTemperature","value":"ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.92C","level":"hint"},{"timestamp":1618480503,"handling":"none","uri":"/api/homeappliances/SIEMENS-TI9575X1DE-68A40E251CAD/programs/selected/options/ConsumerProducts.CoffeeMaker.Option.FillQuantity","key":"ConsumerProducts.CoffeeMaker.Option.FillQuantity","unit":"ml","value":40,"level":"hint"}],"haId":"SIEMENS-TI9575X1DE-68A40E251CAD"}',
 
-		$length = strlen($string);
-		preg_match('/event:(?P<event>\w+)\s*data:(?P<data>({.*}))/',$string, $match);
+        log::add('homeconnectd', 'info', 'Événement : ' . $string);
 
-		if (is_array($match) && array_key_exists('data', $match)) {
-			log::add('homeconnectd', 'info', 'Type d\'événement : ' . $match['event']);
-			$array = json_decode($match['data'],true);
-			if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
-				$eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
-				if (is_object($eqLogic) && $eqLogic->getIsEnable()){
-					$cmdLogicalId = 'GET::' . $array['items'][0]['key'];
-					$cmd = $eqLogic->getCmd('info', $cmdLogicalId);
-					if (!is_object($cmd)) {
-						$eqLogic->createInfoCmd($array['items'][0], $array['items'][0]['key'], 'Option');
-					}
-					$eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
-				} else {
+        $length = strlen($string);
+        preg_match('/event:(?P<event>\w+)\s*data:(?P<data>({.*}))/',$string, $match);
+
+        if (is_array($match) && array_key_exists('data', $match)) {
+            log::add('homeconnectd', 'info', 'Type d\'événement : ' . $match['event']);
+            $array = json_decode($match['data'],true);
+            if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
+                $eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
+                if (is_object($eqLogic) && $eqLogic->getIsEnable()){
+                    $cmdLogicalId = 'GET::' . $array['items'][0]['key'];
+                    $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
+                    if (!is_object($cmd)) {
+                        $eqLogic->createInfoCmd($array['items'][0], $array['items'][0]['key'], 'Option');
+                    }
+                    $eqLogic->updateInfoCmdValue($cmdLogicalId, $array['items'][0]);
+                } else {
 					log::add('homeconnect', 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
 				}
-			}
-		}
-		return $length; //important de renvoyer la taille
-	}
+            }
+        }
+        return $length; //important de renvoyer la taille
+    }
 
 	private static function traduction($word){
 	/**
@@ -1602,6 +1961,9 @@ class homeconnect extends eqLogic {
 	}
 
 	public function updateInfoCmdValue($logicalId, $value) {
+
+		log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte : ".json_encode(self::getTranslation($value['value'])));
+
 		$cmd = $this->getCmd(null, $logicalId);
 		$reglage = '';
 		if (is_object($cmd)) {
