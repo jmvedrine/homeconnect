@@ -41,7 +41,7 @@ foreach ($eqLogics as $eqLogic) {
 		$value = $cmd->execCmd() ? 'Oui' : 'Non';
 	}
     echo '<td><span class="label label-info" style="font-size : 1em;">' . $value . '</span></td>';
-    $cmd = $eqLogic->getCmd('info', 'programActive');
+    $cmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
     $value = '';
     if (is_object($cmd)) {
         $value = $cmd->execCmd();

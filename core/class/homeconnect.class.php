@@ -1647,6 +1647,9 @@ class homeconnect extends eqLogic {
 			} else {
 				log::add('homeconnect', 'debug', "Nouvelle commande other logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
 				$cmd->setSubType('other');
+				if ($cmdData['type'] == 'Boolean') {
+					$cmd->setConfiguration('value', true);
+				}
 				$cmd->save();
 			}
 		} else {
@@ -1702,9 +1705,15 @@ class homeconnect extends eqLogic {
 					$cmd->setSubType('string');
 					$cmd->save();
 				} else if ($actionCmd->getSubType() == 'other') {
-					// Commande string
-					log::add('homeconnect', 'debug', "Création d'une commande info other à partir de la commande action");
-					$cmd->setSubType('string');
+					if ($actionCmd->getConfiguration('value') === true) {
+						// Commande binaire
+						log::add('homeconnect', 'debug', "Création d'une commande info binary à partir de la commande action");
+						$cmd->setSubType('binary');
+					} else {
+						// Commande string
+						log::add('homeconnect', 'debug', "Création d'une commande info other à partir de la commande action");
+						$cmd->setSubType('string');
+					}
 					$cmd->save();
 				} else {
 					log::add('homeconnect', 'debug', "Problème avec le subtype de la commande action associée " . $actionCmd->getSubType());
@@ -1752,13 +1761,25 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "Création d'une commande binary à partir de la value");
 					$cmd->setSubType('binary');
 					$cmd->save();
-				} else if (strpos($cmdData['value'], 'EnumType') !== false) {
+				} else if ($cmdData['value'] === null || strpos($cmdData['value'], 'EnumType') !== false) {
 					log::add('homeconnect', 'debug', "Création d'une commande string à partir de la value");
 					$cmd->setSubType('string');
 					$cmd->save();
 				} else if (is_numeric($cmdData['value'])) {
 					log::add('homeconnect', 'debug', "Création d'une commande numeric à partir de la value");
 					$cmd->setSubType('numeric');
+					if (isset($cmdData['unit'])) {
+						$cmd->setConfiguration('unit', $cmdData['unit']);
+						if ($cmdData['unit'] == 'seconds') {
+							$cmd->setUnite('s');
+							$cmd->setConfiguration('minValue', 0);
+							$cmd->setConfiguration('maxValue', 86340);
+						} else {
+							$cmd->setUnite($cmdData['unit']);
+						}
+					} else {
+						$cmd->setUnite('');
+					}
 					$cmd->save();
 				} else {
 					log::add('homeconnect', 'debug', "Impossible de trouver le subType à partir de value " . print_r($cmdData, true));
@@ -1996,16 +2017,16 @@ class homeconnect extends eqLogic {
 	}
 
     public function lookProgram($programType) {
-		if ($programType == 'selected') {
-			$nameCmd = 'ProgramSelected';
+		if ($programType == 'Selected') {
+			$nameCmd = 'GET::BSH.Common.Root.SelectedProgram';
 		} else {
-			$nameCmd = 'ProgramActive';
+			$nameCmd = 'GET::BSH.Common.Root.ActiveProgram';
 		}
-		$currentProgram = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType, null, 'GET', array());
+		$currentProgram = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType), null, 'GET', array());
 		if ($currentProgram !== false) {
 			log::add('homeconnect', 'debug', "Réponse pour program $programType dans lookProgram " . $currentProgram);
 			$currentProgram = json_decode($currentProgram, true);
-			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.No' . $nameCmd) {
+			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.NoProgram' . $programType) {
 				$key = $currentProgram['data']['key'];
 				log::add('homeconnect', 'debug', "Program $programType key = " . $key);
 				// recherche du programme action associé
@@ -2020,16 +2041,16 @@ class homeconnect extends eqLogic {
 				// MAJ de la commande info ProgramSelected ou ProgramActive.
 				$cmd = $this->getCmd(null, $nameCmd);
 				if (is_object($cmd)) {
-					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $programType = ".$programName);
+					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $nameCmd = ".$programName);
 					$this->checkAndUpdateCmd($nameCmd, $programName);
 					return true;
 				} else {
-					log::add('homeconnect', 'debug', "La commande $programType n'existe pas :");
+					log::add('homeconnect', 'debug', "La commande $nameCmd n'existe pas :");
 				}
 			} else {
 				// Pas de programme actif
 				// A voir : mettre à jour les autres commandes (états et réglages)
-				log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.No" . $nameCmd);
+				log::add('homeconnect', 'debug', "pas de key ou key = SDK.Error.NoProgram" . $programType);
 				$this->checkAndUpdateCmd($nameCmd, __("Aucun", __FILE__));
 			}
 		} else {
@@ -2039,7 +2060,7 @@ class homeconnect extends eqLogic {
 	}
 
 	public function lookProgramOptions($programType) {
-		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . $programType .'/options', null, 'GET', array());
+		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType) .'/options', null, 'GET', array());
 		if ($programOptions !== false) {
 			log::add('homeconnect', 'debug', "options : " . $programOptions);
 			$programOptions = json_decode($programOptions, true);
@@ -2048,12 +2069,17 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 				// Récupération du nom du programme / option.
 				$logicalId = 'GET::' . $value['key'];
-				$optionCmd = $this->getCmd('info', $logicalId);
-				if (is_object($optionCmd)) {
-					$this->updateInfoCmdValue($logicalId, $value);
+				if ($value['key'] !== 'BSH.Common.Option.StartInRelative') {
+					$optionPath = $path . '/options/' . $value['key'];
 				} else {
-					log::add('homeconnect', 'debug', "pas commande info $logicalId pour mise à jour valeur d'une option");
+					// Cette option ne peut pas être utilisée avec selected uniquement avec active
+					$optionPath = 'programs/active/options/' . $value['key'];
 				}
+				$cmd = $this->getCmd('info', $logicalId);
+				if (!is_object($cmd)) {
+					$this->createInfoCmd($value, $optionPath, $value['key'], 'Option');
+				}
+				$this->updateInfoCmdValue($logicalId, $value);
 			}
 		}
 	}
@@ -2066,15 +2092,15 @@ class homeconnect extends eqLogic {
 				return;
 			}
 			log::add('homeconnect', 'debug', "MAJ du programme actif");
-            if ($this->lookProgram('active')) {
+            if ($this->lookProgram('Active')) {
 				// Il y a un programme actif on regarde ses options
 				log::add('homeconnect', 'debug', "Il y a un programme actif");
-				$this->lookProgramOptions('active');
+				$this->lookProgramOptions('Active');
 			} else {
 				// Pas de programme actif on essaie le programme sélectionné
-				if ($this->lookProgram('selected')) {
+				if ($this->lookProgram('Selected')) {
 					log::add('homeconnect', 'debug', "i y a un programme sélectionné");
-					$this->lookProgramOptions('selected');
+					$this->lookProgramOptions('Selected');
 				}
 			}
 		}
@@ -2175,6 +2201,10 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "status : " . print_r($value, true));
 					// Récupération du logicalId du status.
 					$logicalId = 'GET::' .$value['key'];
+					$cmd = $this->getCmd('info', $logicalId);
+					if (!is_object($cmd)) {
+						$this->createInfoCmd($value, 'status/' . $value['key'], 'Status');
+					}
 					$this->updateInfoCmdValue($logicalId, $value);
 				}
 			}
@@ -2195,6 +2225,10 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "setting : " . print_r($value, true));
 					// Récupération du logicalId du setting.
 					$logicalId = 'GET::' . $value['key'];
+					$cmd = $this->getCmd('info', $logicalId);
+					if (!is_object($cmd)) {
+						$this->createInfoCmd($value, 'settings/' . $value['key'], 'Setting');
+					}
 					$this->updateInfoCmdValue($logicalId, $value);
 				}
 			}
