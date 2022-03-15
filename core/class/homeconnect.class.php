@@ -1288,6 +1288,9 @@ class homeconnect extends eqLogic {
 			} else {
 				log::add('homeconnect', 'debug', "Nouvelle commande other logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
 				$cmd->setSubType('other');
+				if ($cmdData['type'] == 'Boolean') {
+					$cmd->setConfiguration('value', true);
+				}
 				$cmd->save();
 			}
 		} else {
