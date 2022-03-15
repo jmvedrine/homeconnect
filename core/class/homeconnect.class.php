@@ -1707,12 +1707,17 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 				// Récupération du nom du programme / option.
 				$logicalId = 'GET::' . $value['key'];
-				$optionCmd = $this->getCmd('info', $logicalId);
-				if (is_object($optionCmd)) {
-					$this->updateInfoCmdValue($logicalId, $value);
+				if ($value['key'] !== 'BSH.Common.Option.StartInRelative') {
+					$optionPath = $path . '/options/' . $value['key'];
 				} else {
-					log::add('homeconnect', 'debug', "pas commande info $logicalId pour mise à jour valeur d'une option");
+					// Cette option ne peut pas être utilisée avec selected uniquement avec active
+					$optionPath = 'programs/active/options/' . $value['key'];
 				}
+				$cmd = $this->getCmd('info', $logicalId);
+				if (!is_object($cmd)) {
+					$this->createInfoCmd($value, $optionPath, $value['key'], 'Option');
+				}
+				$this->updateInfoCmdValue($logicalId, $value);
 			}
 		}
 	}
@@ -1834,6 +1839,10 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "status : " . print_r($value, true));
 					// Récupération du logicalId du status.
 					$logicalId = 'GET::' .$value['key'];
+					$cmd = $this->getCmd('info', $logicalId);
+					if (!is_object($cmd)) {
+						$this->createInfoCmd($value, 'status/' . $value['key'], 'Status');
+					}
 					$this->updateInfoCmdValue($logicalId, $value);
 				}
 			}
@@ -1854,6 +1863,10 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "setting : " . print_r($value, true));
 					// Récupération du logicalId du setting.
 					$logicalId = 'GET::' . $value['key'];
+					$cmd = $this->getCmd('info', $logicalId);
+					if (!is_object($cmd)) {
+						$this->createInfoCmd($value, 'settings/' . $value['key'], 'Setting');
+					}
 					$this->updateInfoCmdValue($logicalId, $value);
 				}
 			}
