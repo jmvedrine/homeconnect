@@ -1346,9 +1346,15 @@ class homeconnect extends eqLogic {
 					$cmd->setSubType('string');
 					$cmd->save();
 				} else if ($actionCmd->getSubType() == 'other') {
-					// Commande string
-					log::add('homeconnect', 'debug', "Création d'une commande info other à partir de la commande action");
-					$cmd->setSubType('string');
+					if ($actionCmd->getConfiguration('value') === true) {
+						// Commande binaire
+						log::add('homeconnect', 'debug', "Création d'une commande info binary à partir de la commande action");
+						$cmd->setSubType('binary');
+					} else {
+						// Commande string
+						log::add('homeconnect', 'debug', "Création d'une commande info other à partir de la commande action");
+						$cmd->setSubType('string');
+					}
 					$cmd->save();
 				} else {
 					log::add('homeconnect', 'debug', "Problème avec le subtype de la commande action associée " . $actionCmd->getSubType());
