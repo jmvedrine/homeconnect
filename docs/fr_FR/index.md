@@ -27,7 +27,7 @@ Précautions importantes à bien observer lors de la suite des opérations
 **Prérequis** : Il faut absolument que l'accès externe de votre Jeedom soit bien configuré. Allez dans  Administration -> Configuration puis Réseaux et vérifiez que c'est bien le cas. 
 Si votre Jeedom n'est pas accessible de l'extérieur  l'association de Jeedom au compte Home Connect ne marchera pas et le plugin ne pourra pas fonctionner.
 
-**IMPORTANT** Il faut faire toute la procédure de connexion en étant connecté à votre Jeedom par l'adresse externe en http://.... si vous la faites en etant connecté par l'adresse interne en 192.168.x.y, vous aurez bien les dialogues du serveur Home Coonnect
+**IMPORTANT** Il faut faire toute la procédure de connexion en étant connecté à votre Jeedom par l'adresse externe en https://.... si vous la faites en etant connecté par l'adresse interne en 192.168.x.y, vous aurez bien les dialogues du serveur Home Coonnect
 vous demandant de vous identifier et le dialogue vous demandant de confirmer, mais au retour dans votre Jeedom vous obtiendrez un message d'erreur.
 
 Vérifiez aussi que que dans Configuration -> API il y a bien une **Clé API Home Connect** et que l'accès API de cette clé est sur **Activé**.
@@ -67,7 +67,7 @@ Découverte de vos appareils Home Connect
 
 ![Appareils](../images/equipements.png)
 
-**IMPORTANT** : Avant une synchronisation, vérifiez que vos appareils sont bien allumés, connectés au WiFi et qu'aucun programme n'est en cours.
+**IMPORTANT** : Avant une synchronisation, vérifiez que vos appareils sont bien allumés, connectés au WiFi et qu'aucun programme n'est en cours. Si ce n'est pas le cas, pour certains appareils la synchronisation semblera marcher mais ensuite il manquera des commandes.
 
 Rendez vous sur la page équipement du plugin (Menu Plugins -> Objets connectés -> Home Connect) et cliquez sur le bouton Synchronisation.
 
@@ -80,7 +80,8 @@ Les commandes disponibles dépendent du type d'appareil et du modèle. De plus o
 
 Utilisation des programmes
 ===
-Pour les types d'appareils qui comportent des programmes : lave-linge, lave vaisselle, four, machine à café, il faut d'abord sélectionner le programme puis les options et cliquer sur le bouton lancer pour que le programme démarre.
+Pour les types d'appareils lave-linge, lave vaisselle, four, machine à café qui comportent des programmes, il faut d'abord sélectionner le programme puis les options et cliquer sur le bouton lancer pour que le programme démarre.
+Pour les hottes qui comportent des programmes, le programme démarre dès que vous le sélectionnez.
 
 FAQ
 ===
@@ -94,11 +95,10 @@ LIMITATIONS ET BUGS
 
 - Historiquement il était impossible de contrôler certains types d'appareils comme les fours et plaques de cuisson. Cette limitation a été levée par Home Connect en Mai 2021 et le plugin a été modifié pour en profiter. Mais pour obtenir ces nouveaux droits, il faudra vous reconnecter.
 
-- l'actualisation des états des appareils se fait par un cron dont l'intervalle est réglable dans la page de configuration du plugin. 
-Ce n'est vraiment pas idéal. Dans le futur un démon recevant les événements envoyés par le serveur permettra de résoudre ce problème.
+- l'actualisation des états des appareils se fait parr un démon qui reçoit les événements envoyés par le serveur.
 
-- Il y a une limite de 1000 requêtes par jour et par client sur le serveur Home Connect. Lorsque ce nombre est atteint, on est blacklisté pour 24h. Si vous avez plusieurs appareils cette limite est vite atteinte. Désactivez l'actualisation par le cron et actualisez manuellement.
+- Un cron existe aussi mais il y a une limite de 1000 requêtes par jour et par client sur le serveur Home Connect. Lorsque ce nombre est atteint, on est blacklisté pour 24h. Si vous avez plusieurs appareils cette limite est vite atteinte, aussi il est conseillé de régler l'auto-actualisation (cron) dans la page de configuration du plugin sur "Jamais".
 
 - Il faudrait des widgets personnalisés pour certaines commandes. Si vous utilisez Jeedom V4 vous pouvez améliorer cela en utilisant l'outil Widget.
 
-- Certains types d'appareils n'ont pas été vraiment testés faute de testeurs : Réfrigérateur, Congélateur, Cave à vin, réfrigérateur congélateur, Machine à café. Je pense d'ailleurs que pour certains types d'appareils aucun modèle n'est actuellement commercialisé en France.
+- Certains types d'appareils n'ont pas été vraiment testés faute de testeurs : Réfrigérateur, Congélateur, Cave à vin, Réfrigérateur-congélateur, Machine à café, Robot de nettoyage. Je pense d'ailleurs que pour certains types d'appareils aucun modèle n'est actuellement commercialisé en France.
