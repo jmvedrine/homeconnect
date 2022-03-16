@@ -1036,7 +1036,9 @@ class homeconnect extends eqLogic {
 					));
 					sleep(3);
 				}
-			}
+			} else {
+			    $eqLogic->applyModuleConfiguration(true);
+            }
 		}
 		log::add('homeconnect', 'debug',"---------- Fin de synchronisation ----------");
 	}
@@ -1836,7 +1838,7 @@ class homeconnect extends eqLogic {
 		return 'plugins/homeconnect/plugin_info/homeconnect_icon.png';
 	}
 
-	public function applyModuleConfiguration() {
+	public function applyModuleConfiguration($_remove = false) {
 		$this->setConfiguration('applyType', $this->getConfiguration('type'));
 		$this->save();
 		if ($this->getConfiguration('type') == '') {
@@ -1846,7 +1848,7 @@ class homeconnect extends eqLogic {
 		if (!is_array($device)) {
 			return true;
 		}
-		$this->import($device);
+		$this->import($device, $_remove);
 	}
 
 	public function preInsert() {
