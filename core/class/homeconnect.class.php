@@ -1887,7 +1887,7 @@ class homeconnect extends eqLogic {
 		sleep(1);
 		event::add('jeedom::alert', array(
 			'level' => 'warning',
-			'page' => 'openzwave',
+			'page' => 'homeconnect',
 			'message' => '',
 		));
 	}
