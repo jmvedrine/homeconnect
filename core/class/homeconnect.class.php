@@ -392,6 +392,9 @@ class homeconnect extends eqLogic {
 
   	public static function getTranslation($_key) {
 		$tableData = self::pluginTranslations();
+		if (is_bool($_key)) {
+			$_key = $_key ? 'true' : 'false';
+		}
 		if(array_key_exists($_key, $tableData)){
 			return $tableData[$_key];
 		} else {
