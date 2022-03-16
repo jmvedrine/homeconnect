@@ -1644,7 +1644,13 @@ class homeconnect extends eqLogic {
 				$listValue = implode(';', $optionValues);
 				$cmd->setConfiguration('listValue', $listValue);
 				$cmd->save();
-			} else {
+			} else if ($key == 'BSH.Common.Setting.AmbientLightCustomColor') {
+				// Commande color
+				log::add('homeconnect', 'debug', "Nouvelle commande color logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
+				$cmd->setSubType('color');
+				$cmd->setConfiguration('value', '#color#');
+				$cmd->save();
+			} else	{
 				log::add('homeconnect', 'debug', "Nouvelle commande other logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
 				$cmd->setSubType('other');
 				if ($cmdData['type'] == 'Boolean') {
@@ -1701,6 +1707,11 @@ class homeconnect extends eqLogic {
 					$cmd->save();
 				} else if ($actionCmd->getSubType() == 'select') {
 					// Commande string
+					log::add('homeconnect', 'debug', "Création d'une commande info string à partir de la commande action");
+					$cmd->setSubType('string');
+					$cmd->save();
+				} else if ($actionCmd->getSubType() == 'color') {
+					// Commande color
 					log::add('homeconnect', 'debug', "Création d'une commande info string à partir de la commande action");
 					$cmd->setSubType('string');
 					$cmd->save();
