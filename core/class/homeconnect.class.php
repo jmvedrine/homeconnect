@@ -2200,7 +2200,7 @@ class homeconnect extends eqLogic {
 				}
 				$cmd = $this->getCmd('info', $logicalId);
 				if (!is_object($cmd)) {
-					$this->createInfoCmd($value, $optionPath, $value['key'], 'Option');
+					$this->createInfoCmd($value, $optionPath, 'Option');
 				}
 				$this->updateInfoCmdValue($logicalId, $value);
 			}
