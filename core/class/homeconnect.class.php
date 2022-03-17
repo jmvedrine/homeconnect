@@ -377,7 +377,7 @@ class homeconnect extends eqLogic {
             'BSH.Common.Setting.AmbientLightBrightness' => array(__("Intensité de la lumière ambiante", __FILE__), 'Settings', 'Double', '%', array(10, 100)),
             'BSH.Common.Setting.AmbientLightColor' => array(__("Couleur de la lumière ambiante", __FILE__), 'Settings', 'Enumeration'),
             'BSH.Common.Setting.AmbientLightCustomColor' => array(__("Couleur personnalisée de la lumière ambiante", __FILE__), 'Settings', 'String'),
-            'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureFreezer' => array(__("Consigne de température congélateur", __FILE__), 'Settings' 'Double'),
+            'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureFreezer' => array(__("Consigne de température congélateur", __FILE__), 'Settings', 'Double'),
             'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureRefrigerator' => array(__("Consigne de température réfrigérateur", __FILE__), 'Settings', 'Double'),
             'Refrigeration.FridgeFreezer.Setting.SuperModeFreezer' => array(__("Mode super congélation", __FILE__), 'Settings', 'Boolean'),
             'Refrigeration.FridgeFreezer.Setting.SuperModeRefrigerator' => array(__("Mode super réfrigération", __FILE__), 'Settings', 'Boolean'),
