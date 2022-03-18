@@ -960,11 +960,11 @@ class homeconnect extends eqLogic {
                 'action' => 'Program'
             ) ,
             'Cooking.Oven.Program.HeatingMode.TopBottomHeating' => array(
-                'name' => __("Convection naturelle", __FILE__) ,
+                'name' => __("Cuisson", __FILE__) ,
                 'action' => 'Program'
             ) ,
             'Cooking.Oven.Program.HeatingMode.TopBottomHeatingEco' => array(
-                'name' => __("Convection naturelle éco", __FILE__) ,
+                'name' => __("Cuisson éco", __FILE__) ,
                 'action' => 'Program'
             ) ,
             'Cooking.Oven.Program.HeatingMode.BottomHeating' => array(
@@ -1012,7 +1012,7 @@ class homeconnect extends eqLogic {
                 'action' => 'Program'
             ) ,
             'Cooking.Oven.Option.SetpointTemperature' => array(
-                'name' => __("Consigne de température", __FILE__) ,
+                'name' => __("Température cible pour l'enceinte", __FILE__) ,
                 'action' => 'Option',
                 'type' => 'Double',
                 'available' => array(
@@ -1842,7 +1842,7 @@ class homeconnect extends eqLogic {
                 'action' => 'Program'
             ) ,
             'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureFreezer' => array(
-                'name' => __("Consigne de température congélateur", __FILE__) ,
+                'name' => __("Température cible congélateur", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1851,7 +1851,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.FridgeFreezer.Setting.SetpointTemperatureRefrigerator' => array(
-                'name' => __("Consigne de température réfrigérateur", __FILE__) ,
+                'name' => __("Température cible réfrigérateur", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1956,7 +1956,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.Common.Setting.ChillerLeft.SetpointTemperature' => array(
-                'name' => __("Consigne de température frigo gauche", __FILE__) ,
+                'name' => __("Température cible frigo gauche", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1965,7 +1965,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.Common.Setting.ChillerCommon.SetpointTemperature' => array(
-                'name' => __("Consigne de température frigo", __FILE__) ,
+                'name' => __("Température cible frigo", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1974,7 +1974,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.Common.Setting.ChillerRight.SetpointTemperature' => array(
-                'name' => __("Consigne de température frigo droit", __FILE__) ,
+                'name' => __("Température cible frigo droit", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1983,7 +1983,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.Common.Setting.WineCompartment.SetpointTemperature' => array(
-                'name' => __("Consigne de température bac à vins 1", __FILE__) ,
+                'name' => __("Température cible bac à vins 1", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1991,7 +1991,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.Common.Setting.WineCompartment2.SetpointTemperature' => array(
-                'name' => __("Consigne de température bac à vins 2", __FILE__) ,
+                'name' => __("Température cible bac à vins 2", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -1999,7 +1999,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'Refrigeration.Common.Setting.WineCompartment3.SetpointTemperature' => array(
-                'name' => __("Consigne de température bac à vins 3", __FILE__) ,
+                'name' => __("Température cible bac à vins 3", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
@@ -2080,7 +2080,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'BSH.Common.Option.Duration' => array(
-                'name' => __("Durée", __FILE__) ,
+                'name' => __("Ajuster la durée", __FILE__) ,
                 'action' => 'Option',
                 'type' => 'Int',
                 'available' => array(
@@ -2089,7 +2089,7 @@ class homeconnect extends eqLogic {
                 ) ,
             ) ,
             'BSH.Common.Option.StartInRelative' => array(
-                'name' => __("Départ différé", __FILE__) ,
+                'name' => __("Heure de départ", __FILE__) ,
                 'action' => 'Option',
                 'type' => 'Int',
                 'available' => array(
