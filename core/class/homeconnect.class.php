@@ -1011,6 +1011,139 @@ class homeconnect extends eqLogic {
                 'name' => __("Tiroir chauffant", __FILE__) ,
                 'action' => 'Program'
             ) ,
+            'Cooking.Oven.Program.HeatingMode.GrillSmallArea' => array(
+                'name' => __("Gril basse puissance", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            //puissance moyenne
+            'Cooking.Oven.Program.HeatingMode.GrillLargeArea' => array(
+                'name' => __("Gril grande puissance", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.HeatingMode.LetRest' => array(
+                'name' => __("Laisser reposer", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.PotRoastedBeef' => array(
+                'name' => __("Boœuf braisé", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.UnstuffedDuck' => array(
+                'name' => __("Canard, non farci", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.BonelessPorkNeckJoint' => array(
+                'name' => __("Cou de porc désossé", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.PorkNeckJoint' => array(
+                'name' => __("Cou de porc rôti", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.PommesFrites' => array(
+                'name' => __("Frites", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.BonelessLegOfLambMedium' => array(
+                'name' => __("Gigot d'agneau désossé, à point", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.BonelessLegOfLambWellDone' => array(
+                'name' => __("Gigot d'agneau désossé, bien cuit", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.BonelessLegOfVenison' => array(
+                'name' => __("Gigot de venaison désossé", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.Goulash' => array(
+                'name' => __("Goulash", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.PotatoGratin' => array(
+                'name' => __("Gratin de pommes de terre, avec pommes de terre crues", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.WholeRabbit' => array(
+                'name' => __("Lapin, entier", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.FrozenLasagne' => array(
+                'name' => __("Lasagne", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.StewWithVegetables' => array(
+                'name' => __("Mijoté aux légumes", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.StewWithMeat' => array(
+                'name' => __("Mijoté avec de la viande", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.ChickenParts' => array(
+                'name' => __("Morceaux de poulet", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.UnstuffedGoose' => array(
+                'name' => __("Oie, non farcie", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.MeatLoafMadeFromFreshMincedMeat' => array(
+                'name' => __("Pain de viande, avec viande hachée fraîche", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.PastaBake' => array(
+                'name' => __("Pâtes au four", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.PartCookedBreadRollsOrBaguette' => array(
+                'name' => __("Petits pains ou baguette, pré-cuits", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.FrozenDeepPanPizza' => array(
+                'name' => __("Pizza à pâte épaisse", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.FrozenThinCrustPizza' => array(
+                'name' => __("Pizza à pâte mince", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.WholeFish' => array(
+                'name' => __("Poisson, entier", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.TurkeyBreast' => array(
+                'name' => __("Poitrine de dinde", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.WholeBakedPotatoes' => array(
+                'name' => __("Pommes de terre au four, entières", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.UnstuffedChicken' => array(
+                'name' => __("Poulet, non farci", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.JointOfPorkWithCrackling' => array(
+                'name' => __("Rôti de porc avec couenne croustillante", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.JointOfVealLean' => array(
+                'name' => __("Rôti de veau, maigre", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.JointOfVealMarbled' => array(
+                'name' => __("Rôti de veau, persillé", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.BeefRoulade' => array(
+                'name' => __("Roulade au bœuf", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Oven.Program.Dish.Automatic.Conv.SirloinMedium' => array(
+                'name' => __("Surlonge, à point", __FILE__) ,
+                'action' => 'Program'
+            ) ,
             'Cooking.Oven.Option.SetpointTemperature' => array(
                 'name' => __("Température cible pour l'enceinte", __FILE__) ,
                 'action' => 'Option',
@@ -1052,10 +1185,16 @@ class homeconnect extends eqLogic {
             'Cooking.Oven.Option.CavitySelector' => array(
                 'name' => __("Sélecteur de cavité", __FILE__) ,
                 'action' => 'Option',
-                'type' => 'String',
+                'type' => 'Enumeration',
                 'available' => array(
                     'Oven'
                 ) ,
+                'enum' => array(
+                    'Cooking.Oven.EnumType.CavitySelector.Main' => array(
+                        'name' => __("Enceinte", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                )
             ) ,
             'Cooking.Oven.Setting.SabbathMode' => array(
                 'name' => __("Mode Sabbat", __FILE__) ,
@@ -1947,7 +2086,7 @@ class homeconnect extends eqLogic {
                 )
             ) ,
             'Refrigeration.Common.Setting.BottleCooler.SetpointTemperature' => array(
-                'name' => __("Consigne de température glacière", __FILE__) ,
+                'name' => __("Température cible glacière", __FILE__) ,
                 'action' => 'Setting',
                 'type' => 'Double',
                 'available' => array(
