@@ -4560,10 +4560,7 @@ class homeconnect extends eqLogic {
 					// Cette option ne peut pas être utilisée avec selected uniquement avec active
 					$optionPath = 'programs/active/options/' . $value['key'];
 				}
-				$cmdAction = $this->getCmd('info', $logicalIdAction);
-				if (!is_object($cmdAction)) {
-					$actionCmd = $this->createActionCmd($value, $optionPath, 'Option');
-				}
+				$actionCmd = $this->createActionCmd($value, $optionPath, 'Option');
 				$cmd = $this->getCmd('info', $logicalId);
 				if (!is_object($cmd)) {
 					$cmd = $this->createInfoCmd($value, $optionPath, 'Option', $actionCmd);
