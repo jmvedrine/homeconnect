@@ -4348,17 +4348,21 @@ class homeconnect extends eqLogic {
 		return $cmd;
 	}
 
-	public function createProgramOption($optionKey, $optionData) {
-		if ($optionKey !== 'BSH.Common.Option.StartInRelative') {
-			$optionPath = $path . '/options/' . $optionKey;
+	public function createProgramOption($optionData) {
+		if (isset($optionData['key'])) {
+			if ($optionData['key'] !== 'BSH.Common.Option.StartInRelative') {
+				$optionPath = $path . '/options/' . $optionData['key'];
+			} else {
+				// Cette option ne peut pas être utilisée avec selected uniquement avec active
+				$optionPath = 'programs/active/options/' . $optionData['key'];
+			}
+			$actionCmd = $this->createActionCmd($optionData, $optionPath, 'Option');
+			$infoCmd = $this->createInfoCmd($optionData, $optionPath, 'Option', $actionCmd);
+			// le setValue est fait dans createInfoCmd
 		} else {
-			// Cette option ne peut pas être utilisée avec selected uniquement avec active
-			$optionPath = 'programs/active/options/' . $optionKey;
+			log::add('homeconnect', 'debug', "Clé manquante dans une option de programme" );
 		}
-		$actionCmd = $eqLogic->createActionCmd($optionData, $optionPath, 'Option');
-		$infoCmd = $eqLogic->createInfoCmd($optionData, $optionPath, 'Option', $actionCmd);
-		// le setValue est fait dans createInfoCmd
-	}
+    }
 
 	public function cmdNameExists($name) {
 		$allCmd = cmd::byEqLogicId($this->getId());
