@@ -33,6 +33,26 @@ class homeconnect extends eqLogic {
 
     public static function pluginTranslations()
     {
+    public static function appliancesList() {
+        $applicances = array(
+            'Oven' => __("Four", __FILE__),
+            'Dishwasher' => __("Lave-vaisselle", __FILE__),
+            'Washer' => __("Lave-linge", __FILE__),
+            'Dryer' => __("Sèche-linge", __FILE__),
+            'WasherDryer' => __("Lave-linge séchant", __FILE__),
+            'FridgeFreezer' => __("Réfrigérateur combiné", __FILE__),
+            'Refrigerator' => __("Réfrigérateur", __FILE__),
+            'Freezer' => __("Congélateur", __FILE__),
+            'WineCooler' => __("Refroidisseur à vin", __FILE__),
+            'CoffeeMaker' => __("Machine à café", __FILE__),
+            'Hob' => __("Table de cuisson", __FILE__),
+            'Hood' => __("Hotte", __FILE__),
+            'CleaningRobot' => __("Robot de nettoyage", __FILE__),
+            'CookProcessor' => __("Robot cuiseur", __FILE__),
+            'WarmingDrawer' => __("Tiroir chauffant", __FILE__)
+        );
+        return $applicances;
+    }
         $KEYS = array(
             'ConsumerProducts.CoffeeMaker.Event.BeanContainerEmpty' => array(__("Compartiment vide", __FILE__), 'Event', 'Enumeration'),
                 'BSH.Common.EnumType.EventPresentState.Present' => array(__("Présent", __FILE__), 'Status'),
