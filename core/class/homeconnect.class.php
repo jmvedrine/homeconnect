@@ -4775,14 +4775,14 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 				// Récupération du nom du programme / option.
 				$logicalId = 'GET::' . $value['key'];
-				$logicalIdAction = 'PUT::' . $value['key'];
 				if ($value['key'] !== 'BSH.Common.Option.StartInRelative') {
 					$optionPath = $path . '/options/' . $value['key'];
 				} else {
 					// Cette option ne peut pas être utilisée avec selected uniquement avec active
 					$optionPath = 'programs/active/options/' . $value['key'];
 				}
-				$actionCmd = $this->createActionCmd($value, $optionPath, 'Option');
+
+				//$actionCmd = $this->createActionCmd($value, $optionPath, 'Option');
 				$cmd = $this->getCmd('info', $logicalId);
 				if (!is_object($cmd)) {
 					$cmd = $this->createInfoCmd($value, $optionPath, 'Option', $actionCmd);
