@@ -1387,6 +1387,10 @@ class homeconnect extends eqLogic {
                 'name' => __("Coton éco 40-60 °C", __FILE__) ,
                 'action' => 'Program'
             ) ,
+            'LaundryCare.Washer.Program.Cotton.Colour' => array(
+                'name' => __("Coton couleur", __FILE__) ,
+                'action' => 'Program'
+            ) ,
             'LaundryCare.Washer.Program.EasyCare' => array(
                 'name' => __("Entretien facile", __FILE__) ,
                 'action' => 'Program'
