@@ -1185,9 +1185,9 @@ class homeconnect extends eqLogic {
 
 			$eqLogic = eqLogic::byLogicalId($key['haId'], 'homeconnect');
 			if (is_object($eqLogic) && $eqLogic->getIsEnable()){
-				$cmd = $eqLogic->getCmd(null, 'connected');
+				$cmd = $eqLogic->getCmd('info', 'connected');
 				if (is_object($cmd)) {
-					$eqLogic->checkAndUpdateCmd('connected', $key['connected']);
+					$eqLogic->checkAndUpdateCmd($cmd, $key['connected']);
 
 					log::add('homeconnect', 'debug', "MAJ du status connected " . $eqLogic->getConfiguration('type', '') . ' ' . $eqLogic->getConfiguration('haId', '') . ' Valeur : '. $key['connected'] ? "Oui" : "Non");
 
@@ -2128,7 +2128,7 @@ class homeconnect extends eqLogic {
 
 		log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte : ".json_encode(self::getTranslation($value['value'])));
 
-		$cmd = $this->getCmd(null, $logicalId);
+		$cmd = $this->getCmd('info', $logicalId);
 		$reglage = '';
 		if (is_object($cmd)) {
 			if (is_bool($value['value'])) {
@@ -2152,7 +2152,7 @@ class homeconnect extends eqLogic {
 						log::add('homeconnect', 'debug', "la commande info : ".$logicalId." n'a pas de valeur");
 					}
 				}
-			$this->checkAndUpdateCmd($logicalId, $reglage);
+			$this->checkAndUpdateCmd($cmd, $reglage);
 			log::add('homeconnect', 'debug', "Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
 		} else {
 			log::add('homeconnect', 'debug', "Dans updateInfoCmdValue la commande : ".$logicalId." n'existe pas");
@@ -2178,14 +2178,14 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "dans lookProgram pas de commande action " . 'PUT::' . $key);
 					$programName = self::traduction(self::lastSegment('.', $key));
 				} else {
-					$programName =$actionCmd->getName();
+					$programName = $actionCmd->getName();
 					log::add('homeconnect', 'debug', "Nom de la commande action " . $programName);
 				}
 				// MAJ de la commande info ProgramSelected ou ProgramActive.
 				$cmd = $this->getCmd(null, $nameCmd);
 				if (is_object($cmd)) {
 					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $nameCmd = ".$programName);
-					$this->checkAndUpdateCmd($nameCmd, $programName);
+					$this->checkAndUpdateCmd($cmd, $programName);
 					return true;
 				} else {
 					log::add('homeconnect', 'debug', "La commande $nameCmd n'existe pas :");
@@ -2389,10 +2389,10 @@ class homeconnect extends eqLogic {
 			foreach($response['data']['homeappliances'] as $appliance) {
 				log::add('homeconnect', 'debug',"Appareil " . print_r($appliance, true));
 				if ($this->getLogicalId() == $appliance['haId']) {
-					$cmd = $this->getCmd(null, 'connected');
+					$cmd = $this->getCmd('info', 'connected');
 					if (is_object($cmd)) {
 						log::add('homeconnect', 'debug',"Mise à jour commande connectée valeur " . $appliance['connected']);
-						$this->checkAndUpdateCmd('connected', $appliance['connected']);
+						$this->checkAndUpdateCmd($cmd, $appliance['connected']);
 					}
 				}
 			}
