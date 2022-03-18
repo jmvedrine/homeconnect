@@ -2907,7 +2907,7 @@ class homeconnect extends eqLogic {
 		        if(array_key_exists($_value, $tableData[$_key]['enum'])){
                     $return = $tableData[$_key]['enum'][$_value]['name'];
                 }
-            } elseif (array_key_exists($_value, $tableData[$_value])) {
+            } elseif (array_key_exists($_value, $tableData)) {
                 $return = $tableData[$_value]['name'];
             } else {
 			    log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' existe, mais valeur ' . $_value . ' est introuvable');
