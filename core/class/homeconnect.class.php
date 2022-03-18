@@ -1352,6 +1352,10 @@ class homeconnect extends eqLogic {
                     ) ,
                 )
             ) ,
+            'LaundryCare.Dryer.Event.DryingProcessFinished' => array(
+                'name' => __("Séchage terminé", __FILE__) ,
+                'action' => 'Event'
+            ),
             'LaundryCare.Common.Option.VarioPerfect' => array(
                 'name' => __("VarioPerfect", __FILE__) ,
                 'action' => 'Option',
