@@ -1631,7 +1631,7 @@ class homeconnect extends eqLogic {
                 'name' => __("+3", __FILE__) ,
                 'action' => 'Option'
             ) ,
-            'LaundryCare.Washer.Option.RinsePlus' =>  => array(
+            'LaundryCare.Washer.Option.RinsePlus' => array(
                 'name' => __("Rinçage +", __FILE__) ,
                 'action' => 'Option',
                 'type' => 'Enumeration',
@@ -1644,7 +1644,7 @@ class homeconnect extends eqLogic {
                         'name' => __("Rinçage + désactivé", __FILE__) ,
                         'action' => 'Option'
                     ) ,
-                )
+                ),
             ) ,
             'LaundryCare.Washer.Option.LessIroning' => array(
                 'name' => __("Moins de repassage", __FILE__) ,
