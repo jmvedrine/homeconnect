@@ -360,6 +360,18 @@ class homeconnect extends eqLogic {
                         'name' => __("96 °C", __FILE__) ,
                         'action' => 'Option'
                     ) ,
+                    'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.Normal' => array(
+                        'name' => __("Normale", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.High' => array(
+                        'name' => __("Élevée", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'ConsumerProducts.CoffeeMaker.EnumType.CoffeeTemperature.VeryHigh' => array(
+                        'name' => __("Très élevée", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
                 )
             ) ,
             'ConsumerProducts.CoffeeMaker.Option.BeanContainerSelection' => array(
@@ -1321,6 +1333,48 @@ class homeconnect extends eqLogic {
                     ) ,
                 )
             ) ,
+            'LaundryCare.Dryer.Option.WrinkleGuard' => array(
+                'name' => __("Anti-pli", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Enumeration',
+                'enum' => array(
+                    'LaundryCare.Dryer.EnumType.WrinkleGuard.Min60' => array(
+                        'name' => __("Anti-pli min. 60", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'LaundryCare.Dryer.EnumType.WrinkleGuard.Min120' => array(
+                        'name' => __("Anti-pli min. 120", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'LaundryCare.Dryer.EnumType.WrinkleGuard.Min240' => array(
+                        'name' => __("Anti-pli min. 240", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                )
+            ) ,
+            'LaundryCare.Common.Option.VarioPerfect' => array(
+                'name' => __("VarioPerfect", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Enumeration',
+                'enum' => array(
+                    'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect' => array(
+                        'name' => __("Vario vitesse parfaite", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect1' => array(
+                        'name' => __("Vario vitesse parfaite 1", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect2' => array(
+                        'name' => __("Vario vitesse parfaite 2", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                ),
+            ) ,
+            'LaundryCare.Common.Option.LoadRecommendation' => array(
+                'name' => __("Recommandation de charges", __FILE__) ,
+                'action' => 'Option'
+            ) ,
             'LaundryCare.Washer.Program.Cotton' => array(
                 'name' => __("Coton", __FILE__) ,
                 'action' => 'Program'
@@ -1631,6 +1685,10 @@ class homeconnect extends eqLogic {
                 'name' => __("+3", __FILE__) ,
                 'action' => 'Option'
             ) ,
+            'LaundryCare.Washer.Option.RinseHold' => array(
+                'name' => __("Arrêt cuve pleine", __FILE__) ,
+                'action' => 'Option'
+            ) ,
             'LaundryCare.Washer.Option.RinsePlus' => array(
                 'name' => __("Rinçage +", __FILE__) ,
                 'action' => 'Option',
@@ -1646,28 +1704,25 @@ class homeconnect extends eqLogic {
                     ) ,
                 ),
             ) ,
+            'LaundryCare.Washer.Option.SilentWash' => array(
+                'name' => __("Lavage silencieux", __FILE__) ,
+                'action' => 'Option'
+            ) ,
+            'LaundryCare.Washer.Option.Soak' => array(
+                'name' => __("Faire tremper", __FILE__) ,
+                'action' => 'Option'
+            ) ,
+            'LaundryCare.Washer.Option.SpeedPerfect' => array(
+                'name' => __("Vitesse parfaite", __FILE__) ,
+                'action' => 'Option'
+            ) ,
             'LaundryCare.Washer.Option.LessIroning' => array(
                 'name' => __("Moins de repassage", __FILE__) ,
                 'action' => 'Option'
             ) ,
-            'LaundryCare.Common.Option.VarioPerfect' => array(
-                'name' => __("VarioPerfect", __FILE__) ,
-                'action' => 'Option',
-                'type' => 'Enumeration',
-                'enum' => array(
-                    'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect' => array(
-                        'name' => __("Vitesse parfaite", __FILE__) ,
-                        'action' => 'Option'
-                    ) ,
-                    'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect1' => array(
-                        'name' => __("Vitesse parfaite 1", __FILE__) ,
-                        'action' => 'Option'
-                    ) ,
-                    'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect2' => array(
-                        'name' => __("Vitesse parfaite 2", __FILE__) ,
-                        'action' => 'Option'
-                    ) ,
-                ),
+            'LaundryCare.Washer.Option.WaterPlus' => array(
+                'name' => __("Eau +", __FILE__) ,
+                'action' => 'Option'
             ) ,
             'LaundryCare.Washer.Option.Prewash' => array(
                 'name' => __("Prélavage", __FILE__) ,
@@ -1677,10 +1732,6 @@ class homeconnect extends eqLogic {
                 'name' => __("Vitesse d'essorage", __FILE__) ,
                 'action' => 'Option',
                 'type' => 'Enumeration',
-                'available' => array(
-                    'Washer',
-                    'WasherDryer'
-                ),
                 'enum' => array(
                     'LaundryCare.Washer.EnumType.Stains.On' => array(
                         'name' => __("Anti-tâche activé", __FILE__) ,
@@ -1691,7 +1742,7 @@ class homeconnect extends eqLogic {
                         'action' => 'Option'
                     ) ,
                 ),
-            ),
+            ) ,
             'LaundryCare.Washer.EnumType.ProcessPhase.FinalSpinning' => array(
                 'name' => __("Essorag final", __FILE__) ,
                 'action' => 'Option'
@@ -2102,6 +2153,26 @@ class homeconnect extends eqLogic {
                     'Washer',
                     'WasherDryer'
                 ) ,
+            ) ,
+            'BSH.Common.Option.WaterForecast' => array(
+                'name' => __("Eau", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Int',
+                'unit' => '%',
+                'constraints' => array(
+                    'min' => 0,
+                    'max' => 100
+                ),
+            ) ,
+            'BSH.Common.Option.EnergyForecast' => array(
+                'name' => __("Énergie", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Int',
+                'unit' => '%',
+                'constraints' => array(
+                    'min' => 0,
+                    'max' => 100
+                ),
             ) ,
             'BSH.Common.Event.ProgramAborted' => array(
                 'name' => __("Programme annulé", __FILE__) ,
