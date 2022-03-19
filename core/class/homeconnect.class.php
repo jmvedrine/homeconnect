@@ -4509,7 +4509,7 @@ class homeconnect extends eqLogic {
 		return $cmd;
 	}
 
-	public function createProgramOption($optionData) {
+	public function createProgramOption($path, $optionData) {
 		if (isset($optionData['key'])) {
 			if ($optionData['key'] !== 'BSH.Common.Option.StartInRelative') {
 				$optionPath = $path . '/options/' . $optionData['key'];
@@ -4788,23 +4788,13 @@ class homeconnect extends eqLogic {
 		if ($programOptions !== false) {
 			log::add('homeconnect', 'debug', "options : " . $programOptions);
 			$programOptions = json_decode($programOptions, true);
+			$logicalId = 'GET::' . $value['key'];
 			// MAJ des options et autres informations du programme en cours.
 			foreach ($programOptions['data']['options'] as $value) {
 				log::add('homeconnect', 'debug', "option : " . print_r($value, true));
-				// Récupération du nom du programme / option.
-				$logicalId = 'GET::' . $value['key'];
-				if ($value['key'] !== 'BSH.Common.Option.StartInRelative') {
-					$optionPath = $path . '/options/' . $value['key'];
-				} else {
-					// Cette option ne peut pas être utilisée avec selected uniquement avec active
-					$optionPath = 'programs/active/options/' . $value['key'];
-				}
 
-				//$actionCmd = $this->createActionCmd($value, $optionPath, 'Option');
-				$cmd = $this->getCmd('info', $logicalId);
-				if (!is_object($cmd)) {
-					$cmd = $this->createInfoCmd($value, $optionPath, 'Option', $actionCmd);
-				}
+				$this->createProgramOption('programs/' . strtolower($programType) , $value);
+				//$this->createInfoCmd($value, $optionPath, 'Option');
 				$this->updateInfoCmdValue($logicalId, $value);
 			}
 		}
