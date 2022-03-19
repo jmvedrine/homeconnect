@@ -3791,27 +3791,18 @@ class homeconnect extends eqLogic {
 
 	public static function devicesParameters($_type = '') {
 		$return = array();
-		foreach (ls(dirname(__FILE__) . '/../config/types', '*') as $dir) {
-			$path = dirname(__FILE__) . '/../config/types/' . $dir;
-			if (!is_dir($path)) {
-				continue;
-			}
-			$files = ls($path, '*.json', false, array('files', 'quiet'));
-			foreach ($files as $file) {
-				try {
-					$content = file_get_contents($path . '/' . $file);
-					if (is_json($content)) {
-						$return += json_decode($content, true);
-					}
-				} catch (Exception $e) {
-				}
-			}
+		$file = dirname(__FILE__) . '/../config/types/' . $_type . '.json';
+		if (!is_file($file)) {
+			return false;
 		}
-		if (isset($_type) && $_type !== '') {
-			if (isset($return[$_type])) {
-				return $return[$_type];
+
+		try {
+			$content = file_get_contents($file);
+			if (is_json($content)) {
+				$return += json_decode($content, true);
 			}
-			return array();
+		} catch (Exception $e) {
+			log::add('homeconnect', 'info', 'Fichier ' . $file . ' erroné');
 		}
 		return $return;
 	}
@@ -4552,7 +4543,7 @@ class homeconnect extends eqLogic {
 	}
 
 	public function applyModuleConfiguration($_remove = false) {
-			log::add('homeconnect', 'debug', __FUNCTION__ . " mise à jour" );
+		log::add('homeconnect', 'debug', __FUNCTION__ . " import de la configuration" );
 
 		$this->setConfiguration('applyType', $this->getConfiguration('type'));
 		$this->save();
