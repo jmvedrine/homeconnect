@@ -4558,7 +4558,7 @@ class homeconnect extends eqLogic {
 	}
 
 	public function isConnected() {
-		$cmdConnected = $this->getCmd(null, 'connected');
+		$cmdConnected = $this->getCmd('info', 'connected');
 		if (is_object($cmdConnected)) {
 			if ($this->getIsEnable() && $cmdConnected->execCmd()) {
 				return true;
@@ -4607,7 +4607,7 @@ class homeconnect extends eqLogic {
 					// Commande option action
 					$logicalIdCmd = 'PUT::' . $key;
 					log::add('homeconnect', 'debug', "Ajustement de la commande action " . $logicalIdCmd);
-					$cmd = $this->getCmd(null, $logicalIdCmd);
+					$cmd = $this->getCmd('action', $logicalIdCmd);
 					if (is_object($cmd)) {
 						if ($cmd->getSubType() == 'slider') {
 							// commande slider.
