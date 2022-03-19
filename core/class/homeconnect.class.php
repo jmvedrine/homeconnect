@@ -1500,6 +1500,14 @@ class homeconnect extends eqLogic {
                 'action' => 'Option',
                 'type' => 'Enumeration',
                 'enum' => array(
+                    'LaundryCare.Common.EnumType.VarioPerfect.Off' => array(
+                        'name' => __("Désactivé", __FILE__) ,
+                        'action' => 'Option'
+                     ) ,
+                    'LaundryCare.Common.EnumType.VarioPerfect.On' => array(
+                        'name' => __("Activé", __FILE__) ,
+                        'action' => 'Option'
+                     ) ,
                     'LaundryCare.Commmon.EnumType.VarioPerfect.SpeedPerfect' => array(
                         'name' => __("Vario vitesse parfaite", __FILE__) ,
                         'action' => 'Option'
@@ -1851,6 +1859,21 @@ class homeconnect extends eqLogic {
                     ) ,
                 ),
             ) ,
+            'LaundryCare.Washer.Option.RinsePlus1' => array(
+                'name' => __("Rinçage plus", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Enumeration',
+                'enum' => array(
+                    'LaundryCare.Washer.EnumType.RinsePlus1.On' => array(
+                        'name' => __("Rinçage + activé", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                    'LaundryCare.Washer.EnumType.RinsePlus1.Off' => array(
+                        'name' => __("Rinçage + désactivé", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
+                ),
+            ) ,
             'LaundryCare.Washer.Option.SilentWash' => array(
                 'name' => __("Lavage silencieux", __FILE__) ,
                 'action' => 'Option'
@@ -1899,16 +1922,20 @@ class homeconnect extends eqLogic {
                 'action' => 'Option',
                 'type' => 'Enumeration',
                 'enum' => array(
+                    'LaundryCare.Washer.EnumType.IDosingLevel.Light' => array(
+                        'name' => __("Faible", __FILE__) ,
+                        'action' => 'Option'
+                    ) ,
                     'LaundryCare.Washer.EnumType.IDosingLevel.Normal' => array(
-                        'name' => __("Dose normale", __FILE__) ,
+                        'name' => __("Normale", __FILE__) ,
                         'action' => 'Option'
                     ) ,
                     'LaundryCare.Washer.EnumType.IDosingLevel.Middle' => array(
-                        'name' => __("Dose moyenne", __FILE__) ,
+                        'name' => __("Moyenne", __FILE__) ,
                         'action' => 'Option'
                     ) ,
                     'LaundryCare.Washer.EnumType.IDosingLevel.Strong' => array(
-                        'name' => __("Forte dose", __FILE__) ,
+                        'name' => __("Forte", __FILE__) ,
                         'action' => 'Option'
                     ) ,
                 ),
