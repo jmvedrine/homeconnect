@@ -3234,7 +3234,7 @@ class homeconnect extends eqLogic {
 		}
 	}
 
-	public static function syncHomeConnect() {
+	public static function syncHomeConnect($_forced) {
 	/**
 	 * Connexion au compte Home Connect (via token) et récupération des appareils liés.
 	 *
@@ -3251,7 +3251,7 @@ class homeconnect extends eqLogic {
 		// Pas besoin de vérifier le token, homeappliances le fait
 
 		// Récupération des appareils.
-		self::homeappliances();
+		self::homeappliances($_forced);
 
 		log::add('homeconnect', 'debug',"Fin de la fonction syncHomeConnect()");
 	}
@@ -3556,7 +3556,7 @@ class homeconnect extends eqLogic {
 		// Relancer le deamon
 	}
 
-	private static function homeappliances() {
+	private static function homeappliances($_forced) {
 	/**
 	 * Récupère la liste des appareils connectés et création des objets associés.
 	 *
@@ -3564,7 +3564,7 @@ class homeconnect extends eqLogic {
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
 
-		log::add('homeconnect', 'debug',"---------- Début de synchronisation ----------");
+		log::add('homeconnect', 'debug',"---------- Début de synchronisation ---------- (forcée =" . $_forced . ')');
 
 		self::verifyToken(60);
 
@@ -3603,145 +3603,141 @@ class homeconnect extends eqLogic {
 				$eqLogic->setConfiguration('type', $appliance['type']);
 				$eqLogic->save();
 				$found_eqLogics = self::findProduct($appliance);
+				$_forced = true; // forcer la récupération de tous les programmes/settings si l'appareil n'existe pas...
+			}
+			if (is_object($eqLogic)) {
 				// certains apareils ne répondent pas pour les programmes et options s'ils ne sont pas connectés
-				if ($appliance['connected']) {
-				// Programs
-				if ($appliance['type'] !== 'Refrigerator' && $appliance['type'] !== 'FridgeFreezer' && $appliance['type'] !== 'WineCooler') {
-					$programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
-					if ($programs !== false) {
-						$programs = json_decode($programs, true);
-						if (isset($programs['data']['programs'])) {
-							$eqLogic->setConfiguration('hasPrograms', true);
-							foreach($programs['data']['programs'] as $applianceProgram) {
-								$programdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
-								log::add('homeconnect','debug', 'Appliance Program ' . print_r($programdata, true));
-								if ($programdata !== false) {
-									$programdata = json_decode($programdata, true);
-									if (isset($applianceProgram['constraints']['execution'])) {
-										if ($applianceProgram['constraints']['execution'] !== 'selectandstart') {
-											$path = 'programs/active';
-										} else {
-											$path = 'programs/selected';
-										}
-									} else {
-										$path = 'programs/selected';
-									}
-									if (isset($programdata['data']['key'])) {
-										// Création de la commande action programme
-										$actionCmd = $eqLogic->createActionCmd($programdata['data'], $path , 'Program');
-										if ($path == 'programs/selected') {
-											$infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.SelectedProgram');
-											if (is_object($infoCmd)) {
-												// On a trouvé la commande info associée.
-												log::add('homeconnect', 'debug', "setValue sur la commande programme selected " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
-												$actionCmd->setValue($infoCmd->getId());
-												$actionCmd->save();
-											} else {
-												log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.SelectedProgram");
-											}
-										} else if ($path == 'programs/active') {
-											$infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
-											if (is_object($infoCmd)) {
-												// On a trouvé la commande info associée.
-												log::add('homeconnect', 'debug', "setValue sur la commande programme active " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
-												$actionCmd->setValue($infoCmd->getId());
-												$actionCmd->save();
-												// A voir : ne pas la rendre visible ?
-											} else {
-												log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.ActiveProgram");
-											}
-										}
-									}
-									if (isset($programdata['data']['options'])) {
-										log::add('homeconnect', 'debug', "Création des commandes options " . print_r($programdata['data']['options'], true));
-										// creation des commandes option action et info
-										foreach($programdata['data']['options'] as $optionData) {
-											if (isset($optionData['key'])) {
-												if ($optionData['key'] !== 'BSH.Common.Option.StartInRelative') {
-													$optionPath = $path . '/options/' . $optionData['key'];
-												} else {
-													// Cette option ne peut pas être utilisée avec selected uniquement avec active
-													$optionPath = 'programs/active/options/' . $optionData['key'];
-												}
-												$actionCmd = $eqLogic->createActionCmd($optionData, $optionPath, 'Option');
-												$infoCmd = $eqLogic->createInfoCmd($optionData, $optionPath, 'Option', $actionCmd);
-												// le setValue est fait dans createInfoCmd
-											}
-										}
-									} else {
-										log::add('homeconnect', 'debug', "Aucune commande option");
-									}
-								} else {
-									log::add('homeconnect', 'debug', "La requête /programs/available/ a retourné false");
-								}
-							}
-						} else {
-							log::add('homeconnect', 'debug',"Cet appareil n'a pas de programmes");
-							$eqLogic->setConfiguration('hasPrograms', false);
-						}
-					} else {
-						log::add('homeconnect', 'debug',"La requête /programs a retourné false");
-						$eqLogic->setConfiguration('hasPrograms', false);
-					}
+				if ($appliance['connected'] && $_forced) {
+                    // Programs
+                    if ($appliance['type'] !== 'Refrigerator' && $appliance['type'] !== 'FridgeFreezer' && $appliance['type'] !== 'WineCooler') {
+                        $programs = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs', null, 'GET', array());
+                        if ($programs !== false) {
+                            $programs = json_decode($programs, true);
+                            if (isset($programs['data']['programs'])) {
+                                $eqLogic->setConfiguration('hasPrograms', true);
+                                foreach($programs['data']['programs'] as $applianceProgram) {
+                                    $programdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
+                                    log::add('homeconnect','debug', 'Appliance Program ' . print_r($programdata, true));
+                                    if ($programdata !== false) {
+                                        $programdata = json_decode($programdata, true);
+                                        if (isset($applianceProgram['constraints']['execution'])) {
+                                            if ($applianceProgram['constraints']['execution'] !== 'selectandstart') {
+                                                $path = 'programs/active';
+                                            } else {
+                                                $path = 'programs/selected';
+                                            }
+                                        } else {
+                                            $path = 'programs/selected';
+                                        }
+                                        if (isset($programdata['data']['key'])) {
+                                            // Création de la commande action programme
+                                            $actionCmd = $eqLogic->createActionCmd($programdata['data'], $path , 'Program');
+                                            if ($path == 'programs/selected') {
+                                                $infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.SelectedProgram');
+                                                if (is_object($infoCmd)) {
+                                                    // On a trouvé la commande info associée.
+                                                    log::add('homeconnect', 'debug', "setValue sur la commande programme selected " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
+                                                    $actionCmd->setValue($infoCmd->getId());
+                                                    $actionCmd->save();
+                                                } else {
+                                                    log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.SelectedProgram");
+                                                }
+                                            } else if ($path == 'programs/active') {
+                                                $infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
+                                                if (is_object($infoCmd)) {
+                                                    // On a trouvé la commande info associée.
+                                                    log::add('homeconnect', 'debug', "setValue sur la commande programme active " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
+                                                    $actionCmd->setValue($infoCmd->getId());
+                                                    $actionCmd->save();
+                                                    // A voir : ne pas la rendre visible ?
+                                                } else {
+                                                    log::add('homeconnect', 'debug', "Pas de commande info GET::BSH.Common.Root.ActiveProgram");
+                                                }
+                                            }
+                                        }
+                                        if (isset($programdata['data']['options'])) {
+                                            log::add('homeconnect', 'debug', "Création des commandes options " . print_r($programdata['data']['options'], true) . ' - path ' . $path);
+                                            // creation des commandes option action et info
+                                            foreach($programdata['data']['options'] as $optionData) {
+                                                $eqLogic->createProgramOption($path, $optionData);
+                                            }
+                                        } else {
+                                            log::add('homeconnect', 'debug', "Aucune commande option");
+                                        }
+                                    } else {
+                                        log::add('homeconnect', 'debug', "La requête /programs/available/ a retourné false");
+                                    }
+                                }
+                            } else {
+                                log::add('homeconnect', 'debug',"Cet appareil n'a pas de programmes");
+                                $eqLogic->setConfiguration('hasPrograms', false);
+                            }
+                        } else {
+                            log::add('homeconnect', 'debug',"La requête /programs a retourné false");
+                            $eqLogic->setConfiguration('hasPrograms', false);
+                        }
+                    } else {
+                        log::add('homeconnect', 'debug',"Ce type d'appareil n'a pas de programme");
+                        $eqLogic->setConfiguration('hasPrograms', false);
+                    }
+
+                    // Status
+                    $allStatus = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
+                    if ($allStatus !== false) {
+                        $allStatus = json_decode($allStatus, true);
+                        if (isset($allStatus['data']['status'])) {
+                            foreach($allStatus['data']['status'] as $statusData) {
+                                log::add('homeconnect', 'debug', "Status " . print_r($statusData, true));
+                                $eqLogic->createInfoCmd($statusData, 'status/' . $statusData['key'], 'Status');
+                            }
+                        } else {
+                            log::add('homeconnect','debug', "Aucun status");
+                        }
+                    }
+
+                    // Settings
+                    $allSettings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
+                    log::add('homeconnect', 'debug', "tous les Settings " . $allSettings);
+                    if ($allSettings !== false) {
+                        $allSettings = json_decode($allSettings, true);
+                        if (isset($allSettings['data']['settings'])) {
+                            foreach($allSettings['data']['settings'] as $setting) {
+                                log::add('homeconnect', 'debug', "setting key " . $setting['key']);
+                                $path = 'settings/' . $setting['key'];
+                                $settingData = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/' . $path, null, 'GET', array());
+                                if ($settingData !== false) {
+                                    log::add('homeconnect', 'debug', "Setting " . $settingData);
+                                    $settingData = json_decode($settingData, true);
+                                    // A voir si pas d'access on assume readWrite. est-ce correct ?
+                                    if (isset($settingData['data']['constraints']['access']) && $settingData['data']['constraints']['access'] == 'readWrite') {
+                                        log::add('homeconnect', 'debug', "Le settin est readWrite, on crée aussi la commande setting action");
+                                        $actionCmd = $eqLogic->createActionCmd($settingData['data'], $path, 'Setting');
+                                        log::add('homeconnect', 'debug', "On crée aussi la commande setting info");
+                                        $infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, 'Setting', $actionCmd);
+                                        // le setValue est fait dans createInfoCmd
+                                    } else {
+                                        // Commande info sans commande action associée
+                                        log::add('homeconnect', 'debug', "Le setting est non readWrite, on ne crée que la commande setting info");
+                                        $infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, 'Setting');
+                                    }
+                                }
+                            }
+                        } else {
+                            log::add('homeconnect','debug', "Aucun setting");
+                        }
+                    }
 				} else {
-					log::add('homeconnect', 'debug',"Ce type d'appareil n'a pas de programme");
-					$eqLogic->setConfiguration('hasPrograms', false);
-				}
-
-				// Status
-
-				$allStatus = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
-				if ($allStatus !== false) {
-					$allStatus = json_decode($allStatus, true);
-					if (isset($allStatus['data']['status'])) {
-						foreach($allStatus['data']['status'] as $statusData) {
-							log::add('homeconnect', 'debug', "Status " . print_r($statusData, true));
-							$eqLogic->createInfoCmd($statusData, 'status/' . $statusData['key'], 'Status');
-						}
-					} else {
-						log::add('homeconnect','debug', "Aucun status");
-					}
-				}
-				// Settings
-
-				$allSettings = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/settings', null, 'GET', array());
-				log::add('homeconnect', 'debug', "tous les Settings " . $allSettings);
-				if ($allSettings !== false) {
-					$allSettings = json_decode($allSettings, true);
-					if (isset($allSettings['data']['settings'])) {
-						foreach($allSettings['data']['settings'] as $setting) {
-							log::add('homeconnect', 'debug', "setting key " . $setting['key']);
-							$path = 'settings/' . $setting['key'];
-							$settingData = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/' . $path, null, 'GET', array());
-							if ($settingData !== false) {
-								log::add('homeconnect', 'debug', "Setting " . $settingData);
-								$settingData = json_decode($settingData, true);
-								// A voir si pas d'access on assume readWrite. est-ce correct ?
-								if (isset($settingData['data']['constraints']['access']) && $settingData['data']['constraints']['access'] == 'readWrite') {
-									log::add('homeconnect', 'debug', "Le settin est readWrite, on crée aussi la commande setting action");
-									$actionCmd = $eqLogic->createActionCmd($settingData['data'], $path, 'Setting');
-									log::add('homeconnect', 'debug', "On crée aussi la commande setting info");
-									$infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, 'Setting', $actionCmd);
-									// le setValue est fait dans createInfoCmd
-								} else {
-									// Commande info sans commande action associée
-									log::add('homeconnect', 'debug', "Le setting est non readWrite, on ne crée que la commande setting info");
-									$infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, 'Setting');
-								}
-							}
-						}
-					} else {
-						log::add('homeconnect','debug', "Aucun setting");
-					}
-				}
-				} else {
-					// L'appareil n'est pas connecté
-					event::add('jeedom::alert', array(
-						'level' => 'danger',
-						'page' => 'homeconnect',
-						'message' => __("L'appareil n'est pas connecté. Merci de le connecter et de refaire une synchronisation", __FILE__),
-					));
-					sleep(3);
+                    if ($_forced) {
+                        // L'appareil n'est pas connecté
+                        event::add('jeedom::alert', array(
+                            'level' => 'danger',
+                            'page' => 'homeconnect',
+                            'message' => __("L'appareil n'est pas connecté. Merci de le connecter et de refaire une synchronisation", __FILE__),
+                        ));
+                        sleep(3);
+                    } else {
+                        log::add('homeconnect','debug', "L'appareil est connecté, mais les program/settings n'ont pas été demandés");
+                    }
 				}
 			} else {
 			    $eqLogic->applyModuleConfiguration(true);

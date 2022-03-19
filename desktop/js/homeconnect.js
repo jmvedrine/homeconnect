@@ -44,33 +44,54 @@
     });
  });
 
- $('#bt_syncHomeConnect').on('click', function () {
-	bootbox.confirm('{{Pour se synchroniser correctement vos appareils doivent être allumés, WiFi activé et sans programme en cours.}}', function(result) {
-		if (result) {
-			$.ajax({ // fonction permettant de faire de l'ajax
-				type: "POST", // methode de transmission des données au fichier php
-				url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+function syncHC(force = false) {
 
-				data: {
-					action: "syncHomeConnect",
-				},
-
-				dataType: 'json',
-
-				error: function (request, status, error) {
-					handleAjaxError(request, status, error);
-				},
-
-				success: function (data) { // si l'appel a bien fonctionné
-					if (data.state != 'ok') {
-						$('#div_alert').showAlert({message: data.result, level: 'danger'});
-						return;
-					}
-					$('#div_alert').showAlert({message: '{{Synchronisation réussie}}', level: 'success'});
-					location.reload();
-				}
-			});
+	$.ajax({ // fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/homeconnect/core/ajax/homeconnect.ajax.php", // url du fichier php
+		data: {
+			action: "syncHomeConnect",
+			force: force,
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) { // si l'appel a bien fonctionné
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
+			}
+			$('#div_alert').showAlert({message: '{{Synchronisation réussie}}', level: 'success'});
+			location.reload();
 		}
+	});
+}
+
+ $('#bt_syncHomeConnect').on('click', function () {
+	bootbox.dialog({
+      title: '{{Synchronisation}}',
+      message: '<p>{{Vos appareils doivent être allumés, WiFi activé et sans programme en cours.}}</p>{{Oui : Ne récupère que la liste des appareils et des commandes de fichier de configuration}}<br/>{{Forcer : consomme beaucoup de requêtes pour récupérer à nouveau tous les programmes et options}}',
+      buttons: {
+          confirm: {
+              label: '<i class="fa fa-check"></i> {{Oui}}',
+              className: 'btn-success',
+              callback: function(){
+                  syncHC(false);
+              }
+          },
+          force: {
+              label: '<i class="fas fa-check-double"></i> {{Forcer}}',
+              className: 'btn-success',
+              callback: function(){
+                  syncHC(true);
+              }
+          },
+          cancel: {
+              label: '<i class="fa fa-times"></i> {{Annuler}}',
+              className: 'btn btn-danger'
+          },
+        }
 	});
 });
 

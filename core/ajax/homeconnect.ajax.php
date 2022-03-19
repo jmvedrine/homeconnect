@@ -40,7 +40,7 @@ try {
 	}
 
 	if (init('action') == 'syncHomeConnect') {
-		homeconnect::syncHomeConnect();
+		homeconnect::syncHomeConnect(filter_var(init('force'), FILTER_VALIDATE_BOOLEAN));
 		ajax::success();
 	}
 
