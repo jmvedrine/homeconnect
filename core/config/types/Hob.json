@@ -14,6 +14,32 @@
       "logicalId": "connected"
     },
     {
+      "name": "Programme en cours",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
+      },
+      "logicalId": "GET::BSH.Common.Root.ActiveProgram"
+    },
+    {
+      "name": "Programme sélectionné",
+      "type": "info",
+      "subtype": "string",
+      "isVisible": 1,
+      "isHistorized": 0,
+      "unite": "",
+      "configuration": {
+        "repeatEventManagement" : "never",
+        "category": "CommonInfo"
+      },
+      "logicalId": "GET::BSH.Common.Root.SelectedProgram"
+    },
+    {
       "name": "Rafraichir",
       "type": "action",
       "subtype": "other",
