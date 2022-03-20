@@ -4752,32 +4752,10 @@ class homeconnect extends eqLogic {
 				log::add('homeconnect', 'debug', __FUNCTION__ . "Program $programType key = " . $key);
 				// recherche du programme action associé
 
-				$actionCmd = $this->createActionCmd($currentProgram['data'], 'programs/' . strtolower($programType), 'Program');
-				if ($programType == 'Selected') {
-					$infoCmd = $this->getCmd('info', 'GET::BSH.Common.Root.SelectedProgram');
-					if (is_object($infoCmd)) {
-						// On a trouvé la commande info associée.
-						log::add('homeconnect', 'debug', __FUNCTION__ . "setValue sur la commande programme selected " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
-						$actionCmd->setValue($infoCmd->getId());
-						$actionCmd->save();
-					} else {
-						log::add('homeconnect', 'debug', __FUNCTION__ . "Pas de commande info GET::BSH.Common.Root.SelectedProgram");
-					}
-				} else if ($programType == 'Active') {
-					$infoCmd = $this->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
-					if (is_object($infoCmd)) {
-						// On a trouvé la commande info associée.
-						log::add('homeconnect', 'debug', __FUNCTION__ . "setValue sur la commande programme active " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
-						$actionCmd->setValue($infoCmd->getId());
-						$actionCmd->save();
-						// A voir : ne pas la rendre visible ?
-					} else {
-						log::add('homeconnect', 'debug', __FUNCTION__ . "Pas de commande info GET::BSH.Common.Root.ActiveProgram");
-					}
-				}
-
 				$actionCmd = $this->getCmd('action', 'PUT::' . $key);
 				if (!is_object($actionCmd)) {
+					log::add('homeconnect', 'debug', __FUNCTION__ . "Nouveau program $programType key = " . $key);
+					$this->lookProgramAvailable($programType, $currentProgram['data']);
 					log::add('homeconnect', 'debug', __FUNCTION__ . "dans lookProgram pas de commande action " . 'PUT::' . $key);
 					$programName = self::traduction(self::lastSegment('.', $key));
 				} else {
@@ -4807,19 +4785,45 @@ class homeconnect extends eqLogic {
 		return false;
 	}
 
+	public function lookProgramAvailable($programType, $applianceProgram) {
+
+		$programdata = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
+		log::add('homeconnect','debug', 'Appliance Program available' . print_r($programdata, true));
+		if ($programdata !== false && $programdata !== 'SDK.Error.UnsupportedProgram') {
+			$programdata = json_decode($programdata, true);
+
+			if (isset($programdata['data']['key'])) {
+				$actionCmd = $this->createActionCmd($currentProgram['data'], 'programs/' . strtolower($programType), 'Program');
+				if ($programType == 'Selected' || $programType == 'Active') {
+					$infoCmd = $this->getCmd('info', 'GET::BSH.Common.Root.' . $programType . 'Program');
+					if (is_object($infoCmd)) {
+						// On a trouvé la commande info associée.
+						log::add('homeconnect', 'debug', __FUNCTION__ . "setValue sur la commande programme $programType " . $actionCmd->getLogicalId() . " commande info " .$infoCmd->getLogicalId());
+						$actionCmd->setValue($infoCmd->getId());
+						$actionCmd->save();
+					} else {
+						log::add('homeconnect', 'debug', __FUNCTION__ . 'Pas de commande info GET::BSH.Common.Root.' . $programType . 'Program');
+					}
+				}
+			}
+		}
+	}
+
 	public function lookProgramOptions($programType) {
 		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType) .'/options', null, 'GET', array());
 		if ($programOptions !== false) {
-			log::add('homeconnect', 'debug', "options : " . $programOptions);
 			$programOptions = json_decode($programOptions, true);
-			$logicalId = 'GET::' . $value['key'];
-			// MAJ des options et autres informations du programme en cours.
-			foreach ($programOptions['data']['options'] as $value) {
-				log::add('homeconnect', 'debug', "option : " . print_r($value, true));
+			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.UnsupportedProgram') {
+				log::add('homeconnect', 'debug', "options : " . $programOptions);
+				$logicalId = 'GET::' . $value['key'];
+				// MAJ des options et autres informations du programme en cours.
+				foreach ($programOptions['data']['options'] as $value) {
+					log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 
-				$this->createProgramOption('programs/' . strtolower($programType) , $value);
-				//$this->createInfoCmd($value, $optionPath, 'Option');
-				$this->updateInfoCmdValue($logicalId, $value);
+					$this->createProgramOption('programs/' . strtolower($programType) , $value);
+					//$this->createInfoCmd($value, $optionPath, 'Option');
+					$this->updateInfoCmdValue($logicalId, $value);
+				}
 			}
 		}
 	}
