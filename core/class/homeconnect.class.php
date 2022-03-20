@@ -4272,7 +4272,7 @@ class homeconnect extends eqLogic {
 			$cmd = new homeconnectCmd();
 		    log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
 			//$name = self::traduction(self::lastSegment('.', $key));
-			$name = ($cmdData['displayvalue'] != '') ? $cmdData['displayvalue'] : self::traduction(self::lastSegment('.', $key));
+			$name = ($cmdData['displayvalue'] != '') ? self::traduction(self::lastSegment('.', $key)) : $cmdData['displayvalue'];
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Action ' . $name);
 			} else {
@@ -4374,7 +4374,7 @@ class homeconnect extends eqLogic {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
 		    log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
-			$name = ($cmdData['displayvalue'] != '') ? $cmdData['displayvalue'] : self::traduction(self::lastSegment('.', $key));
+			$name = ($cmdData['displayvalue'] != '') ? self::traduction(self::lastSegment('.', $key)) : $cmdData['displayvalue'];
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Info ' . $name);
 			} else {
