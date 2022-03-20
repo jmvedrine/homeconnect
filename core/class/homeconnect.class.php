@@ -3186,7 +3186,7 @@ class homeconnect extends eqLogic {
 					break;
 				case 404:
 					$result = json_decode($result, true);
-					if ($result['error']['key'] == 'SDK.Error.NoProgramActive' || $result['error']['key'] == 'SDK.Error.NoProgramSelected') {
+					if ($result['error']['key'] == 'SDK.Error.NoProgramActive' || $result['error']['key'] == 'SDK.Error.NoProgramSelected' || $result['error']['key'] == 'SDK.Error.UnsupportedProgram') {
 						return $result['error']['key'];
 					}
 					// Not Found", desc: "This resource is not available (e.g. no images on washing machine)"
@@ -3618,7 +3618,7 @@ class homeconnect extends eqLogic {
                                 foreach($programs['data']['programs'] as $applianceProgram) {
                                     $programdata = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/programs/available/' . $applianceProgram['key'], null, 'GET', array());
                                     log::add('homeconnect','debug', 'Appliance Program ' . print_r($programdata, true));
-                                    if ($programdata !== false) {
+                                    if ($programdata !== false && $programdata !== 'SDK.Error.UnsupportedProgram') {
                                         $programdata = json_decode($programdata, true);
                                         if (isset($applianceProgram['constraints']['execution'])) {
                                             if ($applianceProgram['constraints']['execution'] !== 'selectandstart') {
