@@ -4275,12 +4275,7 @@ class homeconnect extends eqLogic {
 	  }
 	 */
 
-	/*
-	 * Fonction exécutée automatiquement tous les jours par Jeedom
-	  public static function cronDayly() {
 
-	  }
-	 */
 	public static function cronDaily() {
         cache::set('homeconnect::requests::total', 0, '');
         cache::set('homeconnect::requests::refresh_token', 0, '');
