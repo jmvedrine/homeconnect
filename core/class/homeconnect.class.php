@@ -3099,7 +3099,7 @@ class homeconnect extends eqLogic {
 	 * @param	$_key		string		Clé de la commande
 	 * @return	$return		string		Valeur traduite de la clé
 	 */
-        $return = $_value;
+        $return = $_key;
 		$tableData = self::appliancesCapabilities();
 		if(array_key_exists($_key, $tableData)){
             $return = $tableData[$_key]['name'];
