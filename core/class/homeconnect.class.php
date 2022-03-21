@@ -4284,9 +4284,12 @@ class homeconnect extends eqLogic {
 		if (!is_object($cmd)) {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
-		    log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
+			log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
 			//$name = self::traduction(self::lastSegment('.', $key));
-			$name = ($cmdData['displayvalue'] != '') ? self::traduction(self::lastSegment('.', $key)) : $cmdData['displayvalue'];
+			//$nameOldTrans = self::traduction(self::lastSegment('.', $key));
+			$nameNewTrans = self::getCmdNameTranslation($key);
+			$name = ($nameNewTrans) ? $nameNewTrans : $cmdData['displayvalue'];
+
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Action ' . $name);
 			} else {
@@ -4387,8 +4390,11 @@ class homeconnect extends eqLogic {
 		if (!is_object($cmd)) {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
-		    log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
-			$name = ($cmdData['displayvalue'] != '') ? self::traduction(self::lastSegment('.', $key)) : $cmdData['displayvalue'];
+			log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
+			//$nameOldTrans = self::traduction(self::lastSegment('.', $key));
+			$nameNewTrans = self::getCmdNameTranslation($key);
+			$name = ($nameNewTrans) ? $nameNewTrans : $cmdData['displayvalue'];
+
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Info ' . $name);
 			} else {
@@ -4771,6 +4777,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', __FUNCTION__ . "Nouveau program $programType key = " . $key);
 					$this->lookProgramAvailable($programType, $currentProgram['data']);
 					log::add('homeconnect', 'debug', __FUNCTION__ . "dans lookProgram pas de commande action " . 'PUT::' . $key);
+		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdValueTranslation($key));
 					$programName = self::traduction(self::lastSegment('.', $key));
 				} else {
 					$programName = $actionCmd->getName();
