@@ -3404,15 +3404,18 @@ class homeconnect extends eqLogic {
 		}
 		$url = self::baseUrl() . self::API_TOKEN_URL;
 		log::add('homeconnect', 'debug', "Url = ". $url);
+
 		// Création du paramêtre POSTFIELDS.
-		$post_fields = 'client_id='. $clientId;
+		$parameters = array();
+		$parameters['client_id'] = $clientId;
 		if (!config::byKey('demo_mode','homeconnect')) {
-			$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
+			$parameters['client_secret'] = config::byKey('client_secret','homeconnect','',true);
 		}
-		$post_fields .= '&redirect_uri='. network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
-		$post_fields .= '&grant_type=authorization_code';
-		$post_fields .= '&code='.config::byKey('auth','homeconnect');
-		log::add('homeconnect', 'debug', "Post fields = ". $post_fields);
+		$parameters['redirect_uri'] = network::getNetworkAccess('external') . '/plugins/homeconnect/core/php/callback.php?apikey=' . jeedom::getApiKey('homeconnect');
+		$parameters['grant_type'] = 'authorization_code';
+		$parameters['code'] = config::byKey('auth','homeconnect');
+		log::add('homeconnect', 'debug', "Post fields = ". json_encode($parameters));
+
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
@@ -3420,7 +3423,7 @@ class homeconnect extends eqLogic {
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_POST => True,
-			CURLOPT_POSTFIELDS => $post_fields,
+			CURLOPT_POSTFIELDS => self::buildQueryString($parameters),
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
@@ -3479,14 +3482,16 @@ class homeconnect extends eqLogic {
 		}
 		$url = self::baseUrl() . self::API_TOKEN_URL;
 		log::add('homeconnect', 'debug', "Url = ". $url);
-		// Création du paramêtre POSTFIELDS.
-		$post_fields = 'grant_type=refresh_token';
-		if (!config::byKey('demo_mode','homeconnect')) {
-			$post_fields .= '&client_secret='. config::byKey('client_secret','homeconnect','',true);
-		}
-		$post_fields .= '&refresh_token='.	config::byKey('refresh_token','homeconnect','',true);
 
-		log::add('homeconnect', 'debug', "Post fields = ". $post_fields);
+		// Création du paramêtre POSTFIELDS.
+		$parameters = array();
+		$parameters['grant_type'] = 'refresh_token';
+		if (!config::byKey('demo_mode','homeconnect')) {
+			$parameters['client_secret'] = config::byKey('client_secret','homeconnect','',true);
+		}
+		$parameters['refresh_token'] = config::byKey('refresh_token','homeconnect','',true);
+		log::add('homeconnect', 'debug', "Post fields = ". json_encode($parameters));
+
 		// Récupération du Token.
 		$curl = curl_init();
 		$options = [
@@ -3494,7 +3499,7 @@ class homeconnect extends eqLogic {
 			CURLOPT_RETURNTRANSFER => True,
 			CURLOPT_SSL_VERIFYPEER => FALSE,
 			CURLOPT_POST => True,
-			CURLOPT_POSTFIELDS => $post_fields,
+			CURLOPT_POSTFIELDS => self::buildQueryString($parameters),
 			];
 		curl_setopt_array($curl, $options);
 		$response = json_decode(curl_exec($curl), true);
