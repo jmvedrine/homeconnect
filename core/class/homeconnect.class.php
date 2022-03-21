@@ -3106,7 +3106,7 @@ class homeconnect extends eqLogic {
 		} else {
 		    log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' est introuvable');
         }
-        return $return;
+        return false;
     }
 
 	public static function baseUrl() {
