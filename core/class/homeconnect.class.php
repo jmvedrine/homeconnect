@@ -3166,6 +3166,12 @@ class homeconnect extends eqLogic {
 		$result = curl_exec($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
+
+		$totalRequests = intval(cache::byKey('homeconnect::requests::total')->getValue());
+		$totalRequests++;
+        cache::set('homeconnect::requests::total',$totalRequests,'');
+		log::add('homeconnect','debug',"Nombre de requêtes envoyées aujourd'hui " . $totalRequests);
+
 		if ($code == '200' || $code == '204') {
 			log::add('homeconnect','debug',"La requête $method	: $url a réussi code = " . $code . " résultat = ".$result);
 			return $result;
@@ -3495,6 +3501,10 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug', "Response = ". print_r($response, true));
 		$http_code = curl_getinfo($curl,CURLINFO_HTTP_CODE);
 		curl_close ($curl);
+
+		$tokenRequests = intval(cache::byKey('homeconnect::requests::refresh_token')->getValue());
+        $tokenRequests++;
+        cache::set('homeconnect::requests::refresh_token',$tokenRequests,'');
 
 		// Vérification du code réponse.
 		if($http_code != 200) {
@@ -4258,6 +4268,10 @@ class homeconnect extends eqLogic {
 
 	  }
 	 */
+	public static function cronDaily() {
+        cache::set('homeconnect::requests::total', 0, '');
+        cache::set('homeconnect::requests::refresh_token', 0, '');
+	}
 
 
 
