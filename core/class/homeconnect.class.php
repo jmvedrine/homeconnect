@@ -3828,6 +3828,14 @@ class homeconnect extends eqLogic {
 	 */
 
         log::add('homeconnectd', 'info', 'Événement : ' . $string);
+        $isError = json_decode($string,true);
+        if (is_array($isError) && array_key_exists('error', $isError)) {
+            if (array_key_exists('key', $isError['error']) && $isError['error']['key'] == 'invalid_token') {
+                log::add('homeconnectd', 'info', 'Régénération du token demandée');
+                self::tokenRefresh();
+                self::deamon_start();
+            }
+        }
 
         $length = strlen($string);
         preg_match('/event:(?P<event>\w+)\s*data:(?P<data>({.*}))/',$string, $match);
