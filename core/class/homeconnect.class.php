@@ -3092,22 +3092,21 @@ class homeconnect extends eqLogic {
         return $return;
     }
 
-  	public static function getCmdNameTranslation($_key) {
-	/**
-	 * Récupère la traduction du nom d'une commande
-	 *
-	 * @param	$_key		string		Clé de la commande
-	 * @return	$return		string		Valeur traduite de la clé
-	 */
-        $return = $_key;
-		$tableData = self::appliancesCapabilities();
-		if(array_key_exists($_key, $tableData)){
-            $return = $tableData[$_key]['name'];
-		} else {
-		    log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' est introuvable');
-        }
-        return false;
-    }
+		public static function getCmdNameTranslation($_key) {
+			/**
+			* Récupère la traduction du nom d'une commande
+			*
+			* @param	$_key		string		Clé de la commande
+			* @return	$return		string		Valeur traduite de la clé
+			*/
+			$tableData = self::appliancesCapabilities();
+			if (isset($tableData[$_key])) {
+				return $tableData[$_key]['name'];
+			} else {
+				log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' est introuvable');
+			}
+			return false;
+		}
 
 	public static function baseUrl() {
 		if (config::byKey('demo_mode','homeconnect')) {
