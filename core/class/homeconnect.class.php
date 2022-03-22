@@ -4808,7 +4808,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', __FUNCTION__ . "Nouveau program $programType key = " . $key);
 					$this->lookProgramAvailable($programType, $currentProgram['data']);
 					log::add('homeconnect', 'debug', __FUNCTION__ . "dans lookProgram pas de commande action " . 'PUT::' . $key);
-		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdValueTranslation($key));
+		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdNameTranslation($key));
 					$programName = self::traduction(self::lastSegment('.', $key));
 				} else {
 					$programName = $actionCmd->getName();
