@@ -4301,6 +4301,16 @@ class homeconnect extends eqLogic {
 	}
 
 
+	public static function setCmdName($_key, $_cmdData) {
+
+		$nameNewTrans = self::getCmdNameTranslation($_key);
+		if ($nameNewTrans) {
+			return $nameNewTrans;
+		} else if (array_key_exists('displayvalue', $_cmdData)) {
+			return $_cmdData['displayvalue'];
+		}
+		return $_key;
+	}
 
 	/** *************************** Méthodes d'instance************************ */
 	public function createActionCmd($cmdData, $path, $category) {
@@ -4311,11 +4321,8 @@ class homeconnect extends eqLogic {
 		if (!is_object($cmd)) {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
-			log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
-			//$name = self::traduction(self::lastSegment('.', $key));
-			//$nameOldTrans = self::traduction(self::lastSegment('.', $key));
-			$nameNewTrans = self::getCmdNameTranslation($key);
-			$name = ($nameNewTrans) ? $nameNewTrans : $cmdData['displayvalue'];
+			$name = self::setCmdName($key, $cmdData);
+			log::add('homeconnect', 'debug', "Nom de la nouvelle commande : " . $name);
 
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Action ' . $name);
@@ -4417,10 +4424,8 @@ class homeconnect extends eqLogic {
 		if (!is_object($cmd)) {
 			// La commande n'existe pas, on la créée
 			$cmd = new homeconnectCmd();
-			log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdName= " . self::getCmdNameTranslation($key));
-			//$nameOldTrans = self::traduction(self::lastSegment('.', $key));
-			$nameNewTrans = self::getCmdNameTranslation($key);
-			$name = ($nameNewTrans) ? $nameNewTrans : $cmdData['displayvalue'];
+			$name = self::setCmdName($key, $cmdData);
+			log::add('homeconnect', 'debug', "Nom de la nouvelle commande : " . $name);
 
 			if ($this->cmdNameExists($name)) {
 				$cmd->setName('Info ' . $name);
