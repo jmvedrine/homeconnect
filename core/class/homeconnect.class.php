@@ -3827,8 +3827,9 @@ class homeconnect extends eqLogic {
 	 * @return	$length		string		Longueur de la chaine.
 	 */
 
-        log::add('homeconnectd', 'info', 'Événement : ' . $string);
-        $isError = json_decode($string,true);
+        $length = strlen($string);
+
+        $isError = json_decode($string, true);
         if (is_array($isError) && array_key_exists('error', $isError)) {
             if (array_key_exists('key', $isError['error']) && $isError['error']['key'] == 'invalid_token') {
                 log::add('homeconnectd', 'info', 'Régénération du token demandée');
@@ -3837,15 +3838,33 @@ class homeconnect extends eqLogic {
             }
         }
 
-        $length = strlen($string);
-        preg_match('/event:(?P<event>\w+)\s*data:(?P<data>({.*}))/',$string, $match);
+        $events = array();
+        log::add('homeconnectd', 'info', 'Événement bruts : ' . $string);
+        foreach (explode("\r\n", $string) as $line) {
+            if (strstr($line, 'event:')) {
+                $event = array('haId' => NULL,'event' => NULL,'data' => array());
+                foreach (explode("\n", $line) as $event_data) {
+                    if (strstr($event_data, 'event:')) {
+                        $event['event'] = trim(strtolower(substr($event_data, 6)));
+                    } else if (strstr($event_data, 'id:')) {
+                        $event['haId'] = trim(substr($event_data, 3));
+                    } else if (strstr($event_data, 'data:')) {
+                        if ($json = json_decode(trim(substr($event_data, 5)), true)) {
+                            $event['data'] = $json;
+                        }
+                    }
+                }
+                if ($event['haId']) {
+                    $events[] = $event;
+                }
+            }
+        }
+        log::add('homeconnectd', 'info', 'Événement capturés : ' . print_r($events, true));
 
-        if (is_array($match) && array_key_exists('data', $match)) {
-            log::add('homeconnectd', 'info', 'Type d\'événement : ' . $match['event']);
-            $array = json_decode($match['data'],true);
-            if (is_array($array) && $array['items'] != '' && $array['haId'] != '') {
-                $eqLogic = eqLogic::byLogicalId($array['haId'], 'homeconnect');
-                foreach ($array['items'] as $items) {
+        foreach ($events as $evenement) {
+            if ($evenement['data'] && isset($evenement['data']['items'])) {
+                foreach ($evenement['data']['items'] as $items) {
+                    $eqLogic = eqLogic::byLogicalId($evenement['haId'], 'homeconnect');
                     if (is_object($eqLogic) && $eqLogic->getIsEnable()){
                         $cmdLogicalId = 'GET::' . $items['key'];
                         $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
