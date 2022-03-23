@@ -4573,15 +4573,17 @@ class homeconnect extends eqLogic {
 		}
     }
 
-	public function cmdNameExists($name) {
+    public function cmdNameExists($name) {
+		$cleanName = substr(cleanComponanteName($name), 0, 127);
 		$allCmd = cmd::byEqLogicId($this->getId());
 		foreach($allCmd as $u) {
-			if($name == $u->getName()) {
+			if($cleanName == $u->getName()) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	public function getImage() {
 		$filename = 'plugins/homeconnect/core/config/images/' . $this->getConfiguration('type') . '.png';
 		if(file_exists(__DIR__.'/../../../../'.$filename)){
