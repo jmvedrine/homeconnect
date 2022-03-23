@@ -4573,10 +4573,9 @@ class homeconnect extends eqLogic {
 		}
     }
 
-    public function cmdNameExists($name) {
+	public function cmdNameExists($name) {
 		$cleanName = substr(cleanComponanteName($name), 0, 127);
-		$allCmd = cmd::byEqLogicId($this->getId());
-		foreach($allCmd as $u) {
+		foreach ($this->getCmd() as $liste_cmd) {
 			if($cleanName == $u->getName()) {
 				return true;
 			}
