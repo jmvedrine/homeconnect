@@ -943,6 +943,94 @@ class homeconnect extends eqLogic {
                     'Dishwasher'
                 )
             ) ,
+            'Cooking.Hob.Program.PowerLevelMode' => array(
+                'name' => __("Niveau de puissance", __FILE__) ,
+                'action' => 'Program'
+            ) ,
+            'Cooking.Hob.Option.ZoneSelector' => array(
+                'name' => __("Sélecteur de zone", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Enumeration',
+                'available' => array(
+                    'Hob'
+                ) ,
+                'enum' => array(
+                    'Cooking.Hob.EnumType.ZoneSelector.RearLeft' => array(
+                        'name' => __("Arrière gauche", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.ZoneSelector.FrontLeft' => array(
+                        'name' => __("Avant gauche", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.ZoneSelector.RearRight' => array(
+                        'name' => __("Arrière droite", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.ZoneSelector.FrontRight' => array(
+                        'name' => __("Avant droite", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                )
+            ) ,
+            'Cooking.Hob.Option.PowerLevel' => array(
+                'name' => __("Niveau de puissance", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Enumeration',
+                'available' => array(
+                    'Hob'
+                ) ,
+                'enum' => array(
+                    'Cooking.Hob.EnumType.PowerLevel.Off' => array(
+                        'name' => __("Éteint", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.10' => array(
+                        'name' => __("10%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.20' => array(
+                        'name' => __("20%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.30' => array(
+                        'name' => __("30%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.40' => array(
+                        'name' => __("40%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.50' => array(
+                        'name' => __("50%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.60' => array(
+                        'name' => __("60%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.70' => array(
+                        'name' => __("70%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.80' => array(
+                        'name' => __("80%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                    'Cooking.Hob.EnumType.PowerLevel.90' => array(
+                        'name' => __("90%", __FILE__) ,
+                        'action' => 'Status'
+                    ) ,
+                ) ,
+            ) ,
+            'Cooking.Hob.Option.JoinZone' => array(
+                'name' => __("Joindre une zone", __FILE__) ,
+                'action' => 'Option',
+                'type' => 'Boolean',
+                'available' => array(
+                    'Hob'
+                ) ,
+            ) ,
             'Cooking.Oven.Program.HeatingMode.PreHeating' => array(
                 'name' => __("Préchauffage", __FILE__) ,
                 'action' => 'Program'
