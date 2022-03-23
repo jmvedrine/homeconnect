@@ -4913,14 +4913,14 @@ class homeconnect extends eqLogic {
 
 				$actionCmd = $this->getCmd('action', 'PUT::' . $key);
 				if (!is_object($actionCmd)) {
-					log::add('homeconnect', 'debug', __FUNCTION__ . "Nouveau program $programType key = " . $key);
+					log::add('homeconnect', 'debug', __FUNCTION__ . " Nouveau program $programType key = " . $key);
 					$this->lookProgramAvailable($programType, $currentProgram['data']);
-					log::add('homeconnect', 'debug', __FUNCTION__ . "dans lookProgram pas de commande action " . 'PUT::' . $key);
+					log::add('homeconnect', 'debug', __FUNCTION__ . " Pas de commande action " . 'PUT::' . $key);
 		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdNameTranslation($key));
 					$programName = self::traduction(self::lastSegment('.', $key));
 				} else {
 					$programName = $actionCmd->getName();
-					log::add('homeconnect', 'debug', __FUNCTION__ . "Nom de la commande action " . $programName);
+					log::add('homeconnect', 'debug', __FUNCTION__ . " Nom de la commande action " . $programName);
 				}
 				// MAJ de la commande info ProgramSelected ou ProgramActive.
 				$cmd = $this->getCmd('info', $nameCmd);
