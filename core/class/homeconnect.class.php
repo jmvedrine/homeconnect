@@ -5394,8 +5394,15 @@ class homeconnectCmd extends cmd {
 					$parameters['data']['key'] = $this->getConfiguration('key', '');
 				}
 				if ($this->getConfiguration('value') !== '') {
-					if ($this->getConfiguration('value') === true || $this->getConfiguration('value') === false) {
-						$parameters['data']['value'] = $this->getConfiguration('value');
+					if (is_bool($this->getConfiguration('value'))) {
+						if ($this->getValue() != '') {
+							$cmdValue = cmd::byId($this->getValue());
+							if (is_object($cmdValue)) {
+								$parameters['data']['value'] = !$cmdValue->execCmd();
+							}
+						} else {
+							$parameters['data']['value'] = $this->getConfiguration('value');
+						}
 					} else {
 						$parameters['data']['value'] = str_replace(array_keys($replace),$replace,$this->getConfiguration('value', ''));
 					}
