@@ -4865,7 +4865,7 @@ class homeconnect extends eqLogic {
 			$programdata = json_decode($programdata, true);
 
 			if (isset($programdata['data']['key'])) {
-				$actionCmd = $this->createActionCmd($currentProgram['data'], 'programs/' . strtolower($programType), 'Program');
+				$actionCmd = $this->createActionCmd($programdata['data'], 'programs/' . strtolower($programType), 'Program');
 				if ($programType == 'Selected' || $programType == 'Active') {
 					$infoCmd = $this->getCmd('info', 'GET::BSH.Common.Root.' . $programType . 'Program');
 					if (is_object($infoCmd)) {
@@ -4885,7 +4885,7 @@ class homeconnect extends eqLogic {
 		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType) .'/options', null, 'GET', array());
 		if ($programOptions !== false) {
 			$programOptions = json_decode($programOptions, true);
-			if (isset($currentProgram['data']['key']) && $currentProgram['data']['key'] !== 'SDK.Error.UnsupportedProgram') {
+			if (isset($programOptions['data']['key']) && $programOptions['data']['key'] !== 'SDK.Error.UnsupportedProgram') {
 				log::add('homeconnect', 'debug', "options : " . $programOptions);
 				$logicalId = 'GET::' . $value['key'];
 				// MAJ des options et autres informations du programme en cours.
