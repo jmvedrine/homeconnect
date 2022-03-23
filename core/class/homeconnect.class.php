@@ -944,7 +944,7 @@ class homeconnect extends eqLogic {
                 )
             ) ,
             'Cooking.Hob.Program.PowerLevelMode' => array(
-                'name' => __("Niveau de puissance", __FILE__) ,
+                'name' => __("Mode niveau de puissance", __FILE__) ,
                 'action' => 'Program'
             ) ,
             'Cooking.Hob.Option.ZoneSelector' => array(
@@ -5332,7 +5332,7 @@ class homeconnectCmd extends cmd {
 
 			// Il faut récupérer la valeur du départ différé et la mettre dans le payload.
 			$cache = cache::byKey('homeconnect::startinrelative::'.$eqLogic->getId());
-            $startinrelative = $cache->getValue();
+			$startinrelative = $cache->getValue();
 			if ($startinrelative !== '' && $startinrelative !== 0) {
 				$payload .= ',"options": [' . $startinrelative . ']';
 			}
@@ -5407,7 +5407,7 @@ class homeconnectCmd extends cmd {
 				if ($this->getConfiguration('type', '') !== '') {
 					$parameters['data']['type'] = $this->getConfiguration('type', '');
 				}
-				$payload= json_encode($parameters);
+				$payload = json_encode($parameters);
 
 				$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $path;
 				log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
