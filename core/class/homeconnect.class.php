@@ -4630,16 +4630,35 @@ class homeconnect extends eqLogic {
 	public function loadCmdFromConf($type) {
 		log::add('homeconnect', 'debug',"Fonction loadCmdFromConf($type)");
 		if (!is_file(dirname(__FILE__) . '/../config/types/' . $type . '.json')) {
-			 log::add('homeconnect', 'debug', "no config file for type $type");
+			 log::add('homeconnect', 'debug', "Fichier introuvable : $type");
 			return;
 		}
-		$device = is_json(file_get_contents(dirname(__FILE__) . '/../config/types/' . $type . '.json'), array());
+		$content = file_get_contents(dirname(__FILE__) . '/../config/types/' . $type . '.json');
+		if (!is_json($content)) {
+			log::add('homeconnect', 'debug', "Pas un json : $type");
+			return;
+		}
+		$device = json_decode($content, true);
 		if (!is_array($device) || !isset($device['commands'])) {
-			log::add('homeconnect', 'debug', "no command for type $type");
+			log::add('homeconnect', 'debug', "Pas un tableau ou aucune commande : $type");
 			return true;
 		}
-		$this->import($device);
-		sleep(1);
+		foreach ($device['commands'] as $command) {
+			$cmd = null;
+			foreach ($this->getCmd() as $liste_cmd) {
+				if ((isset($command['logicalId']) && $liste_cmd->getLogicalId() == $command['logicalId'])
+				|| (isset($command['name']) && $liste_cmd->getName() == $command['name'])) {
+					$cmd = $liste_cmd;
+					break;
+				}
+			}
+			if ($cmd == null || !is_object($cmd)) {
+				$cmd = new homeconnectCmd();
+				$cmd->setEqLogic_id($this->getId());
+				utils::a2o($cmd, $command);
+				$cmd->save();
+			}
+		}
 		event::add('jeedom::alert', array(
 			'level' => 'warning',
 			'page' => 'homeconnect',
@@ -5072,10 +5091,16 @@ class homeconnect extends eqLogic {
 	 * @param			|*Cette fonction ne retourne pas de valeur*|
 	 * @return			|*Cette fonction ne retourne pas de valeur*|
 	 */
+		log::add('homeconnect', 'debug', __FUNCTION__ . " début");
+
 		if ($this->getConfiguration('applyType') != $this->getConfiguration('type')) {
 			$this->applyModuleConfiguration();
+			//A voir : Supprimer toutes les commandes ici
 			$this->refreshWidget();
 		}
+		//Parce qu'elles sont de toute façon mises à jour ici.
+		$this->loadCmdFromConf($this->getConfiguration('type'));
+		log::add('homeconnect', 'debug', __FUNCTION__ . " fin");
 	}
 
 	public function preUpdate() {
