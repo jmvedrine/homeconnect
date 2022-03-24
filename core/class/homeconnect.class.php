@@ -31,6 +31,12 @@ class homeconnect extends eqLogic {
 	const API_REQUEST_URL = "/api/homeappliances";
 	const API_EVENTS_URL = "/api/homeappliances/events";
 
+	/** *************************** Attributs statiques *********************** */
+
+	public static $_widgetPossibility = array('custom' => true);
+
+	/** *************************** Méthodes statiques ************************ */
+
     public static function appliancesList() {
         $applicances = array(
             'Oven' => __("Four", __FILE__),
@@ -3140,20 +3146,6 @@ class homeconnect extends eqLogic {
         return $KEYS;
     }
 
-	/** *************************** Attributs ********************************* */
-
-	public static $_widgetPossibility = array('custom' => true);
-
-	/** *************************** Attributs statiques *********************** */
-
-
-
-	/** *************************** Méthodes ********************************** */
-
-
-
-	/** *************************** Méthodes statiques ************************ */
-
   	public static function getCmdValueTranslation($_key, $_value) {
 	/**
 	 * Récupère la traduction de la valeur d'une commande
@@ -3180,21 +3172,98 @@ class homeconnect extends eqLogic {
         return $return;
     }
 
-		public static function getCmdNameTranslation($_key) {
-			/**
-			* Récupère la traduction du nom d'une commande
-			*
-			* @param	$_key		string		Clé de la commande
-			* @return	$return		string		Valeur traduite de la clé
-			*/
-			$tableData = self::appliancesCapabilities();
-			if (isset($tableData[$_key])) {
-				return $tableData[$_key]['name'];
-			} else {
-				log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' est introuvable');
-			}
-			return false;
+	public static function getCmdNameTranslation($_key) {
+		/**
+		* Récupère la traduction du nom d'une commande
+		*
+		* @param	$_key		string		Clé de la commande
+		* @return	$return		string		Valeur traduite de la clé
+		*/
+		$tableData = self::appliancesCapabilities();
+		if (isset($tableData[$_key])) {
+			return $tableData[$_key]['name'];
+		} else {
+			log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' est introuvable');
 		}
+		return false;
+	}
+
+    public static function deamon_info() {
+
+        $return = array();
+        $return['log'] = 'homeconnect';
+        $return['state'] = 'nok';
+        $pid = trim( shell_exec ('ps ax | grep "/homeconnectd.php" | grep -v "grep" | wc -l') );
+        if ($pid != '' && $pid != '0') {
+            $return['state'] = 'ok';
+        }
+        if (config::byKey('client_id','homeconnect','') != '' && config::byKey('client_secret','homeconnect','') != '') {
+            $return['launchable'] = 'ok';
+        } else{
+            $return['launchable'] = 'nok';
+            $return['launchable_message'] = __('Le client ou la clé ne sont pas configurés.', __FILE__);
+        }
+        return $return;
+    }
+
+    public static function deamon_start($_debug = false) {
+        log::add('homeconnect', 'info', 'Lancement du service homeconnect');
+        $deamon_info = self::deamon_info();
+        if ($deamon_info['launchable'] != 'ok') {
+            throw new Exception(__('Veuillez vérifier la configuration', __FILE__));
+        }
+        if ($deamon_info['state'] == 'ok') {
+            self::deamon_stop();
+            sleep(2);
+        }
+        log::add('homeconnectd', 'info', 'Lancement du démon homeconnect');
+        $cmd = substr(dirname(__FILE__),0,strpos (dirname(__FILE__),'/core/class')).'/resources/homeconnectd.php';
+        log::add('homeconnectd', 'debug', 'Deamon cmd : ' . $cmd);
+
+        $result = exec('sudo php ' . $cmd . ' >> ' . log::getPathToLog('homeconnectd') . ' 2>&1 &');
+        if (strpos(strtolower($result), 'error') !== false || strpos(strtolower($result), 'traceback') !== false) {
+            log::add('homeconnectd', 'error', 'Deamon error : ' . $result);
+            return false;
+        }
+        sleep(1);
+        $i = 0;
+        while ($i < 30) {
+            $deamon_info = self::deamon_info();
+            if ($deamon_info['state'] == 'ok') {
+                break;
+            }
+            sleep(1);
+            $i++;
+        }
+        if ($i >= 30) {
+            log::add('homeconnectd', 'error', 'Impossible de lancer le démon homeconnectd', 'unableStartDeamon');
+            return false;
+        }
+        log::add('homeconnectd', 'info', 'Démon homeconnectd lancé');
+        return true;
+    }
+
+    public static function deamon_stop() {
+        log::add('homeconnectd', 'info', 'Arrêt du service homeconnect');
+        $cmd='/homeconnectd.php';
+        exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
+        sleep(1);
+        exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
+        sleep(1);
+        $deamon_info = self::deamon_info();
+        if ($deamon_info['state'] == 'ok') {
+            exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
+            sleep(1);
+        } else {
+            return true;
+        }
+        $deamon_info = self::deamon_info();
+        if ($deamon_info['state'] == 'ok') {
+            exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
+            sleep(1);
+            return true;
+        }
+    }
 
 	public static function baseUrl() {
 		if (config::byKey('demo_mode','homeconnect')) {
@@ -3203,6 +3272,7 @@ class homeconnect extends eqLogic {
 			return "https://api.home-connect.com";
 		}
 	}
+
 	protected static function buildQueryString(array $params) {
 		return http_build_query($params, null, '&', PHP_QUERY_RFC3986);
 	}
@@ -3926,7 +3996,7 @@ class homeconnect extends eqLogic {
         }
 
         $events = array();
-        log::add('homeconnectd', 'info', 'Événement bruts : ' . $string);
+        log::add('homeconnectd', 'info', 'Événement brut : ' . $string);
         foreach (explode("\r\n", $string) as $line) {
             if (strstr($line, 'event:')) {
                 $event = array('haId' => NULL,'event' => NULL,'data' => array());
@@ -3946,7 +4016,7 @@ class homeconnect extends eqLogic {
                 }
             }
         }
-        log::add('homeconnectd', 'info', 'Événement capturés : ' . print_r($events, true));
+        log::add('homeconnectd', 'info', 'Événements capturés : ' . print_r($events, true));
 
         foreach ($events as $evenement) {
             if ($evenement['data'] && isset($evenement['data']['items'])) {
@@ -4350,15 +4420,8 @@ class homeconnect extends eqLogic {
 			$eqLogic->remove();
 		}
 	}
-	/*
-	 * Fonction exécutée automatiquement toutes les 15 minutes par Jeedom */
-	/*public static function cron15() {
-	  }
-	*/
 
-	/*
-	 * Fonction exécutée automatiquement toutes les minutes par Jeedom */
-	  public static function cron() {
+	public static function cron() {
 		$autorefresh = config::byKey('autorefresh', 'homeconnect');
 		if ($autorefresh != '') {
 			try {
@@ -4373,20 +4436,12 @@ class homeconnect extends eqLogic {
                 log::add('homeconnect', 'error', __("Erreur lors de l'exécution du cron ", __FILE__) . $exc->getMessage());
             }
 		}
-	  }
-	/*
-	 * Fonction exécutée automatiquement toutes les heures par Jeedom
-	  public static function cronHourly() {
-
-	  }
-	 */
-
+	}
 
 	public static function cronDaily() {
         cache::set('homeconnect::requests::total', 0, '');
         cache::set('homeconnect::requests::refresh_token', 0, '');
 	}
-
 
 	public static function setCmdName($_key, $_cmdData) {
 
@@ -4402,6 +4457,12 @@ class homeconnect extends eqLogic {
 	/** *************************** Méthodes d'instance************************ */
 	public function createActionCmd($cmdData, $path, $category) {
 		$key = $cmdData['key'];
+		if (!$cmdData['type'] || $cmdData['type'] == '') {
+			$nameNewTrans = self::getCmdNameTranslation($key);
+			if ($nameNewTrans) {
+				$cmdData['type'] = $nameNewTrans['type'];
+			}
+		}
 		log::add('homeconnect', 'debug', "Création d'une commande action key=" . $key . " path=" . $path . " category= " . $category);
 		$logicalIdCmd = 'PUT::' . $key;
 		$cmd = $this->getCmd(null, $logicalIdCmd);
@@ -4505,6 +4566,12 @@ class homeconnect extends eqLogic {
 
 	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
+		if (!$cmdData['type'] || $cmdData['type'] == '') {
+			$nameNewTrans = self::getCmdNameTranslation($key);
+			if ($nameNewTrans) {
+				$cmdData['type'] = $nameNewTrans['type'];
+			}
+		}
 		log::add('homeconnect', 'debug', "Création d'une commande info key=" . $key . " path=" . $path . " category= " . $category);
 		$logicalIdCmd = 'GET::' . $key;
 		$cmd = $this->getCmd(null, $logicalIdCmd);
@@ -4692,10 +4759,6 @@ class homeconnect extends eqLogic {
 			return true;
 		}
 		$this->import($device, $_remove);
-	}
-
-	public function preInsert() {
-
 	}
 
 	public function isConnected() {
@@ -5010,89 +5073,6 @@ class homeconnect extends eqLogic {
 		}
 	}
 
-    public static function deamon_info() {
-        //log::add('homeconnect', 'info', 'Etat du deamon homeconnectd');
-
-        $return = array();
-        $return['log'] = 'homeconnect';
-        $return['state'] = 'nok';
-        $pid = trim( shell_exec ('ps ax | grep "/homeconnectd.php" | grep -v "grep" | wc -l') );
-        if ($pid != '' && $pid != '0') {
-            $return['state'] = 'ok';
-        }
-        if (config::byKey('client_id','homeconnect','') != '' && config::byKey('client_secret','homeconnect','') != '') {
-            $return['launchable'] = 'ok';
-        } else{
-            $return['launchable'] = 'nok';
-            $return['launchable_message'] = __('Le client ou la clé ne sont pas configurés.', __FILE__);
-        }
-        //log::add('homeconnect', 'info', 'Statut : ' . $return['state']);
-        return $return;
-    }
-
-  /**********************/
-
-    public static function deamon_start($_debug = false) {
-        log::add('homeconnect', 'info', 'Lancement du service homeconnect');
-        $deamon_info = self::deamon_info();
-        if ($deamon_info['launchable'] != 'ok') {
-            throw new Exception(__('Veuillez vérifier la configuration', __FILE__));
-        }
-        if ($deamon_info['state'] == 'ok') {
-            self::deamon_stop();
-            sleep(2);
-        }
-        log::add('homeconnectd', 'info', 'Lancement du démon homeconnect');
-        $cmd = substr(dirname(__FILE__),0,strpos (dirname(__FILE__),'/core/class')).'/resources/homeconnectd.php';
-        log::add('homeconnectd', 'debug', 'Deamon cmd : ' . $cmd);
-
-        $result = exec('sudo php ' . $cmd . ' >> ' . log::getPathToLog('homeconnectd') . ' 2>&1 &');
-        if (strpos(strtolower($result), 'error') !== false || strpos(strtolower($result), 'traceback') !== false) {
-            log::add('homeconnectd', 'error', 'Deamon error : ' . $result);
-            return false;
-        }
-        sleep(1);
-        $i = 0;
-        while ($i < 30) {
-            $deamon_info = self::deamon_info();
-            if ($deamon_info['state'] == 'ok') {
-                break;
-            }
-            sleep(1);
-            $i++;
-        }
-        if ($i >= 30) {
-            log::add('homeconnectd', 'error', 'Impossible de lancer le démon homeconnectd', 'unableStartDeamon');
-            return false;
-        }
-        log::add('homeconnectd', 'info', 'Démon homeconnectd lancé');
-        return true;
-    }
-
-  /**********************/
-
-    public static function deamon_stop() {
-        log::add('homeconnectd', 'info', 'Arrêt du service homeconnect');
-        $cmd='/homeconnectd.php';
-        exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
-        sleep(1);
-        exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
-        sleep(1);
-        $deamon_info = self::deamon_info();
-        if ($deamon_info['state'] == 'ok') {
-            exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
-            sleep(1);
-        } else {
-            return true;
-        }
-        $deamon_info = self::deamon_info();
-        if ($deamon_info['state'] == 'ok') {
-            exec('sudo kill -9 $(ps aux | grep "'.$cmd.'" | awk \'{print $2}\')');
-            sleep(1);
-            return true;
-        }
-    }
-
 	public function updateStates() {
 		if ($this->isConnected()) {
 			log::add('homeconnect', 'debug', "MAJ des états ".$this->getLogicalId());
@@ -5164,14 +5144,6 @@ class homeconnect extends eqLogic {
 		}
 	}
 
-	public function postInsert() {
-
-	}
-
-	public function preSave() {
-
-	}
-
 	public function postSave() {
 	/**
 	 * Création / MAJ des commandes des appareils.
@@ -5191,71 +5163,9 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug', __FUNCTION__ . " fin");
 	}
 
-	public function preUpdate() {
-
-	}
-
-	public function postUpdate() {
-
-	}
-
-	public function preRemove() {
-
-	}
-
-	public function postRemove() {
-
-	}
-
-	/*
-	 * Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
-	  public function toHtml($_version = 'dashboard') {
-
-	  }
-	 */
-
-
-
-	/** *************************** Getters ********************************* */
-
-
-
-	/** *************************** Setters ********************************* */
-
-
-
 }
 
 class homeconnectCmd extends cmd {
-
-	/** *************************** Constantes ******************************** */
-
-
-
-	/** *************************** Attributs ********************************* */
-
-
-
-	/** *************************** Attributs statiques *********************** */
-
-
-
-	/** *************************** Méthodes ********************************** */
-
-
-
-	/** *************************** Méthodes statiques ************************ */
-
-
-
-	/** *************************** Méthodes d'instance************************ */
-
-	/*
-	 * Non obligatoire permet de demander de ne pas supprimer les commandes même si elles ne sont pas dans la nouvelle configuration de l'équipement envoyé en JS
-	  public function dontRemoveCmd() {
-	  return true;
-	  }
-	 */
 
 	public function execute($_options = array()) {
 		// Bien penser dans les fichiers json à mettre dans la configuration
@@ -5361,7 +5271,6 @@ class homeconnectCmd extends cmd {
 		// A voir : faut il ajouter qqchose aux headers par defaut de request
 		$headers = array();
 
-
 		// Bien penser à mettre la partie après haid de l'url dans configuration path de la commande
 		$path = $this->getConfiguration('path', '');
 		$replace = array();
@@ -5407,7 +5316,6 @@ class homeconnectCmd extends cmd {
 						$parameters['data']['value'] = str_replace(array_keys($replace),$replace,$this->getConfiguration('value', ''));
 					}
 				}
-
 				if ($this->getConfiguration('unit', '') !== '') {
 					$parameters['data']['unit'] = $this->getConfiguration('unit', '');
 				}
@@ -5432,20 +5340,18 @@ class homeconnectCmd extends cmd {
 				$eqLogic->updateApplianceData();
 			} else {
 				$value = str_replace(array_keys($replace),$replace,$this->getConfiguration('value', ''));
-				$payload = '{"key":"BSH.Common.Option.StartInRelative","value":' . $value. ',"unit":"seconds"}';
+				$parameters = array(
+					'key' => 'BSH.Common.Option.StartInRelative',
+					'value' => $value,
+					'unit' => 'seconds'
+				);
+				$payload = json_encode($parameters, JSON_NUMERIC_CHECK);
+				//$payload = '{"key":"BSH.Common.Option.StartInRelative","value":' . $value. ',"unit":"seconds"}';
 				cache::set('homeconnect::startinrelative::'.$eqLogic->getId(), $payload, '');
 				// il faut mémoriser la valeur du départ différé.
 			}
 		}
 	}
-
-	/** *************************** Getters ********************************* */
-
-
-
-	/** *************************** Setters ********************************* */
-
-
 
 }
 ?>

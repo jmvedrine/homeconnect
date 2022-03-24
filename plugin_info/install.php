@@ -65,6 +65,15 @@ function homeconnect_update() {
                 $cmd->setConfiguration('value', '#select#');
                 $cmd->save();
             }
+            if ($cmd->getType() == 'action' && $cmd->getSubType() == 'other') {
+							$nameNewTrans = homeconnect::getCmdNameTranslation($cmd->getConfiguration('key'));
+							if ($nameNewTrans) {
+								if ($nameNewTrans['type'] == 'Boolean') {
+									$cmd->setConfiguration('value', true);
+									$cmd->save();
+								}
+							}
+            }
             if ($cmd->getLogicalId() == 'programActive') {
                 $cmd->setLogicalId('GET::BSH.Common.Root.ActiveProgram');
                 $cmd->save();
@@ -78,9 +87,8 @@ function homeconnect_update() {
     message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
 }
 
-
 function homeconnect_remove() {
-    
+
 }
 
 ?>
