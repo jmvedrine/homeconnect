@@ -84,7 +84,7 @@ $jsonPresent = false;
                                           $tr .= '<span class="label label-info data_key">'.$enum.'</span>';
                                           $tr .= ' => ';
                                           $tr .= '<span class="label label-info data_value">'.$enumValue['name'].'</span>';
-                                          $tr .= ' <a class="btn btn-success roundedLeft btn-xs '.$isDisable.'" id="bt_testEnum"><i class="fas fa-rss"></i> {{Tester}}</a>';
+                                          $tr .= ' <a class="btn btn-success roundedLeft btn-xs bt_testEnum '.$isDisable.'"><i class="fas fa-rss"></i> {{Tester}}</a>';
                                           $tr .= ' <span id="resultTestEnum"></span>';
                                           $tr .= '</span><br/>';
                                       }
@@ -137,7 +137,7 @@ $(function() {
 
 $('#div_displayCmdConfigure').setValues(cmdInfo, '.cmdAttr');
 
-$('#bt_testEnum').off('click').on('click',function() {
+$('.bt_testEnum').off('click').on('click',function() {
     var elbutton = $(this);
 	$.ajax({ // fonction permettant de faire de l'ajax
 		type: "POST", // methode de transmission des données au fichier php
