@@ -4539,7 +4539,9 @@ class homeconnect extends eqLogic {
 				$optionValues = array();
 				foreach ($cmdData['constraints']['allowedvalues'] as $optionValue) {
 		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdSelect= " .  self::getCmdValueTranslation($key, $optionValue));
-					$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
+					//$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
+					$optionValues[] = $optionValue . '|' . self::getCmdValueTranslation($key, $optionValue);
+
 				}
 				$listValue = implode(';', $optionValues);
 				$cmd->setConfiguration('listValue', $listValue);
@@ -4872,7 +4874,8 @@ class homeconnect extends eqLogic {
 							$optionValues = array();
 							foreach ($optionData['constraints']['allowedvalues'] as $optionValue) {
 		                        log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdSelect= " .  self::getCmdValueTranslation($key, $optionValue));
-								$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
+								//$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
+								$optionValues[] = $optionValue . '|' . self::getCmdValueTranslation($key, $optionValue);
 							}
 							$listValue = implode(';', $optionValues);
 							log::add('homeconnect', 'debug', "listValue " . $listValue);
@@ -4944,7 +4947,8 @@ class homeconnect extends eqLogic {
 				if (isset($value['value'])) {
 					if ($cmd->getSubType() == 'string') {
 						log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdValue= " . self::getCmdValueTranslation($parts[1], $value['value']));
-						$reglage = self::traduction(self::lastSegment('.', $value['value']));
+						//$reglage = self::traduction(self::lastSegment('.', $value['value']));
+						$reglage = self::getCmdValueTranslation($parts[1], $value['value']);
 					} else {
 						$reglage = $value['value'];
 					}
@@ -4980,7 +4984,8 @@ class homeconnect extends eqLogic {
 					$this->lookProgramAvailable($programType, $currentProgram['data']);
 					log::add('homeconnect', 'debug', __FUNCTION__ . " Pas de commande action " . 'PUT::' . $key);
 		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdDetailTranslation($key, 'name'));
-					$programName = self::traduction(self::lastSegment('.', $key));
+					//$programName = self::traduction(self::lastSegment('.', $key));
+					$programName = self::getCmdDetailTranslation($key, 'name');
 				} else {
 					$programName = $actionCmd->getName();
 					log::add('homeconnect', 'debug', __FUNCTION__ . " Nom de la commande action " . $programName);
@@ -5352,6 +5357,5 @@ class homeconnectCmd extends cmd {
 			}
 		}
 	}
-
 }
 ?>
