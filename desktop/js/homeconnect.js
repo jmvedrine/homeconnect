@@ -100,6 +100,13 @@ function syncHC(force = false) {
 	$('#md_modal').load('index.php?v=d&plugin=homeconnect&modal=health').dialog('open');
 });
 
+  $('body').delegate('.cmdAttr[data-action=configureCommand]', 'click', function() {
+    $('#md_modal').dialog({
+      title: "{{Configuration de la commande}}"
+    });
+    $('#md_modal').load('index.php?v=d&plugin=homeconnect&modal=command.configure&id=' + $(this).closest('.cmd').getValues('.cmdAttr')[0]['id']).dialog('open');
+  });
+
  $('.eqLogicAttr[data-l1key=configuration][data-l2key=type]').on('change',function(){
 	if($(this).value() == null){
 		return;
@@ -126,7 +133,7 @@ function addCmdToTable(_cmd) {
   tr += '        <span class="input-group-btn"><a class="cmdAction btn btn-sm btn-default" data-l1key="chooseIcon" title="{{Choisir une icône}}"><i class="fas fa-icons"></i></a></span>'
   tr += '        <span class="cmdAttr input-group-addon roundedRight" data-l1key="display" data-l2key="icon" style="font-size:19px;padding:0 5px 0 0!important;background:var(--btn-default-color) !important";width:2%;></span>'
   tr += '    </div>'
-  tr += '    <select class="cmdAttr form-control input-sm pull-right" data-l1key="value" style="display:none;margin-top:5px;max-width:50%" title="{{Commande info liée}}">'
+  tr += '    <select class="cmdAttr form-control input-sm" data-l1key="value" style="display:none;margin-top:5px;max-width:50%" title="{{Commande info liée}}">'
   tr += '        <option value="">{{Aucune}}</option>'
   tr += '    </select>'
   tr += '</td>'
@@ -147,12 +154,16 @@ function addCmdToTable(_cmd) {
   tr += '</div>'
   tr += '</td>'
 
-  tr += '<td>';
-  if (is_numeric(_cmd.id)) {
-    tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fa fa-cogs"></i></a> ';
-    tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fa fa-rss"></i> {{Tester}}</a> ';
-    tr += '<a class="btn btn-default btn-xs cmdAction" data-action="remove"><i class="fas fa-minus-circle"></i></a>';
+  tr += '<td style="min-width:100px;width:150px;">';
+  tr += '<div class="input-group">';
+  if (is_numeric(_cmd.id) && _cmd.id != '') {
+    tr += '<a class="btn btn-default btn-xs cmdAction roundedLeft" data-action="configure" title="{{Configuration de la commande}} ' + _cmd.type + '"><i class="fa fa-cogs"></i></a>';
+    tr += '<a class="btn btn-warning btn-xs cmdAttr" data-action="configureCommand" title="{{Modification de la commande}} ' + _cmd.type + '"><i class="fas fa-wrench"></i></a>';
+    tr += '<a class="btn btn-success btn-xs cmdAction" data-action="test" title="{{Tester}}"><i class="fa fa-rss"></i> {{Tester}}</a>';
   }
+  tr += '<a class="btn btn-danger btn-xs cmdAction roundedRight" data-action="remove" title="{{Suppression de la commande}} ' + _cmd.type + '"><i class="fas fa-minus-circle"></i></a>';
+  tr += '</div>';
+  tr += '</td>';
   tr += '</tr>';
   $('#table_cmd tbody').append(tr);
   var tr = $('#table_cmd tbody tr').last()
