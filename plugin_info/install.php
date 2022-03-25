@@ -69,7 +69,7 @@ function homeconnect_update() {
 				if ($cmd->getConfiguration('key','') != '') {
 					$nameNewTrans = homeconnect::getCmdNameTranslation($cmd->getConfiguration('key'));
 					if ($nameNewTrans) {
-						if ($nameNewTrans['type'] == 'Boolean') {
+						if (isset($nameNewTrans['type']) && $nameNewTrans['type'] == 'Boolean') {
 							$cmd->setConfiguration('value', true);
 							$cmd->save();
 						}
