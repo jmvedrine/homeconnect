@@ -5345,17 +5345,20 @@ class homeconnectCmd extends cmd {
 				$eqLogic->updateApplianceData();
 			} else {
 				$value = str_replace(array_keys($replace),$replace,$this->getConfiguration('value', ''));
-				$parameters = array(
-					'key' => 'BSH.Common.Option.StartInRelative',
-					'value' => $value,
-					'unit' => 'seconds'
-				);
-				$payload = json_encode($parameters, JSON_NUMERIC_CHECK);
-				//$payload = '{"key":"BSH.Common.Option.StartInRelative","value":' . $value. ',"unit":"seconds"}';
-				cache::set('homeconnect::startinrelative::'.$eqLogic->getId(), $payload, '');
-				// il faut mémoriser la valeur du départ différé.
+				if ($value !== '' && $value !== 0) {
+					$parameters = array(
+						'key' => 'BSH.Common.Option.StartInRelative',
+						'value' => $value,
+						'unit' => 'seconds'
+					);
+					$payload = json_encode($parameters, JSON_NUMERIC_CHECK);
+					//$payload = '{"key":"BSH.Common.Option.StartInRelative","value":' . $value. ',"unit":"seconds"}';
+					cache::set('homeconnect::startinrelative::'.$eqLogic->getId(), $payload, '');
+					// il faut mémoriser la valeur du départ différé.
+				}
 			}
 		}
 	}
+
 }
 ?>
