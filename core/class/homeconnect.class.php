@@ -4458,9 +4458,9 @@ class homeconnect extends eqLogic {
 	public function createActionCmd($cmdData, $path, $category) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$nameNewTrans = self::getCmdDetailTranslation($key, 'name');
+			$nameNewTrans = self::getCmdDetailTranslation($key, 'type');
 			if (isset($nameNewTrans)) {
-				$cmdData['type'] = $nameNewTrans['type'];
+				$cmdData['type'] = $nameNewTrans;
 			}
 		}
 		log::add('homeconnect', 'debug', "Création d'une commande action key=" . $key . " path=" . $path . " category= " . $category);
@@ -4567,9 +4567,9 @@ class homeconnect extends eqLogic {
 	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$nameNewTrans = self::getCmdDetailTranslation($key, 'name');
+			$nameNewTrans = self::getCmdDetailTranslation($key, 'type');
 			if (isset($nameNewTrans)) {
-				$cmdData['type'] = $nameNewTrans['type'];
+				$cmdData['type'] = $nameNewTrans;
 			}
 		}
 		log::add('homeconnect', 'debug', "Création d'une commande info key=" . $key . " path=" . $path . " category= " . $category);
