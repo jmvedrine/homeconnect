@@ -53,10 +53,9 @@ function homeconnect_update() {
 			shell_exec("cp $srcDir$file $resuDir");
 		}
 	}
-
+	// Fix pour mon oubli
 	foreach (eqLogic::byType('homeconnect') as $homeconnect) {
-		$allCmd = cmd::byEqLogicId($homeconnect->getId());
-		foreach($allCmd as $cmd) {
+		foreach ($homeconnect->getCmd() as $cmd) {
 			if ($cmd->getType() == 'action' && $cmd->getSubType() == 'cursor') {
 				$cmd->setConfiguration('value', '#slider#');
 				$cmd->save();
@@ -66,14 +65,10 @@ function homeconnect_update() {
 				$cmd->save();
 			}
 			if ($cmd->getType() == 'action' && $cmd->getSubType() == 'other') {
-				if ($cmd->getConfiguration('key','') != '') {
-					$nameNewTrans = homeconnect::getCmdNameTranslation($cmd->getConfiguration('key'));
-					if ($nameNewTrans) {
-						if (isset($nameNewTrans['type']) && $nameNewTrans['type'] == 'Boolean') {
-							$cmd->setConfiguration('value', true);
-							$cmd->save();
-						}
-					}
+				$nameNewTrans = homeconnect::getCmdDetailTranslation($cmd->getConfiguration('key'), 'type');
+				if (isset($nameNewTrans) && $nameNewTrans == 'Boolean') {
+					$cmd->setConfiguration('value', true);
+					$cmd->save();
 				}
 			}
 			if ($cmd->getLogicalId() == 'programActive') {
@@ -88,6 +83,7 @@ function homeconnect_update() {
 	}
 	message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
 }
+
 
 function homeconnect_remove() {
 

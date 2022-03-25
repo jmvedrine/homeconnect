@@ -3172,7 +3172,7 @@ class homeconnect extends eqLogic {
         return $return;
     }
 
-	public static function getCmdNameTranslation($_key) {
+	public static function getCmdDetailTranslation($_key, $_detail) {
 		/**
 		* Récupère la traduction du nom d'une commande
 		*
@@ -3181,7 +3181,7 @@ class homeconnect extends eqLogic {
 		*/
 		$tableData = self::appliancesCapabilities();
 		if (isset($tableData[$_key])) {
-			return $tableData[$_key]['name'];
+			return $tableData[$_key][$_detail];
 		} else {
 			log::add(__CLASS__,'debug',__FUNCTION__ . ' La clé ' . $_key . ' est introuvable');
 		}
@@ -4445,8 +4445,8 @@ class homeconnect extends eqLogic {
 
 	public static function setCmdName($_key, $_cmdData) {
 
-		$nameNewTrans = self::getCmdNameTranslation($_key);
-		if ($nameNewTrans) {
+		$nameNewTrans = self::getCmdDetailTranslation($_key, 'name');
+		if (isset($nameNewTrans)) {
 			return $nameNewTrans;
 		} else if (array_key_exists('displayvalue', $_cmdData)) {
 			return $_cmdData['displayvalue'];
@@ -4458,8 +4458,8 @@ class homeconnect extends eqLogic {
 	public function createActionCmd($cmdData, $path, $category) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$nameNewTrans = self::getCmdNameTranslation($key);
-			if ($nameNewTrans) {
+			$nameNewTrans = self::getCmdDetailTranslation($key, 'name');
+			if (isset($nameNewTrans)) {
 				$cmdData['type'] = $nameNewTrans['type'];
 			}
 		}
@@ -4567,8 +4567,8 @@ class homeconnect extends eqLogic {
 	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$nameNewTrans = self::getCmdNameTranslation($key);
-			if ($nameNewTrans) {
+			$nameNewTrans = self::getCmdDetailTranslation($key, 'name');
+			if (isset($nameNewTrans)) {
 				$cmdData['type'] = $nameNewTrans['type'];
 			}
 		}
@@ -4931,7 +4931,7 @@ class homeconnect extends eqLogic {
 		$reglage = '';
 		if (is_object($cmd)) {
 			if (is_bool($value['value'])) {
-				$value['value'] = $value['value']  ? 'true' : 'false';
+				$value['value'] = $value['value'] ? 'true' : 'false';
 			}
 			if ($cmd->getConfiguration('withAction')) {
 				// C'est une commande associée à une commande action pas de traduction
@@ -4941,17 +4941,17 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', "La commande info : ".$logicalId." n'a pas de valeur");
 				}
 			} else {
-					if (isset($value['value'])) {
-						if ($cmd->getSubType() == 'string') {
-		                    log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdValue= " . self::getCmdValueTranslation($parts[1], $value['value']));
-							$reglage = self::traduction(self::lastSegment('.', $value['value']));
-						} else {
-							$reglage = $value['value'];
-						}
+				if (isset($value['value'])) {
+					if ($cmd->getSubType() == 'string') {
+						log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdValue= " . self::getCmdValueTranslation($parts[1], $value['value']));
+						$reglage = self::traduction(self::lastSegment('.', $value['value']));
 					} else {
-						log::add('homeconnect', 'debug', "la commande info : ".$logicalId." n'a pas de valeur");
+						$reglage = $value['value'];
 					}
+				} else {
+				log::add('homeconnect', 'debug', "la commande info : ".$logicalId." n'a pas de valeur");
 				}
+			}
 			$this->checkAndUpdateCmd($cmd, $reglage);
 			log::add('homeconnect', 'debug', "Mise à jour setting : ".$logicalId." - Valeur :".$reglage);
 		} else {
@@ -4979,7 +4979,7 @@ class homeconnect extends eqLogic {
 					log::add('homeconnect', 'debug', __FUNCTION__ . " Nouveau program $programType key = " . $key);
 					$this->lookProgramAvailable($programType, $currentProgram['data']);
 					log::add('homeconnect', 'debug', __FUNCTION__ . " Pas de commande action " . 'PUT::' . $key);
-		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdNameTranslation($key));
+		            log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte lookProgram= " .  self::getCmdDetailTranslation($key, 'name'));
 					$programName = self::traduction(self::lastSegment('.', $key));
 				} else {
 					$programName = $actionCmd->getName();
