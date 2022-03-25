@@ -4457,7 +4457,7 @@ class homeconnect extends eqLogic {
 	/** *************************** Méthodes d'instance************************ */
 	public function createActionCmd($cmdData, $path, $category) {
 		$key = $cmdData['key'];
-		if (!$cmdData['type'] || $cmdData['type'] == '') {
+		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
 			$nameNewTrans = self::getCmdNameTranslation($key);
 			if ($nameNewTrans) {
 				$cmdData['type'] = $nameNewTrans['type'];
@@ -4566,7 +4566,7 @@ class homeconnect extends eqLogic {
 
 	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
-		if (!$cmdData['type'] || $cmdData['type'] == '') {
+		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
 			$nameNewTrans = self::getCmdNameTranslation($key);
 			if ($nameNewTrans) {
 				$cmdData['type'] = $nameNewTrans['type'];
