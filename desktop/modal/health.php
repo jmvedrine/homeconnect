@@ -19,8 +19,10 @@ if (!isConnect('admin')) {
 	throw new Exception('401 Unauthorized');
 }
 $eqLogics = homeconnect::byType('homeconnect');
-?>
+echo "<span>{{Nombre de requêtes envoyées aujourd'hui}} : </span>";
+echo "<span><strong>" . intval(cache::byKey('homeconnect::requests::total')->getValue()) . "</strong> / 1000</span>";
 
+?>
 <table class="table table-condensed tablesorter" id="table_healthpiHole">
 	<thead>
 		<tr>
