@@ -3802,7 +3802,7 @@ class homeconnect extends eqLogic {
                                         }
                                         if (isset($programdata['data']['key'])) {
                                             // Création de la commande action programme
-                                            $actionCmd = $eqLogic->createActionCmd($programdata['data'], $path , 'Program');
+                                            $actionCmd = $eqLogic->createActionCmd($programdata['data'], $path, 'Program');
                                             if ($path == 'programs/selected') {
                                                 $infoCmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.SelectedProgram');
                                                 if (is_object($infoCmd)) {
@@ -4023,9 +4023,10 @@ class homeconnect extends eqLogic {
                     $eqLogic = eqLogic::byLogicalId($evenement['haId'], 'homeconnect');
                     if (is_object($eqLogic) && $eqLogic->getIsEnable()){
                         $cmdLogicalId = 'GET::' . $items['key'];
+                        $path = explode('/', $cmdData, 5)[4];
                         $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
                         if (!is_object($cmd)) {
-                            $eqLogic->createInfoCmd($items, $items['key'], 'Option');
+                            $eqLogic->createInfoCmd($items, $path, 'Option', $cmdAction);
                         }
                         $eqLogic->updateInfoCmdValue($cmdLogicalId, $items);
                     } else {
@@ -4457,9 +4458,9 @@ class homeconnect extends eqLogic {
 	public function createActionCmd($cmdData, $path, $category) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$nameNewTrans = self::getCmdDetailTranslation($key, 'type');
-			if (isset($nameNewTrans)) {
-				$cmdData['type'] = $nameNewTrans;
+			$tableData = self::appliancesCapabilities();
+			if (isset($tableData[$key])) {
+				$cmdData = array_merge($cmdData, $tableData[$key]);
 			}
 		}
 		log::add('homeconnect', 'debug', "Création d'une commande action key=" . $key . " path=" . $path . " category= " . $category);
@@ -4568,9 +4569,9 @@ class homeconnect extends eqLogic {
 	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$nameNewTrans = self::getCmdDetailTranslation($key, 'type');
-			if (isset($nameNewTrans)) {
-				$cmdData['type'] = $nameNewTrans;
+			$tableData = self::appliancesCapabilities();
+			if (isset($tableData[$key])) {
+				$cmdData = array_merge($cmdData, $tableData[$key]);
 			}
 		}
 		log::add('homeconnect', 'debug', "Création d'une commande info key=" . $key . " path=" . $path . " category= " . $category);
