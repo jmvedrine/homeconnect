@@ -4023,7 +4023,7 @@ class homeconnect extends eqLogic {
                     $eqLogic = eqLogic::byLogicalId($evenement['haId'], 'homeconnect');
                     if (is_object($eqLogic) && $eqLogic->getIsEnable()){
                         $cmdLogicalId = 'GET::' . $items['key'];
-                        $path = explode('/', $cmdData, 5)[4];
+                        $path = explode('/', $items['uri'], 5)[4];
                         $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
                         if (!is_object($cmd)) {
                             $eqLogic->createInfoCmd($items, $path, 'Option', $cmdAction);
