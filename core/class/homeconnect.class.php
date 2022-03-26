@@ -3379,8 +3379,7 @@ class homeconnect extends eqLogic {
 					break;
 				case 429:
 					//	"Too Many Requests", desc: "E.g. the number of requests for a specific endpoint exceeded the quota of the client"
-					log::add(__CLASS__, 'debug', __("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h",__FILE__));
-					break;
+					throw new \Exception(__("Vous avez dépassé le nombre de requêtes permises au serveur. Réessayez dans 24h",__FILE__));
 				case 500:
 					// "Internal Server Error", desc: "E.g. in case of a server configuration error or any errors in resource files"
 					log::add(__CLASS__, 'debug', __("Erreur interne du serveur",__FILE__));
