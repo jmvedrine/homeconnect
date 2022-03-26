@@ -4027,15 +4027,15 @@ class homeconnect extends eqLogic {
                         $sections = explode('/', $items['uri']);
                         $path = implode('/',array($sections[4],$sections[5]));
                         $cmdAction = $eqLogic->getCmd('action', 'PUT::'.$items['key']);
-                        if (!is_object($cmdAction)) {
-                            if ($sections[4] == 'settings') {
-                                $cat = 'Setting';
+                        if ($sections[4] == 'settings') {
+                            $cat = 'Setting';
+                            if (!is_object($cmdAction)) {
                                 $settingData = self::request(self::API_REQUEST_URL . '/' . $evenement['haId'] . '/' . $path, null, 'GET', array());
                                 if ($settingData !== false) {
                                     log::add('homeconnect', 'debug', "Setting " . $settingData);
                                     $settingData = json_decode($settingData, true);
                                     if (isset($settingData['data']['constraints']['access']) && $settingData['data']['constraints']['access'] == 'readWrite') {
-                                        log::add('homeconnect', 'debug', "Le settin est readWrite, on crée aussi la commande setting action");
+                                        log::add('homeconnect', 'debug', "Le setting est readWrite, on crée aussi la commande setting action");
                                         $actionCmd = $eqLogic->createActionCmd($settingData['data'], $path, $cat);
                                         log::add('homeconnect', 'debug', "On crée aussi la commande setting info");
                                         $infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, $cat, $actionCmd);
@@ -4046,6 +4046,8 @@ class homeconnect extends eqLogic {
                                     }
                                 }
                             }
+                        } elseif ($sections[4] == 'status') {
+                            $cat = 'Status';
                         }
                         $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
                         if (!is_object($cmd)) {
