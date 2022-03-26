@@ -3371,7 +3371,7 @@ class homeconnect extends eqLogic {
 					// "Conflict", desc: "Command/Query cannot be executed for the home appliance, the error response contains the error details"
 					$result = json_decode($result, true);
 					$errorMsg = isset($result['error']['description']) ? $result['error']['description'] : '';
-					log::add(__CLASS__, 'debug', __("Cette action ne peut pas être exécutée pour cet appareil",__FILE__) . ' ' . $errorMsg);
+					log::add(__CLASS__, 'error', __("Cette action ne peut pas être exécutée pour cet appareil",__FILE__) . ' ' . $errorMsg);
 					break;
 				case 415:
 					// "Unsupported Media Type", desc: "The request's Content-Type is not supported"
@@ -4022,11 +4022,34 @@ class homeconnect extends eqLogic {
                 foreach ($evenement['data']['items'] as $items) {
                     $eqLogic = eqLogic::byLogicalId($evenement['haId'], 'homeconnect');
                     if (is_object($eqLogic) && $eqLogic->getIsEnable()){
+                        $cat = 'Option';
                         $cmdLogicalId = 'GET::' . $items['key'];
-                        $path = explode('/', $items['uri'], 5)[4];
+                        $sections = explode('/', $items['uri']);
+                        $path = implode('/',array($sections[4],$sections[5]));
+                        $cmdAction = $eqLogic->getCmd('action', 'PUT::'.$items['key']);
+                        if (!is_object($cmdAction)) {
+                            if ($sections[4] == 'settings') {
+                                $cat = 'Setting';
+                                $settingData = self::request(self::API_REQUEST_URL . '/' . $evenement['haId'] . '/' . $path, null, 'GET', array());
+                                if ($settingData !== false) {
+                                    log::add('homeconnect', 'debug', "Setting " . $settingData);
+                                    $settingData = json_decode($settingData, true);
+                                    if (isset($settingData['data']['constraints']['access']) && $settingData['data']['constraints']['access'] == 'readWrite') {
+                                        log::add('homeconnect', 'debug', "Le settin est readWrite, on crée aussi la commande setting action");
+                                        $actionCmd = $eqLogic->createActionCmd($settingData['data'], $path, $cat);
+                                        log::add('homeconnect', 'debug', "On crée aussi la commande setting info");
+                                        $infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, $cat, $actionCmd);
+                                    } else {
+                                        // Commande info sans commande action associée
+                                        log::add('homeconnect', 'debug', "Le setting est non readWrite, on ne crée que la commande setting info");
+                                        $infoCmd = $eqLogic->createInfoCmd($settingData['data'], $path, $cat);
+                                    }
+                                }
+                            }
+                        }
                         $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
                         if (!is_object($cmd)) {
-                            $eqLogic->createInfoCmd($items, $path, 'Option');
+                        	$eqLogic->createInfoCmd($items, $path, $cat);
                         }
                         $eqLogic->updateInfoCmdValue($cmdLogicalId, $items);
                     } else {
@@ -4588,7 +4611,7 @@ class homeconnect extends eqLogic {
 			} else {
 				$cmd->setName($name);
 			}
-			log::add('homeconnect', 'debug', "Nouvelle commande info : logicalId " . $logicalIdCmd . ' et nom ' . $cmd->getName());
+			log::add('homeconnect', 'debug', "Nouvelle commande info : logicalId " . $logicalIdCmd . ' et nom ' . $cmd->getName() . ' tableau ' . json_encode($cmdData));
 			$cmd->setLogicalId($logicalIdCmd);
 			$cmd->setIsVisible(1);
 			$cmd->setIsHistorized(0);
@@ -4600,6 +4623,8 @@ class homeconnect extends eqLogic {
 			$cmd->setConfiguration('category', $category);
 			$cmd->setEqLogic_id($this->getId());
 			$cmd->setType('info');
+			log::add('homeconnect', 'debug', "Type de création : isset(action) " . isset($actionCmd) . ' ou isset(type) ' . isset($cmdData['type']) . ' ou isset(value) ' . isset($cmdData['value']));
+
 			if (isset($actionCmd)) {
 				// Il y aune commande action associée
 				// On ne l'affiche pas
@@ -4665,7 +4690,7 @@ class homeconnect extends eqLogic {
 					}
 					log::add('homeconnect', 'debug', "Min = " . $cmd->getConfiguration('minValue') . " Max = " .$cmd->getConfiguration('maxValue') . " Unité = " . $cmd->getUnite());
 					$cmd->save();
-				} else if (strpos($cmdData['type'], 'EnumType') !== false) {
+				} else if (strpos($cmdData['type'], 'EnumType') !== false || $cmdData['type'] == 'Enumeration') {
 					// Commande string
 					log::add('homeconnect', 'debug', "Création d'une commande string à partir de l'étiquette type");
 					$cmd->setSubType('string');
@@ -4676,7 +4701,7 @@ class homeconnect extends eqLogic {
 					$cmd->save();
 				}
 
-			} else if (isset ($cmdData['value'])) {
+			} else if (isset($cmdData['value'])) {
 				// détermination du subtype à partir de value
 				if ($cmdData['value'] === true || $cmdData['value'] === false) {
 					log::add('homeconnect', 'debug', "Création d'une commande binary à partir de la value");
