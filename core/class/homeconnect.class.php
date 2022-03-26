@@ -4026,7 +4026,7 @@ class homeconnect extends eqLogic {
                         $path = explode('/', $items['uri'], 5)[4];
                         $cmd = $eqLogic->getCmd('info', $cmdLogicalId);
                         if (!is_object($cmd)) {
-                            $eqLogic->createInfoCmd($items, $path, 'Option', $cmdAction);
+                            $eqLogic->createInfoCmd($items, $path, 'Option');
                         }
                         $eqLogic->updateInfoCmdValue($cmdLogicalId, $items);
                     } else {
