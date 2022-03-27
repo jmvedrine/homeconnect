@@ -3829,8 +3829,17 @@ class homeconnect extends eqLogic {
                                         if (isset($programdata['data']['options'])) {
                                             log::add('homeconnect', 'debug', "Création des commandes options " . print_r($programdata['data']['options'], true) . ' - path ' . $path);
                                             // creation des commandes option action et info
+                                            $opt = array();
+                                            $cmdProgram = $this->getCmd('action', 'PUT::'.$programdata['data']['key']);
                                             foreach($programdata['data']['options'] as $optionData) {
+                                                array_push($opt, $optionData['key']);
                                                 $eqLogic->createProgramOption($path, $optionData);
+                                            }
+                                            if (is_object($cmdProgram)) {
+                                                $configOpt = array_merge($opt, $cmdProgram->getConfiguration('listOptions', array()));
+                                                $configOpt = array_unique($configOpt);
+                                                $cmdProgram->setConfiguration('listOptions', $configOpt)->save();
+                                                log::add('homeconnect', 'debug', "Ajout des options disponibles dans la commande PUT::" .$programdata['data']['key']  . print_r($configOpt, true));
                                             }
                                         } else {
                                             log::add('homeconnect', 'debug', "Aucune commande option");
@@ -4853,9 +4862,12 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug', "Résultat de la requête " . $programdata);
 		$programdata = json_decode($programdata, true);
 		if (isset($programdata['data']['options'])) {
+			$opt = array();
+			$cmdProgram = $this->getCmd('action', 'PUT::'.$programKey);
 			foreach($programdata['data']['options'] as $optionData) {
 				if (isset($optionData['key'])) {
 					$key = $optionData['key'];
+					array_push($opt, $key);
 					// Commande option action
 					$logicalIdCmd = 'PUT::' . $key;
 					log::add('homeconnect', 'debug', "Ajustement de la commande action " . $logicalIdCmd);
@@ -4900,7 +4912,7 @@ class homeconnect extends eqLogic {
 							log::add('homeconnect', 'debug', "Ajustement commande action select logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
 							$optionValues = array();
 							foreach ($optionData['constraints']['allowedvalues'] as $optionValue) {
-		                        log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdSelect= " .  self::getCmdValueTranslation($key, $optionValue));
+								log::add('homeconnect', 'debug', "INFORMATION ne pas tenir compte cmdSelect= " .  self::getCmdValueTranslation($key, $optionValue));
 								//$optionValues[] = $optionValue . '|' . self::traduction(self::lastSegment('.', $optionValue));
 								$optionValues[] = $optionValue . '|' . self::getCmdValueTranslation($key, $optionValue);
 							}
@@ -4912,12 +4924,17 @@ class homeconnect extends eqLogic {
 							log::add('homeconnect', 'debug', "Commande action other rien à ajuster " . $logicalIdCmd . " nom ". $cmd->getName() . ' subtype ' . $cmd->getSubType());
 						}
 					} else {
+						$pathCreate = 'programs/selected';
+						if (is_object($cmdProgram)) {
+							$pathCreate = $cmdProgram->getConfiguration('path', $pathCreate);
+						}
+						$this->createProgramOption($pathCreate, $optionData);
 						log::add('homeconnect', 'debug', "La commande action " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
 					}
 					// commande option info
 					$logicalIdCmd = 'GET::' . $key;
 					log::add('homeconnect', 'debug', "Ajustement de la commande info " . $logicalIdCmd);
-					$cmd = $this->getCmd(null, $logicalIdCmd);
+					$cmd = $this->getCmd('info', $logicalIdCmd);
 					if (is_object($cmd)) {
 						if ($cmd->getSubType() == 'numeric') {
 							// commande numeric.
@@ -4943,11 +4960,18 @@ class homeconnect extends eqLogic {
 							log::add('homeconnect', 'debug', "Rien à ajuster pour une commande info de subType " . $cmd->getSubType());
 						}
 					} else {
+						$this->updateInfoCmdValue($logicalIdCmd, $optionData);
 						log::add('homeconnect', 'debug', "La commande info " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
 					}
 				} else {
 					log::add('homeconnect', 'debug', "Pas de key dans optionData" );
 				}
+			}
+			if (is_object($cmdProgram)) {
+				$configOpt = array_merge($opt, $cmdProgram->getConfiguration('listOptions', array()));
+				$configOpt = array_unique($configOpt);
+				$cmdProgram->setConfiguration('listOptions', $configOpt)->save();
+				log::add('homeconnect', 'debug', "Ajout des options disponibles dans la commande PUT::$programKey"  . print_r($configOpt,true));
 			}
 		} else {
 			log::add('homeconnect', 'debug', "Pas d'options à ajuster" );
@@ -4964,6 +4988,7 @@ class homeconnect extends eqLogic {
 				$value['value'] = $value['value'] ? 'true' : 'false';
 			}
 			if ($cmd->getConfiguration('withAction')) {
+
 				// C'est une commande associée à une commande action pas de traduction
 				if (isset($value['value'])) {
 					$reglage = $value['value'];
@@ -5022,12 +5047,12 @@ class homeconnect extends eqLogic {
 				if (is_object($cmd)) {
 					log::add('homeconnect', 'debug', "Mise à jour de la valeur de la commande action $nameCmd = ".$programName);
 					$this->checkAndUpdateCmd($cmd, $programName);
-					return true;
+					return $key;
 				} else {
 					log::add('homeconnect', 'debug', "La commande $nameCmd n'existe pas :");
 				}
 				//recherche des options ce program pour ajout cmd option
-				$this->lookProgramOptions($programType);
+				//$this->lookProgramOptions($programType, $key); // déjà fait ?
 			} else {
 				// Pas de programme actif
 				// A voir : mettre à jour les autres commandes (états et réglages)
@@ -5064,20 +5089,29 @@ class homeconnect extends eqLogic {
 		}
 	}
 
-	public function lookProgramOptions($programType) {
+	public function lookProgramOptions($programType, $_key) {
 		$programOptions = self::request(self::API_REQUEST_URL . '/' . $this->getLogicalId() . '/programs/' . strtolower($programType) .'/options', null, 'GET', array());
 		if ($programOptions !== false) {
 			$programOptions = json_decode($programOptions, true);
 			if (isset($programOptions['data']['key']) && $programOptions['data']['key'] !== 'SDK.Error.UnsupportedProgram') {
 				log::add('homeconnect', 'debug', "options : " . $programOptions);
-				$logicalId = 'GET::' . $value['key'];
 				// MAJ des options et autres informations du programme en cours.
+				$opt = array();
+				$cmdProgram = $this->getCmd('action', 'PUT::'.$_key);
+
 				foreach ($programOptions['data']['options'] as $value) {
+					array_push($opt, $value['key']);
 					log::add('homeconnect', 'debug', "option : " . print_r($value, true));
 
 					$this->createProgramOption('programs/' . strtolower($programType) , $value);
 					//$this->createInfoCmd($value, $optionPath, 'Option');
-					$this->updateInfoCmdValue($logicalId, $value);
+					$this->updateInfoCmdValue($value['key'], $value);
+				}
+				if (is_object($cmdProgram)) {
+					$configOpt = array_merge($opt, $cmdProgram->getConfiguration('listOptions', array()));
+					$configOpt = array_unique($configOpt);
+					$cmdProgram->setConfiguration('listOptions', $configOpt)->save();
+					log::add('homeconnect', 'debug', "Ajout des options disponibles dans la commande PUT::$programKey" . print_r($configOpt,true));
 				}
 			}
 		}
@@ -5091,15 +5125,17 @@ class homeconnect extends eqLogic {
 				return;
 			}
 			log::add('homeconnect', 'debug', "MAJ du programme actif");
-            if ($this->lookProgram('Active')) {
+			$activeProgram = $this->lookProgram('Active');
+			if ($activeProgram) {
 				// Il y a un programme actif on regarde ses options
 				log::add('homeconnect', 'debug', "Il y a un programme actif");
-				$this->lookProgramOptions('Active');
+				$this->lookProgramOptions('Active', $activeProgram);
 			} else {
 				// Pas de programme actif on essaie le programme sélectionné
-				if ($this->lookProgram('Selected')) {
-					log::add('homeconnect', 'debug', "i y a un programme sélectionné");
-					$this->lookProgramOptions('Selected');
+				$selectedProgram = $this->lookProgram('Selected');
+				if ($selectedProgram) {
+					log::add('homeconnect', 'debug', "Il y a un programme sélectionné");
+					$this->lookProgramOptions('Selected', $selectedProgram);
 				}
 			}
 		}
