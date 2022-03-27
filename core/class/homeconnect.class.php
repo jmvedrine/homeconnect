@@ -5354,7 +5354,7 @@ class homeconnectCmd extends cmd {
 				if ($this->getConfiguration('type', '') !== '') {
 					$parameters['data']['type'] = $this->getConfiguration('type', '');
 				}
-				$payload = json_encode($parameters);
+				$payload = json_encode($parameters, JSON_NUMERIC_CHECK);
 
 				$url = homeconnect::API_REQUEST_URL . '/'. $haid . '/' . $path;
 				log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
