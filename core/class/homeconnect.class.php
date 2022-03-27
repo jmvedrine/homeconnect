@@ -3738,6 +3738,7 @@ class homeconnect extends eqLogic {
 		log::add('homeconnect', 'debug',"---------- Début de synchronisation ---------- (forcée =" . $_forced . ')');
 
 		self::verifyToken(60);
+		$startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
 
 		$response = self::request(self::API_REQUEST_URL, null, 'GET', array());
 		$response = json_decode($response, true);
@@ -3861,6 +3862,16 @@ class homeconnect extends eqLogic {
                         $eqLogic->setConfiguration('hasPrograms', false);
                     }
 
+                    if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 50 ) {
+                        sleep(59);
+                        $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
+                        event::add('jeedom::alert', array(
+                            'level' => 'warning',
+                            'page' => 'homeconnect',
+                            'message' => __("Nombre de requêtes dépassé, pause de 60 secondes.", __FILE__),
+                        ));
+                    }
+
                     // Status
                     $allStatus = self::request(self::API_REQUEST_URL . '/' . $appliance['haId'] . '/status', null, 'GET', array());
                     if ($allStatus !== false) {
@@ -3873,6 +3884,16 @@ class homeconnect extends eqLogic {
                         } else {
                             log::add('homeconnect','debug', "Aucun status");
                         }
+                    }
+
+                    if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 50 ) {
+                        sleep(59);
+                        $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
+                        event::add('jeedom::alert', array(
+                            'level' => 'warning',
+                            'page' => 'homeconnect',
+                            'message' => __("Nombre de requêtes dépassé, pause de 60 secondes.", __FILE__),
+                        ));
                     }
 
                     // Settings
