@@ -3830,7 +3830,7 @@ class homeconnect extends eqLogic {
                                             log::add('homeconnect', 'debug', "Création des commandes options " . print_r($programdata['data']['options'], true) . ' - path ' . $path);
                                             // creation des commandes option action et info
                                             $opt = array();
-                                            $cmdProgram = $this->getCmd('action', 'PUT::'.$programdata['data']['key']);
+                                            $cmdProgram = $eqLogic->getCmd('action', 'PUT::'.$programdata['data']['key']);
                                             foreach($programdata['data']['options'] as $optionData) {
                                                 array_push($opt, $optionData['key']);
                                                 $eqLogic->createProgramOption($path, $optionData);
