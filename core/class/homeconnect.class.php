@@ -5139,7 +5139,7 @@ class homeconnect extends eqLogic {
 				}
 			}
 			if (!$activeProgram && !$selectedProgram) {
-				cache::set('homeconnect::startinrelative::'.$eqLogic->getId(), $payload, '');
+				cache::set('homeconnect::startinrelative::'.$this->getId(), '', '');
 			}
 		}
 	}
