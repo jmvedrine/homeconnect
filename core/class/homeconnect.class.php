@@ -3841,7 +3841,7 @@ class homeconnect extends eqLogic {
                                                     $eqLogic->createProgramOption($path, $optionData);
                                                 }
                                                 if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
-                                                    sleep(59);
+                                                    sleep(61);
                                                     $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
                                                     event::add('jeedom::alert', array(
                                                         'level' => 'warning',
@@ -3877,7 +3877,7 @@ class homeconnect extends eqLogic {
                     }
 
                     if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
-                        sleep(59);
+                        sleep(61);
                         $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
                         event::add('jeedom::alert', array(
                             'level' => 'warning',
@@ -3901,7 +3901,7 @@ class homeconnect extends eqLogic {
                     }
 
                     if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
-                        sleep(59);
+                        sleep(61);
                         $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
                         event::add('jeedom::alert', array(
                             'level' => 'warning',
