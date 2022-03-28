@@ -3377,7 +3377,7 @@ class homeconnect extends eqLogic {
 										        'Dishwasher'
 										    ) ,
 										) ,
-										'BSH.Common.EnumType.AmbientLightColor.Color14' => array(
+										'BSH.Common.EnumType.AmbientLightColor.Color34' => array(
 										    'name' => __("Couleur 34", __FILE__) ,
 										    'action' => 'Status',
 										    'available' => array(
@@ -3385,7 +3385,7 @@ class homeconnect extends eqLogic {
 										        'Dishwasher'
 										    ) ,
 										) ,
-										'BSH.Common.EnumType.AmbientLightColor.Color15' => array(
+										'BSH.Common.EnumType.AmbientLightColor.Color35' => array(
 										    'name' => __("Couleur 35", __FILE__) ,
 										    'action' => 'Status',
 										    'available' => array(
