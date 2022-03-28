@@ -3834,7 +3834,12 @@ class homeconnect extends eqLogic {
                                             $cmdProgram = $eqLogic->getCmd('action', 'PUT::'.$programdata['data']['key']);
                                             foreach($programdata['data']['options'] as $optionData) {
                                                 array_push($opt, $optionData['key']);
-                                                $eqLogic->createProgramOption($path, $optionData);
+                                                $cmdActionOption = $eqLogic->getCmd('action','PUT::' . $optionData['key']);
+                                                $cmdInfoOption = $eqLogic->getCmd('info','GET::' . $optionData['key']);
+                                                if (!is_object($cmdActionOption) && !is_object($cmdInfoOption)) {
+                                                    log::add('homeconnect', 'debug', "Commandes options action et info inexistantes PUT::/GET::" .$optionData['key']);
+                                                    $eqLogic->createProgramOption($path, $optionData);
+                                                }
                                                 if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
                                                     sleep(59);
                                                     $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
@@ -4958,7 +4963,12 @@ class homeconnect extends eqLogic {
 						if (is_object($cmdProgram)) {
 							$pathCreate = $cmdProgram->getConfiguration('path', $pathCreate);
 						}
-						$this->createProgramOption($pathCreate, $optionData);
+						$cmdActionOption = $this->getCmd('action','PUT::' . $optionData['key']);
+						$cmdInfoOption = $this->getCmd('info','GET::' . $optionData['key']);
+						if (!is_object($cmdActionOption) && !is_object($cmdInfoOption)) {
+							log::add('homeconnect', 'debug', "Commandes options action et info inexistantes PUT::/GET::" .$optionData['key']);
+							$this->createProgramOption($pathCreate, $optionData);
+						}
 						log::add('homeconnect', 'debug', "La commande action " . $logicalIdCmd . " n'existe pas impossible de l'ajuster" );
 					}
 					// commande option info
@@ -5132,8 +5142,12 @@ class homeconnect extends eqLogic {
 				foreach ($programOptions['data']['options'] as $value) {
 					array_push($opt, $value['key']);
 					log::add('homeconnect', 'debug', "option : " . print_r($value, true));
-
-					$this->createProgramOption('programs/' . strtolower($programType) , $value);
+					$cmdActionOption = $this->getCmd('action','PUT::' . $value['key']);
+					$cmdInfoOption = $this->getCmd('info','GET::' . $value['key']);
+					if (!is_object($cmdActionOption) && !is_object($cmdInfoOption)) {
+						log::add('homeconnect', 'debug', "Commandes options action et info inexistantes PUT::/GET::" .$value['key']);
+						$this->createProgramOption('programs/' . strtolower($programType), $value);
+					}
 					//$this->createInfoCmd($value, $optionPath, 'Option');
 					$this->updateInfoCmdValue($value['key'], $value);
 				}
