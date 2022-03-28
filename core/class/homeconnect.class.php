@@ -3835,6 +3835,15 @@ class homeconnect extends eqLogic {
                                             foreach($programdata['data']['options'] as $optionData) {
                                                 array_push($opt, $optionData['key']);
                                                 $eqLogic->createProgramOption($path, $optionData);
+                                                if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
+                                                    sleep(59);
+                                                    $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
+                                                    event::add('jeedom::alert', array(
+                                                        'level' => 'warning',
+                                                        'page' => 'homeconnect',
+                                                        'message' => __("Nombre de requêtes dépassé, pause de 60 secondes.", __FILE__),
+                                                    ));
+                                                }
                                             }
                                             if (is_object($cmdProgram)) {
                                                 $configOpt = array_merge($opt, $cmdProgram->getConfiguration('listOptions', array()));
@@ -3862,7 +3871,7 @@ class homeconnect extends eqLogic {
                         $eqLogic->setConfiguration('hasPrograms', false);
                     }
 
-                    if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 50 ) {
+                    if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
                         sleep(59);
                         $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
                         event::add('jeedom::alert', array(
@@ -3886,7 +3895,7 @@ class homeconnect extends eqLogic {
                         }
                     }
 
-                    if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 50 ) {
+                    if ((intval(cache::byKey('homeconnect::requests::total')->getValue()) - $startRequest) >= 49 ) {
                         sleep(59);
                         $startRequest = intval(cache::byKey('homeconnect::requests::total')->getValue());
                         event::add('jeedom::alert', array(
