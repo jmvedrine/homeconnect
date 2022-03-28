@@ -3113,14 +3113,798 @@ class homeconnect extends eqLogic {
                             'Dishwasher'
                         ) ,
                     ) ,
-                    'BSH.Common.EnumType.AmbientLightColor.Color[1-99]' => array(
-                        'name' => __("Couleur [1-99]", __FILE__) ,
-                        'action' => 'Status',
-                        'available' => array(
-                            'Hood',
-                            'Dishwasher'
-                        ) ,
-                    ) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color1' => array(
+										    'name' => __("Couleur 1", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color2' => array(
+										    'name' => __("Couleur 2", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color3' => array(
+										    'name' => __("Couleur 3", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color4' => array(
+										    'name' => __("Couleur 4", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color5' => array(
+										    'name' => __("Couleur 5", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color6' => array(
+										    'name' => __("Couleur 6", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color7' => array(
+										    'name' => __("Couleur 7", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color8' => array(
+										    'name' => __("Couleur 8", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color9' => array(
+										    'name' => __("Couleur 9", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color10' => array(
+										    'name' => __("Couleur 10", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color11' => array(
+										    'name' => __("Couleur 11", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color12' => array(
+										    'name' => __("Couleur 12", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color13' => array(
+										    'name' => __("Couleur 13", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color14' => array(
+										    'name' => __("Couleur 14", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color15' => array(
+										    'name' => __("Couleur 15", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color16' => array(
+										    'name' => __("Couleur 16", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color17' => array(
+										    'name' => __("Couleur 17", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color18' => array(
+										    'name' => __("Couleur 18", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color19' => array(
+										    'name' => __("Couleur 19", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color20' => array(
+										    'name' => __("Couleur 20", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color21' => array(
+										    'name' => __("Couleur 21", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color22' => array(
+										    'name' => __("Couleur 22", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color23' => array(
+										    'name' => __("Couleur 23", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color24' => array(
+										    'name' => __("Couleur 24", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color25' => array(
+										    'name' => __("Couleur 25", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color26' => array(
+										    'name' => __("Couleur 26", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color27' => array(
+										    'name' => __("Couleur 27", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color28' => array(
+										    'name' => __("Couleur 28", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color29' => array(
+										    'name' => __("Couleur 29", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color30' => array(
+										    'name' => __("Couleur 30", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color31' => array(
+										    'name' => __("Couleur 31", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color32' => array(
+										    'name' => __("Couleur 32", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color33' => array(
+										    'name' => __("Couleur 33", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color14' => array(
+										    'name' => __("Couleur 34", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color15' => array(
+										    'name' => __("Couleur 35", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color36' => array(
+										    'name' => __("Couleur 36", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color37' => array(
+										    'name' => __("Couleur 37", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color38' => array(
+										    'name' => __("Couleur 38", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color39' => array(
+										    'name' => __("Couleur 39", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color40' => array(
+										    'name' => __("Couleur 40", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color41' => array(
+										    'name' => __("Couleur 41", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color42' => array(
+										    'name' => __("Couleur 42", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color43' => array(
+										    'name' => __("Couleur 43", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color44' => array(
+										    'name' => __("Couleur 44", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color45' => array(
+										    'name' => __("Couleur 45", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color46' => array(
+										    'name' => __("Couleur 46", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color47' => array(
+										    'name' => __("Couleur 47", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color48' => array(
+										    'name' => __("Couleur 48", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color49' => array(
+										    'name' => __("Couleur 49", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color50' => array(
+										    'name' => __("Couleur 50", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color51' => array(
+										    'name' => __("Couleur 51", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color52' => array(
+										    'name' => __("Couleur 52", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color53' => array(
+										    'name' => __("Couleur 53", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color54' => array(
+										    'name' => __("Couleur 54", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color55' => array(
+										    'name' => __("Couleur 55", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color56' => array(
+										    'name' => __("Couleur 56", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color57' => array(
+										    'name' => __("Couleur 57", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color58' => array(
+										    'name' => __("Couleur 58", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color59' => array(
+										    'name' => __("Couleur 59", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color60' => array(
+										    'name' => __("Couleur 60", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color61' => array(
+										    'name' => __("Couleur 61", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color62' => array(
+										    'name' => __("Couleur 62", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color63' => array(
+										    'name' => __("Couleur 63", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color64' => array(
+										    'name' => __("Couleur 64", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color65' => array(
+										    'name' => __("Couleur 65", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color66' => array(
+										    'name' => __("Couleur 66", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color67' => array(
+										    'name' => __("Couleur 67", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color68' => array(
+										    'name' => __("Couleur 68", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color69' => array(
+										    'name' => __("Couleur 69", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color70' => array(
+										    'name' => __("Couleur 70", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color71' => array(
+										    'name' => __("Couleur 71", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color72' => array(
+										    'name' => __("Couleur 72", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color73' => array(
+										    'name' => __("Couleur 73", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color74' => array(
+										    'name' => __("Couleur 74", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color75' => array(
+										    'name' => __("Couleur 75", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color76' => array(
+										    'name' => __("Couleur 76", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color77' => array(
+										    'name' => __("Couleur 77", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color78' => array(
+										    'name' => __("Couleur 78", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color79' => array(
+										    'name' => __("Couleur 79", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color80' => array(
+										    'name' => __("Couleur 80", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color81' => array(
+										    'name' => __("Couleur 81", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color82' => array(
+										    'name' => __("Couleur 82", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color83' => array(
+										    'name' => __("Couleur 83", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color84' => array(
+										    'name' => __("Couleur 84", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color85' => array(
+										    'name' => __("Couleur 85", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color86' => array(
+										    'name' => __("Couleur 86", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color87' => array(
+										    'name' => __("Couleur 87", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color88' => array(
+										    'name' => __("Couleur 88", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color89' => array(
+										    'name' => __("Couleur 89", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color90' => array(
+										    'name' => __("Couleur 90", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color91' => array(
+										    'name' => __("Couleur 91", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color92' => array(
+										    'name' => __("Couleur 92", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color93' => array(
+										    'name' => __("Couleur 93", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color94' => array(
+										    'name' => __("Couleur 94", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color95' => array(
+										    'name' => __("Couleur 95", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color96' => array(
+										    'name' => __("Couleur 96", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color97' => array(
+										    'name' => __("Couleur 97", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color98' => array(
+										    'name' => __("Couleur 98", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
+										'BSH.Common.EnumType.AmbientLightColor.Color99' => array(
+										    'name' => __("Couleur 99", __FILE__) ,
+										    'action' => 'Status',
+										    'available' => array(
+										        'Hood',
+										        'Dishwasher'
+										    ) ,
+										) ,
                 )
             ) ,
             'BSH.Common.Setting.AmbientLightCustomColor' => array(
