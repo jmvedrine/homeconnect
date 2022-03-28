@@ -65,10 +65,12 @@ function homeconnect_update() {
 				$cmd->save();
 			}
 			if ($cmd->getType() == 'action' && $cmd->getSubType() == 'other') {
-				$nameNewTrans = homeconnect::getCmdDetailTranslation($cmd->getConfiguration('key'), 'type');
-				if (isset($nameNewTrans) && $nameNewTrans == 'Boolean') {
-					$cmd->setConfiguration('value', true);
-					$cmd->save();
+				if ($cmd->getConfiguration('key', '') != '') {
+					$nameNewTrans = homeconnect::getCmdDetailTranslation($cmd->getConfiguration('key'), 'type');
+					if (isset($nameNewTrans) && $nameNewTrans == 'Boolean') {
+						$cmd->setConfiguration('value', true);
+						$cmd->save();
+					}
 				}
 			}
 			if ($cmd->getLogicalId() == 'programActive') {
