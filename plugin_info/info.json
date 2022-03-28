@@ -7,11 +7,11 @@
 	"author" : "Sartog",
 	"require" : "3.3",
 	"category" : "devicecommunication",
-	"changelog" : "https://jmvedrine.github.io/homeconnect/#language#/changelog",
-	"documentation" : "https://jmvedrine.github.io/homeconnect/#language#/",
+	"changelog" : "https://flobul.github.io/homeconnect/#language#/changelog",
+	"documentation" : "https://flobul.github.io/homeconnect/#language#/",
 	"hasDependency" : false,
 	"hasOwnDeamon" : true,
 	"maxDependancyInstallTime" : 0,
 	"language" : ["fr_FR","en_US"],
-	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4","atlas"]
 }
