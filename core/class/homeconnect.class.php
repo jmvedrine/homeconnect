@@ -1078,7 +1078,8 @@ class homeconnect extends eqLogic {
 	public function createActionCmd($cmdData, $path, $category) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$tableData = self::appliancesCapabilities();
+			$table = new homeconnect_capabilities();
+			$tableData = $table->appliancesCapabilities;
 			if (isset($tableData[$key])) {
 				$cmdData = array_merge($cmdData, $tableData[$key]);
 			}
@@ -1186,7 +1187,8 @@ class homeconnect extends eqLogic {
 	public function createInfoCmd($cmdData, $path, $category, $actionCmd = null) {
 		$key = $cmdData['key'];
 		if (!isset($cmdData['type']) || $cmdData['type'] == '') {
-			$tableData = self::appliancesCapabilities();
+			$table = new homeconnect_capabilities();
+			$tableData = $table->appliancesCapabilities;
 			if (isset($tableData[$key])) {
 				$cmdData = array_merge($cmdData, $tableData[$key]);
 			}

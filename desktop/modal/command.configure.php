@@ -66,7 +66,8 @@ $jsonPresent = false;
 
                 <div class="col-xs-9">
                   <?php if ($cmd->getConfiguration('key', '') !== '') {
-                      $tableData = homeconnect::appliancesCapabilities();
+                      $table = new homeconnect_capabilities();
+                      $tableData = $table->appliancesCapabilities;
                       if (isset($tableData[$cmd->getConfiguration('key')])) {
                           $data = $tableData[$cmd->getConfiguration('key')];
                           echo '<span class="label label-default">'.$data['name'].'</span> ';
