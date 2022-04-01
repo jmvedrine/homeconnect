@@ -14,6 +14,7 @@ require_once dirname(__FILE__) . '/../core/class/homeconnect.class.php';
             "Accept-Encoding: gzip, deflate",
             "Cache-Control: no-cache",
             "Connection: keep-alive",
+            "Keep-Alive: 120",
             "Host: api.home-connect.com",
             "Accept-Language: " . config::byKey('language', 'core', 'fr_FR'),
             "Authorization: Bearer " . config::byKey('access_token','homeconnect'),
@@ -25,5 +26,5 @@ require_once dirname(__FILE__) . '/../core/class/homeconnect.class.php';
     } catch (Exception $e) {
         homeconnect::deamon_stop();
     }
- 
+
 ?>
