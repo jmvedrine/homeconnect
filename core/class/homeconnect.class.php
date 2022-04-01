@@ -1049,9 +1049,9 @@ class homeconnect extends eqLogic {
 				$message .= ' ' . __('n\'a recu de message depuis', __FILE__) . ' ' . $heartbeat . ' ' . __('min', __FILE__);
 				$logicalId = 'heartbeat' . $plugin->getId();
 
-				message::add($plugin->getId(), $message, '', $logicalId);
+				//message::add($plugin->getId(), $message, '', $logicalId);
 				if ($plugin->getHasOwnDeamon() && config::byKey('heartbeat::restartDeamon::' . $plugin->getId(), 'core', 0) == 1) {
-					$plugin->deamon_start(true);
+					//$plugin->deamon_start(true);
 				}
 			}
 		} catch (Exception $e) {
