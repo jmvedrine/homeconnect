@@ -1023,41 +1023,6 @@ class homeconnect extends eqLogic {
 		}
 	}
 
-	public static function cron5() {
-		$plugin = plugin::byId('homeconnect');
-		try {
-			$heartbeat = config::byKey('heartbeat::delay::' . $plugin->getId(), 'core', 0);
-			if ($heartbeat == 0 || is_nan($heartbeat)) {
-				log::add(__CLASS__, 'debug', 'Erreur heartbeat');
-			}
-			$eqLogics = eqLogic::byType($plugin->getId());
-			$ok = false;
-			$enable = 0;
-			$deamon_info = self::deamon_info();
-			if ($deamon_info['state'] == 'ok') {
-				$ligne = array_pop(file(log::getPathToLog('homeconnectd')));
-				if ($ligne != '' && preg_match("/^\[(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2}))\]/", $ligne, $match)) {
-					$date = str_replace(array('[',']'), '', $match[0]);
-				if (strtotime($date) > strtotime('-' . $heartbeat . ' minutes ' . date('Y-m-d H:i:s'))) {
-						$ok = true;
-					}
-				}
-			}
-
-			if (!$ok) {
-				$message = __('Attention le démon ', __FILE__) . ' ' . ' ' . $plugin->getName();
-				$message .= ' ' . __('n\'a recu de message depuis', __FILE__) . ' ' . $heartbeat . ' ' . __('min', __FILE__);
-				$logicalId = 'heartbeat' . $plugin->getId();
-
-				//message::add($plugin->getId(), $message, '', $logicalId);
-				if ($plugin->getHasOwnDeamon() && config::byKey('heartbeat::restartDeamon::' . $plugin->getId(), 'core', 0) == 1) {
-					//$plugin->deamon_start(true);
-				}
-			}
-		} catch (Exception $e) {
-		}
-	}
-
 	public static function cronDaily() {
         cache::set('homeconnect::requests::total', 0, '');
         cache::set('homeconnect::requests::refresh_token', 0, '');
@@ -1152,7 +1117,7 @@ class homeconnect extends eqLogic {
 				}*/
 				$cmd->setDisplay('parameters', $arr);
 				$cmd->save();
-			} else if (strpos($cmdData['type'], 'EnumType') !== false) {
+			} else if (strpos($cmdData['type'], 'EnumType') !== false || $cmdData['type'] == 'Enumeration') {
 				// Commande select
 				log::add(__CLASS__, 'debug', "Nouvelle commande select logicalId " . $logicalIdCmd . " nom ". $cmd->getName());
 				$cmd->setSubType('select');
