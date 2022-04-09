@@ -170,4 +170,32 @@ $('#bt_loginDemoHomeConnect').on('click', function () {
 		}
 	});
 });
+
+$('#bt_savePluginLogConfig').off('click').on('click', function () {
+   var plugin = $('#span_plugin_id').text();
+   var logPluginLevel = $('#div_plugin_log').getValues('.configKey')[0];
+   var logPluginLeveltoStr = JSON.stringify(logPluginLevel);
+   $('.bt_plugin_conf_view_log').each(function () {
+       var filename = $(this).attr('data-log');
+       logPluginLeveltoStr = logPluginLeveltoStr.replace("log::level::" + plugin, "log::level::" + filename);
+       newLogPluginLevel = JSON.parse(logPluginLeveltoStr);
+       jeedom.config.save({
+           configuration: newLogPluginLevel,
+           error: function(error) {
+              $.fn.showAlert({
+                message: error.message,
+                level: 'danger'
+              })
+           },
+           success: function() {
+              $.fn.showAlert({
+                message: '{{Sauvegarde de la configuration des logs}} <i>' + filename + '</i> {{effectuée}}',
+                level: 'success'
+              })
+              modifyWithoutSave = false
+           }
+       });
+   });
+});
+
 </script>

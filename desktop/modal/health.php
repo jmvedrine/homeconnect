@@ -19,8 +19,10 @@ if (!isConnect('admin')) {
 	throw new Exception('401 Unauthorized');
 }
 $eqLogics = homeconnect::byType('homeconnect');
-?>
+echo "<span>{{Nombre de requêtes envoyées aujourd'hui}} : </span>";
+echo "<span><strong>" . intval(cache::byKey('homeconnect::requests::total')->getValue()) . "</strong> / 1000</span>";
 
+?>
 <table class="table table-condensed tablesorter" id="table_healthpiHole">
 	<thead>
 		<tr>
@@ -41,7 +43,7 @@ foreach ($eqLogics as $eqLogic) {
 		$value = $cmd->execCmd() ? 'Oui' : 'Non';
 	}
     echo '<td><span class="label label-info" style="font-size : 1em;">' . $value . '</span></td>';
-    $cmd = $eqLogic->getCmd('info', 'programActive');
+    $cmd = $eqLogic->getCmd('info', 'GET::BSH.Common.Root.ActiveProgram');
     $value = '';
     if (is_object($cmd)) {
         $value = $cmd->execCmd();

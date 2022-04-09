@@ -40,7 +40,7 @@ try {
 	}
 
 	if (init('action') == 'syncHomeConnect') {
-		homeconnect::syncHomeConnect();
+		homeconnect::syncHomeConnect(filter_var(init('force'), FILTER_VALIDATE_BOOLEAN));
 		ajax::success();
 	}
 
@@ -49,6 +49,24 @@ try {
 		ajax::success();
 	}
 
+	if (init('action') == 'testEnum') {
+        $eqLogic = eqLogic::byId(init('eqLogic_id'));
+        if (!is_object($eqLogic)) {
+		    throw new Exception(__('EqLogic inexistant', __FILE__));
+        }
+        if (init('path') == '' || init('data_key') == '' || init('data_value') == '') {
+		    	throw new Exception(__('Chemin, clé ou valeur incorrect', __FILE__));
+        }
+        $url = homeconnect::API_REQUEST_URL . '/'. $eqLogic->getConfiguration('haid') . '/' . init('path');
+        $parameters = array('data' => array('key' => init('data_key'), 'value' => init('data_value')));
+        log::add('homeconnect', 'debug',"Paramètres de la requête pour exécuter la commande :");
+        log::add('homeconnect', 'debug',"Method : " . $method);
+        log::add('homeconnect', 'debug',"Url : " . $url);
+        log::add('homeconnect', 'debug',"Payload : " . $payload);
+        $payload = json_encode($parameters);
+        $response = homeconnect::request($url, $payload, 'PUT', array());
+		ajax::success($response);
+	}
 
 	throw new Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
 	/*	   * *********Catch exeption*************** */

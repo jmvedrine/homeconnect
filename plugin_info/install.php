@@ -53,26 +53,42 @@ function homeconnect_update() {
 			shell_exec("cp $srcDir$file $resuDir");
 		}
 	}
-    // Fix pour mon oubli
-     foreach (eqLogic::byType('homeconnect') as $homeconnect) {
-        $allCmd = cmd::byEqLogicId($homeconnect->getId());
-		foreach($allCmd as $cmd) {
-            if ($cmd->getType() == 'action' && $cmd->getSubType() == 'cursor') {
-                $cmd->setConfiguration('value', '#slider#');
-                $cmd->save();
-            }
-            if ($cmd->getType() == 'action' && $cmd->getSubType() == 'select') {
-                $cmd->setConfiguration('value', '#select#');
-                $cmd->save();
-            }
-        }
-    }
-    message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
+	// Fix pour mon oubli
+	foreach (eqLogic::byType('homeconnect') as $homeconnect) {
+		foreach ($homeconnect->getCmd() as $cmd) {
+			if ($cmd->getType() == 'action' && $cmd->getSubType() == 'cursor') {
+				$cmd->setConfiguration('value', '#slider#');
+				$cmd->save();
+			}
+			if ($cmd->getType() == 'action' && $cmd->getSubType() == 'select') {
+				$cmd->setConfiguration('value', '#select#');
+				$cmd->save();
+			}
+			if ($cmd->getType() == 'action' && $cmd->getSubType() == 'other') {
+				if ($cmd->getConfiguration('key', '') != '') {
+					$nameNewTrans = homeconnect::getCmdDetailTranslation($cmd->getConfiguration('key'), 'type');
+					if (isset($nameNewTrans) && $nameNewTrans == 'Boolean') {
+						$cmd->setConfiguration('value', true);
+						$cmd->save();
+					}
+				}
+			}
+			if ($cmd->getLogicalId() == 'programActive') {
+				$cmd->setLogicalId('GET::BSH.Common.Root.ActiveProgram');
+				$cmd->save();
+			}
+			if ($cmd->getLogicalId() == 'programSelected') {
+				$cmd->setLogicalId('GET::BSH.Common.Root.SelectedProgram');
+				$cmd->save();
+			}
+		}
+	}
+	message::add('homeconnect', 'Merci pour la mise à jour de ce plugin, faites une synchronisation pour mettre à jour les commandes.');
 }
 
 
 function homeconnect_remove() {
-    
+
 }
 
 ?>

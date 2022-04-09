@@ -29,29 +29,45 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		</div>
 
 		<legend><i class="fas fa-table"></i> {{Mes appareils}}</legend>
-
-		<div class="eqLogicThumbnailContainer">
-
-			<?php
-				foreach ($eqLogics as $eqLogic) {
-					$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-					echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
-					echo '<img src="' . $eqLogic->getImage() . '"/>';
-					echo '<br>';
-					echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-					echo '</div>';
-				}
-			?>
-
-		</div>
+		<?php
+		if (count($eqLogics) == 0) {
+			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Home Connect trouvé, cliquez sur "Synchronisation" pour commencer}}</div>';
+		} else {
+			// Champ de recherche
+			echo '<div class="input-group" style="margin:5px;">';
+			echo '<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic">';
+			echo '<div class="input-group-btn">';
+			echo '<a id="bt_resetSearch" class="btn" style="width:30px"><i class="fas fa-times"></i></a>';
+			echo '<a class="btn roundedRight hidden" id="bt_pluginDisplayAsTable" data-coreSupport="1" data-state="0"><i class="fas fa-grip-lines"></i></a>';
+			echo '</div>';
+			echo '</div>';
+			// Liste des équipements du plugin
+			echo '<div class="eqLogicThumbnailContainer">';
+        	foreach ($eqLogics as $eqLogic) {
+                $opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+                echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
+                echo '    <img src="' . $eqLogic->getImage() . '">';
+                echo '    <br\>';
+                echo '    <span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+                echo '    <span class="hiddenAsCard displayTableRight hidden">';
+                echo ($eqLogic->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
+                echo '    </span>';
+                echo '</div>';
+			}
+			echo '</div>';
+		}
+		?>
 	</div>
 
-	<div class="col-lg-10 col-md-9 col-sm-8 eqLogic" style="border-left: solid 1px #EEE; padding-left: 25px;display: none;">
-        <div class="input-group pull-right" style="display:inline-flex">
-            <a class="btn btn-success eqLogicAction roundedLeft" data-action="save"><i class="fas fa-check-circle"></i> {{Sauvegarder}}</a>
-            <a class="btn btn-danger eqLogicAction" data-action="remove"><i class="fas fa-minus-circle"></i> {{Supprimer}}</a>
-            <a class="btn btn-default eqLogicAction roundedRight" data-action="configure"><i class="fas fa-cogs"></i> {{Configuration avancée}}</a>
-        </div>
+	<div class="col-xs-12 eqLogic" style="display: none;">
+		<div class="input-group pull-right" style="display:inline-flex;">
+			<span class="input-group-btn">
+				<a class="btn btn-sm btn-default eqLogicAction roundedLeft" data-action="configure"><i class="fas fa-cogs"></i><span class="hidden-xs"> {{Configuration avancée}}</span>
+				</a><a class="btn btn-sm btn-success eqLogicAction" data-action="save"><i class="fas fa-check-circle"></i> {{Sauvegarder}}
+				</a><a class="btn btn-sm btn-danger eqLogicAction roundedRight" data-action="remove"><i class="fas fa-minus-circle"></i> {{Supprimer}}
+				</a>
+			</span>
+		</div>
 		<ul class="nav nav-tabs" role="tablist">
 			<li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fas fa-arrow-circle-left"></i></a></li>
 			<li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{Equipement}}</a></li>
@@ -160,7 +176,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 				<table id="table_cmd" class="table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th>{{Nom}}</th><th>{{Options}}</th><th>{{Type}}</th><th>{{Paramètres}}</th><th>{{Action}}</th>
+							<th>{{Nom}}</th><th>{{Type}}</th><th>{{Paramètres}}</th><th>{{Action}}</th>
 						</tr>
 					</thead>
 					<tbody>
