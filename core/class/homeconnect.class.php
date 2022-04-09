@@ -992,7 +992,7 @@ class homeconnect extends eqLogic {
                         }
                         $eqLogic->updateInfoCmdValue($cmdLogicalId, $items);
                     } else {
-                        log::add(__CLASS__, 'debug', 'Appareil ' . $array['haId'] . 'n\'existe pas ou n\'est pas activé');
+                        log::add(__CLASS__, 'debug', 'Appareil ' . $evenement['haId'] . 'n\'existe pas ou n\'est pas activé');
                     }
                 }
             }
@@ -1524,7 +1524,7 @@ class homeconnect extends eqLogic {
 				$configOpt = array_merge($opt, $cmdProgram->getConfiguration('listOptions', array()));
 				$configOpt = array_unique($configOpt);
 				$cmdProgram->setConfiguration('listOptions', $configOpt)->save();
-				log::add(__CLASS__, 'debug', "Ajout des options disponibles dans la commande PUT::$programKey"  . print_r($configOpt,true));
+				log::add(__CLASS__, 'debug', "Ajout des options disponibles dans la commande PUT::$key"  . print_r($configOpt,true));
 			}
 		} else {
 			log::add(__CLASS__, 'debug', "Pas d'options à ajuster" );
